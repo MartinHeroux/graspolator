@@ -1,4 +1,4 @@
-def exp1_subject_folders():
+def exp1_subject_folders() -> object:
     return (
         "SUB01L",
         "SUB01R",
