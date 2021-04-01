@@ -1,24 +1,25 @@
 from typing import NamedTuple
 
-
 import utils
 
 
 def read_exp1(data_folder):
-    data = []
+    blocked_data = []
+    widest_lines = []
     subjects = utils.exp1_subject_folders()
     for subject in subjects:
-        data.append(_read_parse_exp1(data_folder / subject))
-    return data
+        blocked_data.append(_read_parse_exp1(data_folder / subject)[0])
+        widest_lines.append(_read_parse_exp1(data_folder / subject)[1])
+    return blocked_data, widest_lines
 
 
 def _read_parse_exp1(subject_folder):
     current_subject_data = _read_subject_data(subject_folder)
-    widest_line, current_subject_data = _extract_widest_line_based_on_visual_inspection(
+    widest_line = _extract_widest_line_based_on_visual_inspection(
         current_subject_data
     )
     blocks = _parse_data(current_subject_data)
-    return blocks
+    return blocks, widest_line
 
 
 def _read_subject_data(subject_folder):
@@ -30,7 +31,7 @@ def _read_subject_data(subject_folder):
 
 def _extract_widest_line_based_on_visual_inspection(current_subject_data):
     widest_line = current_subject_data.pop(-1).split(":")[1].strip()
-    return widest_line, current_subject_data
+    return widest_line  # , current_subject_data
 
 
 def _parse_data(current_subject_data):
@@ -80,15 +81,15 @@ def _reorder_based_on_hand_dominance(sides, actual_widths, perceived_widths):
 
 def _dominant_not_first_on_day1(sides):
     return (
-        (sides[3] == "LEFT")
-        and (sides[0] == "RIGHT")
-        or (sides[3] == "RIGHT")
-        and (sides[0] == "LEFT")
+            (sides[3] == "LEFT")
+            and (sides[0] == "RIGHT")
+            or (sides[3] == "RIGHT")
+            and (sides[0] == "LEFT")
     )
 
 
 def _swap_order(list_of_lists):
-    return [list_of_lists[1], list_of_lists[0],list_of_lists[2], list_of_lists[3]]
+    return [list_of_lists[1], list_of_lists[0], list_of_lists[2], list_of_lists[3]]
 
 
 def _extract_blocks(actual_widths, perceived_widths):
