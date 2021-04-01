@@ -12,14 +12,20 @@ DATA_FOLDER_EXP2 = Path('./data/exp2')
 # EXPERIMENT 1
 # --------------------------------------------
 
-subject_data = data.read_exp1(DATA_FOLDER_EXP1)[0]
-widest_lines = data.read_exp1(DATA_FOLDER_EXP1)[1]
+all_subject_data, widest_lines = data.read_exp1(DATA_FOLDER_EXP1)
 
 subject_IDs = utils.exp1_subject_folders()
-names_and_data_zip = zip(subject_IDs, subject_data)
 
-for ID, data in names_and_data_zip:
-    plots.visual_check_and_store(ID, data)
+for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
+    plots.visual_check_and_store(subject_ID, current_subject_data)
+    #plots.regplots(subject_ID, current_subject_data)
 
-for ID, data in names_and_data_zip:
-    plots.regplots(ID, data)
+
+
+
+
+
+
+
+
+
