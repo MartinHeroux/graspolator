@@ -53,12 +53,14 @@ def read_yaml_corrections_file(fix_yaml):
     with open(fix_yaml) as config_file:
         return yaml.load(config_file, Loader=yaml.FullLoader)
 
+
 def create_exp_folder(experiment):
     if not os.path.exists('./subject_folders_' + experiment):
         os.makedirs('./subject_folders_' + experiment)
         print("All-subject folder created " + experiment)
     else:
         print("All-subject folder already exists")
+
 
 def create_subject_folder(subject_ID):
     if not os.path.exists('./subject_folders_exp1/' + subject_ID):

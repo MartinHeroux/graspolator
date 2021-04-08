@@ -1,10 +1,8 @@
-from pathlib import Path
-
 import data
 import plots
 import utils
 from pathlib import Path
-import os
+
 
 DATA_FOLDER_EXP1 = Path('./data/exp1')
 DATA_FOLDER_EXP2 = Path('./data/exp2')

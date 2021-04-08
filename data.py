@@ -8,18 +8,37 @@ def read_exp1(data_folder):
     widest_lines = []
     subjects = utils.exp1_subject_folders()
     for subject in subjects:
-        blocked_data.append(_read_parse_exp1(data_folder / subject)[0])
-        widest_lines.append(_read_parse_exp1(data_folder / subject)[1])
+        blocked_data.append(_read_parse_exp1(data_folder, subject)[0])
+        widest_lines.append(_read_parse_exp1(data_folder, subject)[1])
     return blocked_data, widest_lines
 
 
-def _read_parse_exp1(subject_folder):
+def _read_parse_exp1(data_folder, subject):
+    subject_folder = data_folder / subject
     current_subject_data = _read_subject_data(subject_folder)
+    current_subject_data = _fix_data(current_subject_data, subject_folder, subject)
     widest_line = _extract_widest_line_based_on_visual_inspection(
         current_subject_data
     )
     blocks = _parse_data(current_subject_data)
     return blocks, widest_line
+
+
+def _fix_data(current_subject_data, subject_folder, subject):
+    fix_file = subject_folder / (subject + '_fix.yaml')
+    fix = utils.read_yaml_corrections_file(fix_file)
+    if not fix_file.is_file():
+        return current_subject_data
+    if 'delete' in fix:
+        index_999 = []
+        for i, line in enumerate(current_subject_data):
+            if (line.split(":")[0].split("_")[0] == "MEASURE") and (line.split(":")[1].strip() == '999'):
+                index_999.append(i)
+        index_999.reverse()
+        for index in index_999:
+            current_subject_data.pop(index)
+            current_subject_data.pop(index-1)
+    return current_subject_data
 
 
 def _read_subject_data(subject_folder):
