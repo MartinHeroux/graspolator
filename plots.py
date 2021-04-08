@@ -2,8 +2,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from random import random
 import numpy as np
-import yaml
-
+import random
 
 import utils
 
@@ -38,8 +37,7 @@ def plot_and_store(subject_ID, subject_data):
         plt.xticks(range(2, 11))
         plt.xlim([1, 11])
         plt.yticks([0.5] + list(range(1, 14)))
-        # TODO: Once id and fixed all bad trials, set y_lim to 14
-        plt.ylim([0, None])
+        plt.ylim([0, 14])
         plt.grid()
         plt.title(name, loc = 'right')
         plt.ylabel('Perceived width (cm)')
