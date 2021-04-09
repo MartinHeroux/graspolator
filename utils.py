@@ -1,7 +1,9 @@
 import statsmodels.api as sm
 import yaml
 import os
-
+import pdfrw as pdf
+from pathlib import Path
+from PyPDF2 import PdfFileMerger
 
 def exp1_subject_folders() -> object:
     return (
@@ -69,6 +71,23 @@ def create_subject_folder(subject_ID):
     else:
         print(str(subject_ID + " folder already exists, proceeding"))
 
+def filename_list(directory):
+    filenames = []
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            filenames.append(filename)
+    return filenames
 
 # yaml_file = Path('test.yaml')
 # yaml_data = _read_yaml_corrections_file(yaml_file)
+
+def merge_pdfs(source_directory):
+    filenames = filename_list(source_directory)
+    merger = PdfFileMerger()
+    for filename in filenames:
+        pdf_path = str(Path('./randomised_plots_no_ID/', filename))
+        merger.append(pdf_path)
+    merger.write("concatenated.pdf")
+    merger.close()
+
+

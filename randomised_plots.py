@@ -3,6 +3,7 @@ from pathlib import Path
 from random import random
 import numpy as np
 import random as rd
+import utils
 
 
 def random_plot(plot, subject_ID, subject_data):
@@ -27,8 +28,8 @@ def random_plot(plot, subject_ID, subject_data):
 
         plt.xticks(range(2, 11))
         plt.xlim([1, 11])
-        plt.ylim([1, 14])
-        plt.yticks([0.5] + list(range(1, 14)))
+        plt.ylim([1, 15])
+        plt.yticks([0.5] + list(range(1, 15)))
         plt.grid()
         plt.title(name, loc = 'right')
         plt.ylabel('Perceived width (cm)')
@@ -39,7 +40,7 @@ def random_plot(plot, subject_ID, subject_data):
     plt.close()
 
     plt.figure(figsize=(10, 10))
-    plt.suptitle(str('Scatterplot'))
+    plt.suptitle(str('{} Scatterplot'.format(plot)))
 
     for subplot_index, condition_data, name in zip(subplot_indices, subject_data, condition_names):
         plt.subplot(2, 2, subplot_index)
@@ -51,12 +52,13 @@ def random_plot(plot, subject_ID, subject_data):
 
         plt.xticks(range(2, 11))
         plt.xlim([1, 11])
-        plt.ylim([1, 14])
-        plt.yticks([0.5] + list(range(1, 14)))
+        plt.ylim([1, 15])
+        plt.yticks([0.5] + list(range(1, 15)))
         plt.grid()
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
 
-    plt.savefig(('{}/{}'.format(path_2, plot)))
+    plt.savefig(('{}/{}.pdf'.format(path_2, plot)))
     print(f'Saving de_id scatter plots for {subject_ID}')
     plt.close
+

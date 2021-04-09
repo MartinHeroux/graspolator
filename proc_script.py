@@ -24,6 +24,10 @@ for plot, (subject_ID, current_subject_data) in enumerate(zip(subject_IDs, all_s
     #utils.create_subject_folder(subject_ID)
     randomised_plots.random_plot(plot, subject_ID, current_subject_data)
 
+utils.merge_pdfs(Path('./randomised_plots_no_ID'))
+
+
+
 
 
 
