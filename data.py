@@ -30,16 +30,21 @@ def _fix_data(current_subject_data, subject_folder, subject):
     if not fix_file.is_file():
         return current_subject_data
     if 'delete' in fix:
-        index_999 = []
-        for i, line in enumerate(current_subject_data):
-            if (line.split(":")[0].split("_")[0] == "MEASURE") and (line.split(":")[1].strip() == '999'):
-                index_999.append(i)
-        index_999.reverse()
-        for index in index_999:
-            current_subject_data.pop(index)
-            current_subject_data.pop(index-1)
-    return current_subject_data
-
+        index = []
+        deletion_target = fix['delete']
+        if deletion_target == 999:
+            for i, line in enumerate(current_subject_data):
+                if (line.split(":")[0].split("_")[0] == "MEASURE") and (line.split(":")[1].strip() == 999):
+                    index.append(i)
+            index.reverse()
+            for index in index:
+                current_subject_data.pop(index)
+                current_subject_data.pop(index-1)
+            return current_subject_data
+        else:
+            current_subject_data.pop(deletion_target)
+            current_subject_data.pop(deletion_target - 1)
+        return current_subject_data
 
 def _read_subject_data(subject_folder):
     path_to_data_file = subject_folder / (subject_folder.name + "_data.txt")

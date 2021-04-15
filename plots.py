@@ -24,7 +24,7 @@ def plot_and_store(subject_ID, subject_data):
         plt.plot(x_data, condition_data.perceived_widths, 'o', alpha=0.5, color='royalblue')
 
         intercept, slope = utils.calculate_regression(condition_data)
-        text_to_write = [f'{name}', '\n', f' Intercept: {intercept:4.2f}', '\n' , f' Slope: {slope:4.2f}', '\n']
+        text_to_write = [f'{name}', '\n', f'Intercept: {intercept:4.2f}', '\n' , f'Slope: {slope:4.2f}', '\n']
         subject_txt_file.writelines(text_to_write)
 
         x2 = 2
