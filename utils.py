@@ -1,9 +1,9 @@
+import os
+from pathlib import Path
 import statsmodels.api as sm
 import yaml
-import os
-import pdfrw as pdf
-from pathlib import Path
 from PyPDF2 import PdfFileMerger
+
 
 def exp1_subject_folders() -> object:
     return (
@@ -48,6 +48,11 @@ def calculate_regression(block):
     intercept, slope = model.params
     return intercept, slope
 
+def calculate_regression_all_data(actual, perceived):
+    actual = sm.add_constant(actual)
+    model = sm.OLS(perceived, actual).fit()
+    intercept, slope = model.params
+    return intercept, slope
 
 def read_yaml_corrections_file(fix_yaml):
     if not fix_yaml.is_file():
@@ -77,9 +82,6 @@ def filename_list(directory):
         for filename in files:
             filenames.append(filename)
     return filenames
-
-# yaml_file = Path('test.yaml')
-# yaml_data = _read_yaml_corrections_file(yaml_file)
 
 def merge_pdfs(source_directory):
     filenames = filename_list(source_directory)
