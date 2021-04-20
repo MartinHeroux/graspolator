@@ -92,4 +92,3 @@ def merge_pdfs(source_directory):
     merger.write("concatenated.pdf")
     merger.close()
 
-

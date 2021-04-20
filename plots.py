@@ -112,7 +112,7 @@ def random_plot(plot, subject_ID, subject_data):
 
 def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
     if not os.path.exists('./plots/group_plots'):
-        os.makedirs('./plots_group_plots')
+        os.makedirs('./plots/group_plots')
     else:
         print('group plot folder already exists')
 
@@ -136,8 +136,8 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
 
     plt.xticks(range(2, 11))
     plt.xlim([1, 11])
-    plt.yticks([0.5] + list(range(1, 14)))
-    plt.ylim([0, 13])
+    plt.yticks(list(range(-3, 16)))
+    plt.ylim([-1, 16])
     plt.grid()
     plt.ylabel('Perceived width (cm)')
     plt.xlabel('Actual width (cm)')

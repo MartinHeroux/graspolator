@@ -4,7 +4,7 @@ import utils
 def subject_reg_line(subject_data):
     intercept, slope = calc_reg_line_values(subject_data)
     intersection_x_value, y_when_x_is_2, y_when_x_is_10 = key_points(intercept, slope)
-    line_colour = subject_category(intersection_x_value, y_when_x_is_2)
+    line_colour = subject_line_colour(intersection_x_value, y_when_x_is_2)
     return y_when_x_is_2, y_when_x_is_10, line_colour
 
 
@@ -30,7 +30,7 @@ def key_points(intercept, slope):
     return x_point_of_intersection, y_value_when_x_equals_2, y_value_when_x_equals_10
 
 
-def subject_category(intersection_x_value, y_when_x_equals_2):
+def subject_line_colour(intersection_x_value, y_when_x_equals_2):
     if intersection_x_value >= 2 and intersection_x_value <= 10:
         line_colour = 'royalblue'
     elif y_when_x_equals_2 > 2:
@@ -38,3 +38,12 @@ def subject_category(intersection_x_value, y_when_x_equals_2):
     else:
         line_colour = 'firebrick'
     return line_colour
+
+def subject_group(intersection_x_value, y_when_x_equals_2):
+    if intersection_x_value >= 2 and intersection_x_value <= 10:
+        group = 'crosser'
+    elif y_when_x_equals_2 > 2:
+        group = 'maximiser'
+    else:
+        group = 'minimiser'
+    return group

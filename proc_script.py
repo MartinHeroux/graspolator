@@ -1,6 +1,7 @@
 import data
 import plots
 import utils
+import area_between_lines
 
 from pathlib import Path
 
@@ -33,6 +34,11 @@ for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
 
 # create group plot of regression lines coloured by 'type' of participant
 plots.plot_subject_reg_lines_by_category(subject_IDs, all_subject_data)
+
+# calculate area between lines for 'error' score
+for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
+    subject_ID, group, area_difference = area_between_lines.area_under_line(subject_ID, current_subject_data)
+    print(subject_ID, group, area_difference)
 
 
 
