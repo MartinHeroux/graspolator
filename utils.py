@@ -92,3 +92,35 @@ def merge_pdfs(source_directory):
     merger.write("concatenated.pdf")
     merger.close()
 
+def point_of_intersection(intercept, slope):
+    m1, b1 = 1, 0
+    m2, b2 = slope, intercept
+    x_intersect = (b2 - b1) / (m1 - m2)
+    y_intersect = (x_intersect * slope) + intercept
+    return x_intersect, y_intersect
+
+
+def reg_line_endpoints(intercept, slope):
+    x2 = 2
+    x10 = 10
+    y_at_x2 = slope * x2 + intercept
+    y_at_x10 = slope * x10 + intercept
+    return x2, x10, y_at_x2, y_at_x10
+
+def subject_group(x_intersect, y_at_x2):
+    if x_intersect >= 2 and y_at_x2 <= 10:
+        group = 'crosser'
+    elif y_at_x2 > 2:
+        group = 'maximiser'
+    else:
+        group = 'minimiser'
+    return group
+
+def subject_line_colour(intersection_x_value, y_when_x_equals_2):
+    if intersection_x_value >= 2 and intersection_x_value <= 10:
+        line_colour = 'royalblue'
+    elif y_when_x_equals_2 > 2:
+        line_colour = 'green'
+    else:
+        line_colour = 'firebrick'
+    return line_colour

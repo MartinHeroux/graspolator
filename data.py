@@ -34,8 +34,6 @@ def _fix_data(current_subject_data, subject_folder, subject):
         deletion_target = fix['delete']
         if deletion_target == 999:
             for i, line in enumerate(current_subject_data):
-                # TODO: figure out why the line below is not working for
-                #  SUB02R (index 3 in subject list) and SUB04R (index 6 in subject list)
                 if (line.split(":")[0].split("_")[0] == "MEASURE") and (line.split(":")[1].strip() == '999'):
                     index.append(i)
             index.reverse()

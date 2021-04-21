@@ -1,7 +1,8 @@
 import data
 import plots
 import utils
-import area_between_lines
+import area_plots
+import area_between_regs
 
 from pathlib import Path
 
@@ -21,27 +22,28 @@ subject_IDs = utils.exp1_subject_folders()
 # read and process data
 all_subject_data, widest_lines = data.read_exp1(DATA_FOLDER_EXP1)
 
-# create randomised plots for data checking
+# create randomised plots for data checking + merge into single pdf
 for plot, (subject_ID, current_subject_data) in enumerate(zip(subject_IDs, all_subject_data), start = 1):
     utils.create_subject_folder(subject_ID)
     plots.random_plot(plot, subject_ID, current_subject_data)
 
 utils.merge_pdfs(Path('./randomised_plots_no_ID'))
 
-# create result plots for each subject
+# create result plots (reg lines and scatter plots) for each subject
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
     plots.plot_and_store(subject_ID, current_subject_data)
 
-# create group plot of regression lines coloured by 'type' of participant
+# create group plot of regression lines coloured by 'type' of participant per condition
 plots.plot_subject_reg_lines_by_category(subject_IDs, all_subject_data)
 
-# calculate area between lines for 'error' score
+# calculate area between line of reality and reg line as 'error' score per condition, per participant
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
-    subject_ID, group, area_difference = area_between_lines.area_under_line(subject_ID, current_subject_data)
-    print(subject_ID, group, area_difference)
+    area_plots.plot_areas(subject_ID, current_subject_data)
 
-
-
+# calculate area between reg lines for each participant
+# currently not complete
+for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
+    plot.area_between_reg_lines(subject_ID, current_subject_data)
 
 
 
