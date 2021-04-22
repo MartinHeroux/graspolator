@@ -1,8 +1,7 @@
 import data
 import plots
 import utils
-import area_plots
-import area_between_regs
+
 
 from pathlib import Path
 
@@ -38,12 +37,12 @@ plots.plot_subject_reg_lines_by_category(subject_IDs, all_subject_data)
 
 # calculate area between line of reality and reg line as 'error' score per condition, per participant
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
-    area_plots.plot_areas(subject_ID, current_subject_data)
+    plots.plot_areas(subject_ID, current_subject_data)
 
 # calculate area between reg lines for each participant
 # currently not complete
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
-    plot.area_between_reg_lines(subject_ID, current_subject_data)
+    plots.plot_area_between_reg_lines(subject_ID, current_subject_data)
 
 
 
