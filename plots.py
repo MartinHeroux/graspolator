@@ -144,7 +144,7 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
             plt.subplot(1, 4, subplot_index)
 
             intercept, slope = utils.calculate_regression(condition_data)
-            x_intersect, y_intersect = utils.point_of_intersection(intercept, slope)
+            x_intersect, y_intersect = utils.point_of_intersection_with_reality(intercept, slope)
             x2, x10, y_at_x2, y_at_x10 = utils.reg_line_endpoints(intercept, slope)
             line_colour = utils.subject_line_colour(x_intersect, y_at_x2)
             plt.plot([x2, x10], [y_at_x2, y_at_x10], color=line_colour, linewidth=0.5)
@@ -173,7 +173,7 @@ def plot_areas(subject_ID, subject_data):
         plt.plot([2, 10], [2, 10], 'k--')
 
         intercept, slope = utils.calculate_regression(condition_data)
-        x_intersect, y_intersect = utils.point_of_intersection(intercept, slope)
+        x_intersect, y_intersect = utils.point_of_intersection_with_reality(intercept, slope)
         x2, x10, y_at_x2, y_at_x10 = utils.reg_line_endpoints(intercept, slope)
         group = utils.subject_group(x_intersect, y_at_x2)
 

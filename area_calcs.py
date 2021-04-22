@@ -55,6 +55,33 @@ def crosser_triangle_area_calc(x_intersect, y_intersect, y_at_x2, y_at_x10):
     return area_left, area_right, area_difference
 
 
+def reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b):
+    h_left_trapezium = x_intersect - 2
+    h_right_trapezium = 10 - x_intersect
+
+    left_trap_area_a = trapezium_area(y_at_x2_a, y_intersect, h_left_trapezium)
+    right_trap_area_a = trapezium_area(y_intersect, y_at_x10_a, h_right_trapezium)
+
+    left_trap_area_b = trapezium_area(y_at_x2_b, y_intersect, h_left_trapezium)
+    right_trap_area_b = trapezium_area(y_intersect, y_at_x10_b, h_right_trapezium)
+
+    left_area = abs(left_trap_area_a - left_trap_area_b)
+    right_area = abs(right_trap_area_a - right_trap_area_b)
+
+    total_area = abs(left_area + right_area)
+    return total_area
+
+
+def reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b):
+    h = 8
+
+    area_a = trapezium_area(y_at_x2_a, y_at_x10_a, h)
+    area_b = trapezium_area(y_at_x2_b, y_at_x10_b, h)
+
+    total_area = abs(area_a - area_b)
+    return total_area
+
+
 def trapezium_area(a, b, h):
     a_plus_b_div_2 = (a + b) / 2
     area = a_plus_b_div_2 * h

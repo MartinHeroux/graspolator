@@ -48,11 +48,13 @@ def calculate_regression(block):
     intercept, slope = model.params
     return intercept, slope
 
+
 def calculate_regression_all_data(actual, perceived):
     actual = sm.add_constant(actual)
     model = sm.OLS(perceived, actual).fit()
     intercept, slope = model.params
     return intercept, slope
+
 
 def read_yaml_corrections_file(fix_yaml):
     if not fix_yaml.is_file():
@@ -76,12 +78,14 @@ def create_subject_folder(subject_ID):
     else:
         print(str(subject_ID + " folder already exists, proceeding"))
 
+
 def filename_list(directory):
     filenames = []
     for root, dirs, files in os.walk(directory):
         for filename in files:
             filenames.append(filename)
     return filenames
+
 
 def merge_pdfs(source_directory):
     filenames = filename_list(source_directory)
@@ -92,11 +96,20 @@ def merge_pdfs(source_directory):
     merger.write("concatenated.pdf")
     merger.close()
 
-def point_of_intersection(intercept, slope):
+
+def point_of_intersection_with_reality(intercept, slope):
     m1, b1 = 1, 0
     m2, b2 = slope, intercept
     x_intersect = (b2 - b1) / (m1 - m2)
     y_intersect = (x_intersect * slope) + intercept
+    return x_intersect, y_intersect
+
+
+def point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b):
+    m1, b1 = slope_a, intercept_a
+    m2, b2 = slope_b, intercept_b
+    x_intersect = (b2 - b1) / (m1 - m2)
+    y_intersect = (x_intersect * slope_a) + intercept_a
     return x_intersect, y_intersect
 
 
@@ -106,6 +119,7 @@ def reg_line_endpoints(intercept, slope):
     y_at_x2 = slope * x2 + intercept
     y_at_x10 = slope * x10 + intercept
     return x2, x10, y_at_x2, y_at_x10
+
 
 def subject_group(x_intersect, y_at_x2):
     if 2 <= x_intersect <= 10 and y_at_x2 >= 0:
@@ -117,6 +131,15 @@ def subject_group(x_intersect, y_at_x2):
     else:
         group = 'minimiser'
     return group
+
+
+def subject_group_reg_lines(x_intersect):
+    if 2 <= x_intersect <= 10:
+        group = 'cross'
+    else:
+        group = 'no_cross'
+    return group
+
 
 def subject_line_colour(intersection_x_value, y_when_x_equals_2):
     if intersection_x_value >= 2 and intersection_x_value <= 10:

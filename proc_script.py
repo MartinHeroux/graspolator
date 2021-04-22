@@ -1,6 +1,7 @@
 import data
 import plots
 import utils
+import consistency_plots
 
 
 from pathlib import Path
@@ -42,7 +43,7 @@ for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
 # calculate area between reg lines for each participant
 # currently not complete
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
-    plots.plot_area_between_reg_lines(subject_ID, current_subject_data)
+    consistency_plots.consistency_plot(subject_ID, current_subject_data)
 
 
 
