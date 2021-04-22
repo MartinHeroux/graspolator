@@ -1,10 +1,9 @@
-
-
 def minimiser_area_calc(y_at_x2, y_at_x10):
     h = 8
     area = trapezium_area(y_at_x2, y_at_x10, h)
     area_difference = (48 - area)
     return area_difference
+
 
 def maximiser_area_calc(y_at_x2, y_at_x10):
     h = 8
@@ -12,9 +11,8 @@ def maximiser_area_calc(y_at_x2, y_at_x10):
     area_difference = (area - 48)
     return area_difference
 
-def crosser_area_calc(intercept, slope, x_intersect, y_at_x2, y_at_x10):
-    y_intersect = (slope * x_intersect) + intercept
 
+def crosser_area_calc(x_intersect, y_intersect, y_at_x2, y_at_x10):
     h_left_trapezium = x_intersect - 2
     h_right_trapezium = 10 - x_intersect
 
@@ -22,6 +20,31 @@ def crosser_area_calc(intercept, slope, x_intersect, y_at_x2, y_at_x10):
     area_reality_line_right = trapezium_area(y_intersect, 10, h_right_trapezium)
 
     area_reg_line_left = trapezium_area(y_at_x2, y_intersect, h_left_trapezium)
+    area_reg_line_right = trapezium_area(y_intersect, y_at_x10, h_right_trapezium)
+
+    if y_at_x2 < 2:
+        area_left = area_reality_line_left - area_reg_line_left
+        area_right = area_reg_line_right - area_reality_line_right
+    else:
+        area_left = area_reg_line_left - area_reality_line_left
+        area_right = area_reality_line_right - area_reg_line_right
+
+    area_difference = area_left + area_right
+
+    return area_left, area_right, area_difference
+
+
+def crosser_triangle_area_calc(x_intersect, y_intersect, y_at_x2, y_at_x10):
+    h_left_shapes = x_intersect - 2
+    h_right_trapezium = 10 - x_intersect
+
+    b_length = (y_intersect + abs(y_at_x2))
+    a_length_left = (2 + abs(y_at_x2))
+
+    area_reality_line_left = trapezium_area(a_length_left, b_length, h_left_shapes)
+    area_reality_line_right = trapezium_area(y_intersect, 10, h_right_trapezium)
+
+    area_reg_line_left = triangle_area(b_length, h_left_shapes)
     area_reg_line_right = trapezium_area(y_intersect, y_at_x10, h_right_trapezium)
 
     area_left = area_reality_line_left - area_reg_line_left
@@ -35,4 +58,9 @@ def crosser_area_calc(intercept, slope, x_intersect, y_at_x2, y_at_x10):
 def trapezium_area(a, b, h):
     a_plus_b_div_2 = (a + b) / 2
     area = a_plus_b_div_2 * h
+    return area
+
+
+def triangle_area(b, h):
+    area = (b * h) / 2
     return area

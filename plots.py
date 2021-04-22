@@ -178,8 +178,17 @@ def plot_areas(subject_ID, subject_data):
         group = utils.subject_group(x_intersect, y_at_x2)
 
         if group == 'crosser':
-            area_left, area_right, area_difference = area_calcs.crosser_area_calc(intercept, slope, x_intersect,
-                                                                                  y_at_x2, y_at_x10)
+            area_left, area_right, area_difference = area_calcs.crosser_area_calc(x_intersect,
+                                                                                  y_intersect,
+                                                                                  y_at_x2,
+                                                                                  y_at_x10)
+            text = str(
+                f'area_left = {area_left:4.2f} \narea_right = {area_right:4.2f} \narea_difference = {area_difference:4.2f}')
+        elif group == 'crosser_triangle':
+            area_left, area_right, area_difference = area_calcs.crosser_triangle_area_calc(x_intersect,
+                                                                                           y_intersect,
+                                                                                           y_at_x2,
+                                                                                           y_at_x10)
             text = str(
                 f'area_left = {area_left:4.2f} \narea_right = {area_right:4.2f} \narea_difference = {area_difference:4.2f}')
         elif group == 'minimiser':
@@ -245,5 +254,4 @@ def plot_area_between_reg_lines(subject_ID, subject_data):
 
     plt.savefig(str('{}/{}_all_reg_lines'.format(path, subject_ID)))
     print(f'Saving all reg lines for {subject_ID}')
-    # TODO: discuss maths of figuring out area between all lines when irregular polygon
     plt.close()

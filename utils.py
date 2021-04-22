@@ -108,8 +108,10 @@ def reg_line_endpoints(intercept, slope):
     return x2, x10, y_at_x2, y_at_x10
 
 def subject_group(x_intersect, y_at_x2):
-    if 2 <= x_intersect <= 10:
+    if 2 <= x_intersect <= 10 and y_at_x2 >= 0:
         group = 'crosser'
+    elif 2 <= x_intersect <= 10:
+        group = 'crosser_triangle'
     elif y_at_x2 >= 2:
         group = 'maximiser'
     else:
