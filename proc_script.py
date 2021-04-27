@@ -45,7 +45,10 @@ for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
     consistency_plots.consistency_plot(subject_ID, current_subject_data)
 
-
+# calculate and store r_square values for each participant in txt file
+r_square_file = open("r_squared_values.txt", "w")
+for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
+    utils.r_squared(subject_ID, current_subject_data)
 
 
 

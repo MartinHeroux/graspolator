@@ -3,6 +3,7 @@ from pathlib import Path
 import statsmodels.api as sm
 import yaml
 from PyPDF2 import PdfFileMerger
+from sklearn.metrics import r2_score
 
 
 def exp1_subject_folders() -> object:
@@ -149,3 +150,16 @@ def subject_line_colour(intersection_x_value, y_when_x_equals_2):
     else:
         line_colour = 'firebrick'
     return line_colour
+
+def r_squared(subject_ID, current_subject_data):
+    condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
+    r_square_file = open("r_squared_values.txt", "a")
+    r_square_file.write(f'subject: {subject_ID} \n')
+    for condition_name, condition_data in zip(condition_names, current_subject_data):
+        r_square_file = open("r_squared_values.txt", "a")
+        actual_widths = condition_data.actual_widths
+        perceived_widths = condition_data.perceived_widths
+        r_square = r2_score(actual_widths, perceived_widths)
+        line_to_write = [f" {condition_name} r_squared: {r_square:4.2f} \n"]
+        r_square_file.writelines(line_to_write)
+    r_square_file.close
