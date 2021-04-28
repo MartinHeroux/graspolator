@@ -26,7 +26,6 @@ all_subject_data, widest_lines = data.read_exp1(DATA_FOLDER_EXP1)
 for plot, (subject_ID, current_subject_data) in enumerate(zip(subject_IDs, all_subject_data), start = 1):
     utils.create_subject_folder(subject_ID)
     plots.random_plot(plot, subject_ID, current_subject_data)
-
 utils.merge_pdfs(Path('./randomised_plots_no_ID'))
 
 # create result plots (reg lines and scatter plots) for each subject
@@ -36,12 +35,11 @@ for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
 # create group plot of regression lines coloured by 'type' of participant per condition
 plots.plot_subject_reg_lines_by_category(subject_IDs, all_subject_data)
 
-# calculate area between line of reality and reg line as 'error' score per condition, per participant
+# calculate area between line of reality and regression line as 'error' score per condition, per participant
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
     plots.plot_areas(subject_ID, current_subject_data)
 
-# calculate area between reg lines for each participant
-# currently not complete
+# calculate area between regression lines for each participant
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
     consistency_plots.consistency_plot(subject_ID, current_subject_data)
 
@@ -50,6 +48,7 @@ r_square_file = open("r_squared_values.txt", "w")
 for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
     utils.r_squared(subject_ID, current_subject_data)
 
-
+# plot area differences for each condition pair, for each participant on same figure
+plots.group_consistency_plot(subject_IDs, all_subject_data)
 
 

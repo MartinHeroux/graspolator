@@ -151,6 +151,17 @@ def subject_line_colour(intersection_x_value, y_when_x_equals_2):
         line_colour = 'firebrick'
     return line_colour
 
+
+def compute_area_calc_inputs(data_pair):
+    intercept_a, slope_a = calculate_regression(data_pair.data_1)
+    intercept_b, slope_b = calculate_regression(data_pair.data_2)
+
+    x2_a, x10_a, y_at_x2_a, y_at_x10_a = reg_line_endpoints(intercept_a, slope_a)
+    x2_b, x10_b, y_at_x2_b, y_at_x10_b = reg_line_endpoints(intercept_b, slope_b)
+    x_intersect, y_intersect = point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b)
+
+    return x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b
+
 def r_squared(subject_ID, current_subject_data):
     condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
     r_square_file = open("r_squared_values.txt", "a")

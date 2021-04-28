@@ -3,8 +3,10 @@ import matplotlib.patches as mpatches
 from pathlib import Path
 from random import random
 import random as rd
-import numpy as np
 import os
+from collections import namedtuple
+import numpy as np
+
 
 import utils
 import area_calcs
@@ -107,7 +109,7 @@ def random_plot(plot, subject_ID, subject_data):
 
     plt.savefig(('{}/{}.pdf'.format(path_2, plot)))
     print(f'Saving de_id scatter plots for {subject_ID}')
-    plt.close
+    plt.close()
 
 
 def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
@@ -254,4 +256,56 @@ def plot_area_between_reg_lines(subject_ID, subject_data):
 
     plt.savefig(str('{}/{}_all_reg_lines'.format(path, subject_ID)))
     print(f'Saving all reg lines for {subject_ID}')
+    plt.close()
+
+def group_consistency_plot(subject_IDs, all_subject_data):
+    if not os.path.exists('./plots/group_consistency_plot'):
+        os.makedirs('./plots/group_consistency_plot')
+
+    path = Path('./plots/group_consistency_plot/')
+
+    Pair = namedtuple('Pair', 'data_1 data_2')
+    Pairs = namedtuple('Pairs', 'between_hands, between_days, within_day')
+
+    plt.figure(figsize=(7, 10))
+    plt.suptitle(str('All Subject Consistency Plot'))
+    plt.ylabel('Area Difference Between Regression Lines (cm^3)')
+    plt.xlabel('Condition Pair')
+    plt.grid()
+    x_points_base = [1, 2, 3]
+    plt.xticks(x_points_base, labels = ['Between Hands', 'Between Days', 'Within Day'])
+    plt.yticks(range(0, 15))
+
+    for line_number, (subject_ID, current_subject_data) in enumerate(zip(subject_IDs, all_subject_data), start=1):
+        y_points = []
+        jitter_values = [random() / 40 for _ in range(len(x_points_base))]
+        if line_number < 15:
+            x_points_jitter = np.array(x_points_base) + np.array(jitter_values)
+        else:
+            x_points_jitter = np.array(x_points_base) - np.array(jitter_values)
+
+        between_hands = Pair(data_1=current_subject_data[0], data_2=current_subject_data[1])
+        between_days = Pair(data_1=current_subject_data[0], data_2=current_subject_data[2])
+        within_day = Pair(data_1=current_subject_data[2], data_2=current_subject_data[3])
+
+        data_pairs = Pairs(between_hands=between_hands, between_days=between_days, within_day=within_day)
+
+        for data_pair in data_pairs:
+            x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b = utils.compute_area_calc_inputs(
+                data_pair)
+            group = utils.subject_group_reg_lines(x_intersect)
+
+            if group == 'cross':
+                total_area = area_calcs.reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a,
+                                                              y_at_x2_b,
+                                                              y_at_x10_b)
+            else:
+                total_area = area_calcs.reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b)
+
+            y_points.append(total_area)
+        rgb = np.random.rand(3, )
+        plt.plot(x_points_jitter, y_points, color=rgb, marker = 'o', alpha = 0.5)
+
+    plt.savefig('{}/group_consistency_plot.png'.format(path))
+    print(f'Saving group consistency plots')
     plt.close()
