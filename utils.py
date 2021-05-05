@@ -7,6 +7,8 @@ import scipy.stats as scp
 import numpy as np
 from scipy.stats import sem, t
 
+import area_calcs
+
 
 def exp1_subject_folders() -> object:
     return (
@@ -41,6 +43,29 @@ def exp1_subject_folders() -> object:
         "SUB27R",
         "SUB28R",
     )
+
+
+def area_difference(condition_data):
+    intercept, slope = calculate_regression(condition_data)
+    x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
+    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(intercept, slope)
+    group = subject_group(x_intersect, y_at_x2)
+
+    if group == 'crosser':
+        area_left, area_right, area_difference = area_calcs.crosser_area_calc(x_intersect,
+                                                                              y_intersect,
+                                                                              y_at_x2,
+                                                                              y_at_x10)
+    elif group == 'crosser_triangle':
+        area_left, area_right, area_difference = area_calcs.crosser_triangle_area_calc(x_intersect,
+                                                                                       y_intersect,
+                                                                                       y_at_x2,
+                                                                                       y_at_x10)
+    elif group == 'minimiser':
+        area_difference = area_calcs.minimiser_area_calc(y_at_x2, y_at_x10)
+    else:
+        area_difference = area_calcs.maximiser_area_calc(y_at_x2, y_at_x10)
+    return area_difference
 
 
 def calculate_regression(block):
@@ -174,11 +199,10 @@ def r_squared(subject_ID, current_subject_data):
         actual_widths = condition_data.actual_widths
         perceived_widths = condition_data.perceived_widths
         r_score, p_value = scp.pearsonr(actual_widths, perceived_widths)
-        r_squared = r_score**2
+        r_squared = r_score ** 2
         line_to_write = [f" {condition_name} r_squared: {r_squared:4.2f} \n"]
         r_square_file.writelines(line_to_write)
     r_square_file.close
-
 
 
 def confidence_interval(data):

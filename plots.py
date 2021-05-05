@@ -260,13 +260,10 @@ def plot_area_between_reg_lines(subject_ID, subject_data):
     plt.close()
 
 def group_consistency_plot(subject_IDs, all_subject_data):
-    if not os.path.exists('./plots/group_consistency_plot'):
-        os.makedirs('./plots/group_consistency_plot')
+    if not os.path.exists('./plots/group_plots'):
+        os.makedirs('./plots/group_plots')
 
-    path = Path('./plots/group_consistency_plot/')
-
-    Pair = namedtuple('Pair', 'data_1 data_2')
-    Pairs = namedtuple('Pairs', 'between_hands, between_days, within_day')
+    path = Path('./plots/group_plots/')
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('All Subject Consistency Plot'))
@@ -284,26 +281,8 @@ def group_consistency_plot(subject_IDs, all_subject_data):
         else:
             x_points_jitter = np.array(x_points_base) - np.array(jitter_values)
 
-        between_hands = Pair(data_1=current_subject_data[0], data_2=current_subject_data[1])
-        between_days = Pair(data_1=current_subject_data[0], data_2=current_subject_data[2])
-        within_day = Pair(data_1=current_subject_data[2], data_2=current_subject_data[3])
-
-        data_pairs = Pairs(between_hands=between_hands, between_days=between_days, within_day=within_day)
-        data_pair_names = ['between_hands', 'between_days', 'within_days']
-        for pair_name, data_pair in zip(data_pair_names, data_pairs):
-
-            x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b = utils.compute_area_calc_inputs(
-                data_pair)
-            group = utils.subject_group_reg_lines(x_intersect)
-
-            if group == 'cross':
-                total_area = area_calcs.reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a,
-                                                              y_at_x2_b,
-                                                              y_at_x10_b)
-            else:
-                total_area = area_calcs.reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b)
-
-            y_points.append(total_area)
+        between_hands, between_days, within_days = area_calcs.bh_bd_wd_areas(current_subject_data)
+        y_points = [between_hands, between_days, within_days]
         rgb = np.random.rand(3, )
         plt.plot(x_points_jitter, y_points, color=rgb, marker = 'o', alpha = 0.5)
 
@@ -313,7 +292,7 @@ def group_consistency_plot(subject_IDs, all_subject_data):
 
 
 def plot_difference_of_differences(all_subject_data):
-    path = Path('./plots/difference_of_differences_plot')
+    path = Path('./plots/group_plots/difference_of_differences_plot')
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('Difference of Differences'))
@@ -364,4 +343,53 @@ def plot_difference_of_differences(all_subject_data):
     plt.legend(handles=legend_elements, loc='upper right')
     plt.savefig(path)
     print(f'Saving difference of area differences plots')
+    plt.close()
+
+def plot_area_across_conditions(all_subject_data):
+    if not os.path.exists('./plots/group_plots'):
+        os.makedirs('./plots/group_plots')
+
+    path = Path('./plots/group_plots/all_subject_areas_across_conditions')
+
+    plt.figure(figsize=(10, 10))
+    plt.suptitle(str('Area Between Regression and Reality Per Condition'))
+    plt.ylabel('Area Between Lines (cm^2)')
+    plt.xlabel('Condition')
+    plt.grid()
+    x_points_base = [1, 2, 3, 4]
+    plt.xticks(x_points_base,
+               labels=['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"])
+    plt.ylim(0, 24)
+
+    legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
+                       Line2D([0], [0], marker='^', label='Mean Area Difference', mec='r',
+                              markerfacecolor='r', markersize=8, linestyle='None'),
+                       Line2D([0], [0], color='black', label='95% Confidence Interval', lw=2)]
+
+    d1_dom_areas, d1_non_dom_areas, d2_dom_1_areas, d2_dom_2_areas = [], [], [], []
+    all_areas = d1_dom_areas, d1_non_dom_areas, d2_dom_1_areas, d2_dom_2_areas
+
+    for subject_data in all_subject_data:
+        d1_dom_area = utils.area_difference(subject_data[0])
+        d1_non_dom_area = utils.area_difference(subject_data[1])
+        d2_dom_1_area = utils.area_difference(subject_data[2])
+        d2_dom_2_area = utils.area_difference(subject_data[3])
+
+        y_points = [d1_dom_area, d1_non_dom_area, d2_dom_1_area, d2_dom_2_area]
+
+        d1_dom_areas.append(d1_dom_area)
+        d1_non_dom_areas.append(d1_non_dom_area)
+        d2_dom_1_areas.append(d2_dom_1_area)
+        d2_dom_2_areas.append(d2_dom_2_area)
+
+        plt.plot(x_points_base, y_points, color='darkgrey', alpha=0.5)
+
+    for x_point, data in zip(x_points_base, all_areas):
+        mean = np.mean(data)
+        ci = utils.confidence_interval(data)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec = 'r', markersize=8)
+
+    plt.legend(handles=legend_elements, loc='upper left')
+    plt.savefig(path)
+    print(f'Saving difference of area difference by condition plots')
     plt.close()
