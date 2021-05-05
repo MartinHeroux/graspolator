@@ -3,7 +3,9 @@ from pathlib import Path
 import statsmodels.api as sm
 import yaml
 from PyPDF2 import PdfFileMerger
-from sklearn.metrics import r2_score
+import scipy.stats as scp
+import numpy as np
+from scipy.stats import sem, t
 
 
 def exp1_subject_folders() -> object:
@@ -162,6 +164,7 @@ def compute_area_calc_inputs(data_pair):
 
     return x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b
 
+
 def r_squared(subject_ID, current_subject_data):
     condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
     r_square_file = open("r_squared_values.txt", "a")
@@ -170,7 +173,17 @@ def r_squared(subject_ID, current_subject_data):
         r_square_file = open("r_squared_values.txt", "a")
         actual_widths = condition_data.actual_widths
         perceived_widths = condition_data.perceived_widths
-        r_square = r2_score(actual_widths, perceived_widths)
-        line_to_write = [f" {condition_name} r_squared: {r_square:4.2f} \n"]
+        r_score, p_value = scp.pearsonr(actual_widths, perceived_widths)
+        r_squared = r_score**2
+        line_to_write = [f" {condition_name} r_squared: {r_squared:4.2f} \n"]
         r_square_file.writelines(line_to_write)
     r_square_file.close
+
+
+
+def confidence_interval(data):
+    confidence = 0.95
+    n = len(data)
+    std_err = sem(data)
+    ci = std_err * t.ppf((1 + confidence) / 2, n - 1)
+    return ci

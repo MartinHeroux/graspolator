@@ -6,6 +6,7 @@ import random as rd
 import os
 from collections import namedtuple
 import numpy as np
+from matplotlib.lines import Line2D
 
 
 import utils
@@ -269,12 +270,11 @@ def group_consistency_plot(subject_IDs, all_subject_data):
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('All Subject Consistency Plot'))
-    plt.ylabel('Area Difference Between Regression Lines (cm^3)')
+    plt.ylabel('Area Difference Between Regression Lines (cm^2)')
     plt.xlabel('Condition Pair')
     plt.grid()
     x_points_base = [1, 2, 3]
     plt.xticks(x_points_base, labels = ['Between Hands', 'Between Days', 'Within Day'])
-    plt.yticks(range(0, 15))
 
     for line_number, (subject_ID, current_subject_data) in enumerate(zip(subject_IDs, all_subject_data), start=1):
         y_points = []
@@ -289,8 +289,9 @@ def group_consistency_plot(subject_IDs, all_subject_data):
         within_day = Pair(data_1=current_subject_data[2], data_2=current_subject_data[3])
 
         data_pairs = Pairs(between_hands=between_hands, between_days=between_days, within_day=within_day)
+        data_pair_names = ['between_hands', 'between_days', 'within_days']
+        for pair_name, data_pair in zip(data_pair_names, data_pairs):
 
-        for data_pair in data_pairs:
             x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b = utils.compute_area_calc_inputs(
                 data_pair)
             group = utils.subject_group_reg_lines(x_intersect)
@@ -308,4 +309,59 @@ def group_consistency_plot(subject_IDs, all_subject_data):
 
     plt.savefig('{}/group_consistency_plot.png'.format(path))
     print(f'Saving group consistency plots')
+    plt.close()
+
+
+def plot_difference_of_differences(all_subject_data):
+    path = Path('./plots/difference_of_differences_plot')
+
+    plt.figure(figsize=(7, 10))
+    plt.suptitle(str('Difference of Differences'))
+    plt.ylabel('Difference Between Areas (cm^2)')
+    plt.xlabel('Difference Pair')
+    plt.grid()
+    x_points_base = [1, 2, 3]
+    plt.xticks(x_points_base,
+               labels=['Between Hands - Within Day', 'Between Hands - Between Days', 'Within Day - Between Days'])
+    plt.yticks(range(-10, 10))
+
+    legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
+                       Line2D([0], [0], marker='^', label='Mean Area Difference', mec='r',
+                              markerfacecolor='r', markersize=8, linestyle='None'),
+                       Line2D([0], [0], color='black', label='95% Confidence Interval', lw=2)]
+
+    all_bh_wd = []
+    all_bh_bd = []
+    all_wd_bd = []
+
+    for current_subject_data in all_subject_data:
+        between_hands_area, between_day_area, within_day_area = area_calcs.bh_bd_wd_areas(
+            current_subject_data)
+        bh_wd = between_hands_area - within_day_area
+        bh_bd = between_hands_area - between_day_area
+        wd_bd = within_day_area - between_day_area
+
+        all_bh_wd.append(bh_wd)
+        all_bh_bd.append(bh_bd)
+        all_wd_bd.append(wd_bd)
+
+        y_points = [bh_wd, bh_bd, wd_bd]
+
+        plt.plot(x_points_base, y_points, color='silver', alpha=0.5)
+
+    area_diff_list = [all_bh_wd, all_bh_bd, all_wd_bd]
+    maximum_area_differences = [max(all_bh_wd), max(all_bh_bd), max(all_wd_bd)]
+    maximum_area_difference = max(maximum_area_differences)
+
+    for x_point, data in zip(x_points_base, area_diff_list):
+        mean = np.mean(data)
+        ci = utils.confidence_interval(data)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec = 'r', markersize=8)
+
+    plt.hlines(y=0, xmin=1, xmax=3, color='dimgrey', linestyle='--', lw=2)
+    # TODO fix layering order of plot lines
+    plt.ylim(-(maximum_area_difference+1), (maximum_area_difference+1))
+    plt.legend(handles=legend_elements, loc='upper right')
+    plt.savefig(path)
+    print(f'Saving difference of area differences plots')
     plt.close()

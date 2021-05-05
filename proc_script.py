@@ -51,4 +51,7 @@ for subject_ID, current_subject_data in zip(subject_IDs, all_subject_data):
 # plot area differences for each condition pair, for each participant on same figure
 plots.group_consistency_plot(subject_IDs, all_subject_data)
 
+# plot difference of differences for conditions (e.g between hands vs within day)
+plots.plot_difference_of_differences(all_subject_data)
+
 

@@ -1,3 +1,6 @@
+import utils
+from collections import namedtuple
+
 def minimiser_area_calc(y_at_x2, y_at_x10):
     h = 8
     area = trapezium_area(y_at_x2, y_at_x10, h)
@@ -91,3 +94,32 @@ def trapezium_area(a, b, h):
 def triangle_area(b, h):
     area = (b * h) / 2
     return area
+
+def bh_bd_wd_areas(current_subject_data):
+    Pair = namedtuple('Pair', 'data_1 data_2')
+
+    between_hands = Pair(data_1=current_subject_data[0], data_2=current_subject_data[1])
+    between_day = Pair(data_1=current_subject_data[0], data_2=current_subject_data[2])
+    within_day = Pair(data_1=current_subject_data[2], data_2=current_subject_data[3])
+    print('tuples created')
+
+    between_hands_area = calculate_area(between_hands)
+    between_day_area = calculate_area(between_day)
+    within_day_area = calculate_area(within_day)
+    print('comparison areas calculated')
+
+    return between_hands_area, between_day_area, within_day_area
+
+
+def calculate_area(data_pair):
+    x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b = utils.compute_area_calc_inputs(
+        data_pair)
+    group = utils.subject_group_reg_lines(x_intersect)
+
+    if group == 'cross':
+        total_area = reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a,
+                                                      y_at_x2_b,
+                                                      y_at_x10_b)
+    else:
+        total_area = reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b)
+    return total_area
