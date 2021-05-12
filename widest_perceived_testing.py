@@ -21,6 +21,8 @@ def plot_regression_widest_perceived(subject_IDs, all_subject_data, widest_lines
         d2_dom_2_at_10.pop(index)
         widest_lines.pop(index)
 
+    widest_lines_int = [int(str_value) for str_value in widest_lines]
+
     lengths_list = [len(d1_dom_at_10), len(d1_non_dom_at_10), len(d2_dom_1_at_10), len(d2_dom_2_at_10), len(widest_lines)]
     for item in lengths_list:
         if item is not (len(subject_IDs) - len(indices_to_pop)):
@@ -46,7 +48,7 @@ def plot_regression_widest_perceived(subject_IDs, all_subject_data, widest_lines
             print("unequal lists for regression, exiting")
             exit()
 
-        intercept, slope = utils.calculate_regression_general(condition_values, widest_lines)
+        intercept, slope = utils.calculate_regression_general(condition_values, widest_lines_int)
 
         x2 = 2
         x10 = 10
