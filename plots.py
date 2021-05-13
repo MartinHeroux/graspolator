@@ -338,7 +338,6 @@ def plot_difference_of_differences(all_subject_data):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec = 'r', markersize=8)
 
     plt.hlines(y=0, xmin=1, xmax=3, color='dimgrey', linestyle='--', lw=2)
-    # TODO fix layering order of plot lines
     plt.ylim(-(maximum_area_difference+1), (maximum_area_difference+1))
     plt.legend(handles=legend_elements, loc='upper right')
     plt.savefig(path)
