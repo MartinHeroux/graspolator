@@ -76,6 +76,12 @@ def calculate_regression(block):
     intercept, slope = model.params
     return intercept, slope
 
+def calculate_regression_general(x, y):
+    x = sm.add_constant(x)
+    model = sm.OLS(y, x).fit()
+    intercept, slope = model.params
+    return intercept, slope
+
 
 def calculate_regression_all_data(actual, perceived):
     actual = sm.add_constant(actual)

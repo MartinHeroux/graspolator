@@ -326,7 +326,7 @@ def plot_difference_of_differences(all_subject_data):
 
         y_points = [bh_wd, bh_bd, wd_bd]
 
-        plt.plot(x_points_base, y_points, color='silver', alpha=0.5, zorder=1)
+        plt.plot(x_points_base, y_points, color='silver', alpha=0.5)
 
     area_diff_list = [all_bh_wd, all_bh_bd, all_wd_bd]
     maximum_area_differences = [max(all_bh_wd), max(all_bh_bd), max(all_wd_bd)]
@@ -335,13 +335,12 @@ def plot_difference_of_differences(all_subject_data):
     for x_point, data in zip(x_points_base, area_diff_list):
         mean = np.mean(data)
         ci = utils.confidence_interval(data)
-        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec = 'r', markersize=8, zorder=15)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec = 'r', markersize=8)
 
-    plt.hlines(y=0, xmin=1, xmax=3, color='dimgrey', linestyle='--', lw=2, zorder=5)
-    # TODO fix layering order of plot lines
+    plt.hlines(y=0, xmin=1, xmax=3, color='dimgrey', linestyle='--', lw=2)
     plt.ylim(-(maximum_area_difference+1), (maximum_area_difference+1))
     plt.legend(handles=legend_elements, loc='upper right')
-    plt.savefig(path, dpi=600)
+    plt.savefig(path)
     print(f'Saving difference of area differences plots')
     plt.close()
 
@@ -349,7 +348,7 @@ def plot_area_across_conditions(all_subject_data):
     if not os.path.exists('./plots/group_plots'):
         os.makedirs('./plots/group_plots')
 
-    path = Path('./plots/group_plots/all_subject_areas_across_conditions.png')
+    path = Path('./plots/group_plots/all_subject_areas_across_conditions')
 
     plt.figure(figsize=(10, 10))
     plt.suptitle(str('Area Between Regression and Reality Per Condition'))
@@ -390,6 +389,6 @@ def plot_area_across_conditions(all_subject_data):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec = 'r', markersize=8)
 
     plt.legend(handles=legend_elements, loc='upper left')
-    plt.savefig(path, dpi=600)
+    plt.savefig(path)
     print(f'Saving difference of area difference by condition plots')
     plt.close()
