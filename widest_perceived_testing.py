@@ -7,12 +7,14 @@ from matplotlib.lines import Line2D
 import utils
 
 
+
+
 def plot_regression_widest_perceived(subject_IDs, all_subject_data, widest_lines):
     condition_names = ["day2_dominant_1", "day2_dominant_2"]
     subplot_indices = [1, 2]
 
     indices_to_pop, indices_to_replace = indices_subjects_without_10(subject_IDs, all_subject_data, widest_lines)
-    replacement_values = replacement_values(all_subject_data, indices_to_replace)
+    repl_values = replacement_values(all_subject_data, indices_to_replace)
 
     d2_dom_1_at_10, d2_dom_2_at_10 = values_at_10(all_subject_data)
 
@@ -21,7 +23,7 @@ def plot_regression_widest_perceived(subject_IDs, all_subject_data, widest_lines
         d2_dom_2_at_10.pop(index)
         widest_lines.pop(index)
 
-    for index, replacement_value in zip(indices_to_replace, replacement_values):
+    for index, replacement_value in zip(indices_to_replace, repl_values):
         d2_dom_1_at_10[index] = replacement_value
         d2_dom_2_at_10[index] = replacement_value
 
@@ -139,6 +141,7 @@ def indices_subjects_without_10(subject_IDs, all_subject_data, widest_lines):
 
     return indices_to_pop, indices_to_replace
 
+
 def replacement_values(all_subject_data, indices_to_replace):
     values_to_replace = []
     for index in indices_to_replace:
@@ -152,4 +155,3 @@ def replacement_values(all_subject_data, indices_to_replace):
         value_at_10 = (value_at_10_b + value_at_10_a) / 2
         values_to_replace.append(value_at_10)
     return values_to_replace
-
