@@ -57,4 +57,8 @@ plots.plot_difference_of_differences(all_subject_data)
 # plot area between reg line and reality line for each participant for each condition
 plots.plot_area_across_conditions(all_subject_data)
 
+# plot regression between area between lines and r^2 value
+plots.area_vs_r2_plot(all_subject_data)
 
+# plot summary of R^2 values for each condition
+plots.r2_group_plot(all_subject_data)

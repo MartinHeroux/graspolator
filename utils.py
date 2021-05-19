@@ -6,6 +6,8 @@ from PyPDF2 import PdfFileMerger
 import scipy.stats as scp
 import numpy as np
 from scipy.stats import sem, t
+import matplotlib.pyplot as plt
+
 
 import area_calcs
 
@@ -154,6 +156,12 @@ def reg_line_endpoints(intercept, slope):
     y_at_x10 = slope * x10 + intercept
     return x2, x10, y_at_x2, y_at_x10
 
+def abline(slope, intercept):
+    """Plot a line from slope and intercept"""
+    axes = plt.gca()
+    x_vals = np.array(axes.get_xlim())
+    y_vals = intercept + slope * x_vals
+    plt.plot(x_vals, y_vals, 'k--')
 
 def subject_group(x_intersect, y_at_x2):
     if 2 <= x_intersect <= 10 and y_at_x2 >= 0:

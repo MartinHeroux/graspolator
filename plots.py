@@ -7,6 +7,7 @@ import os
 from collections import namedtuple
 import numpy as np
 from matplotlib.lines import Line2D
+import scipy.stats as scp
 
 
 import utils
@@ -390,5 +391,94 @@ def plot_area_across_conditions(all_subject_data):
 
     plt.legend(handles=legend_elements, loc='upper left')
     plt.savefig(path)
+    print(f'Saving difference of area difference by condition plots')
+    plt.close()
+
+def area_vs_r2_plot(all_subject_data):
+    condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
+    r2_lists = [[], [], [], []]
+    area_lists = [[], [], [], []]
+    path = Path('./plots/group_plots')
+
+    for condition_number, condition_name in enumerate(condition_names, start = 0):
+        for current_subject_data in all_subject_data:
+            data_for_calcs = current_subject_data[condition_number]
+            actual_widths = data_for_calcs.actual_widths
+            perceived_widths = data_for_calcs.perceived_widths
+            r_score, p_value = scp.pearsonr(actual_widths, perceived_widths)
+            r_squared = r_score ** 2
+            r2_lists[condition_number].append(r_squared)
+
+            area_total = area_calcs.extract_area_number(data_for_calcs)
+            area_lists[condition_number].append(area_total)
+
+    print(f'R2 List lengths: D1_dom: {len(r2_lists[0])}, D1_non_dom: {len(r2_lists[1])}, D2_dom_1: {len(r2_lists[2])}, D2_dom_2: {len(r2_lists[3])}')
+    print(f'Area List lengths: D1_dom: {len(area_lists[0])}, D1_non_dom: {len(area_lists[1])}, D2_dom_1: {len(area_lists[2])}, D2_dom_2: {len(area_lists[3])}')
+    print(r2_lists)
+    print(area_lists)
+
+    plt.figure(figsize = (10, 10))
+    plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
+    for subplot_index, (condition_r2_data, condition_area_data, condition_name) in enumerate(zip(r2_lists, area_lists, condition_names), start = 1):
+        intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
+        utils.abline(slope, intercept)
+        plt.subplot(2, 2, subplot_index)
+        plt.scatter(condition_area_data, condition_r2_data, marker = 'o', color = 'royalblue', alpha = 0.5)
+        plt.text(15, 0.75, f'{slope:4.2f}*x + {intercept:4.2f}', fontsize=12)
+        plt.xlim([1, 26])
+        plt.ylim([0.7, 1])
+        plt.grid()
+        plt.title(condition_name, loc='right')
+        plt.xlabel('Area (cm^2)')
+        plt.ylabel('R^2 Value')
+        plt.tight_layout()
+    plt.savefig('{}/{}'.format(path, 'area_vs_r2_plot_by_condition'), dpi=300)
+    print(f'Saving area vs r2 plots')
+    plt.close()
+
+def r2_group_plot(all_subject_data):
+    condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
+    r2_lists = [[], [], [], []]
+    path = Path('./plots/group_plots')
+
+    legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
+                       Line2D([0], [0], marker='_', label='Mean R^2', mec='r',
+                              markerfacecolor='r', markersize=8, linestyle='None'),
+                       Line2D([0], [0], color='black', label='95% Confidence Interval', lw=2)]
+
+    for condition_number, condition_name in enumerate(condition_names, start = 0):
+        for current_subject_data in all_subject_data:
+            data_for_calcs = current_subject_data[condition_number]
+            actual_widths = data_for_calcs.actual_widths
+            perceived_widths = data_for_calcs.perceived_widths
+            r_score, p_value = scp.pearsonr(actual_widths, perceived_widths)
+            r_squared = r_score ** 2
+            r2_lists[condition_number].append(r_squared)
+        print(len(r2_lists[condition_number]))
+
+    plt.figure(figsize=(10, 10))
+    plt.suptitle('R^2 (actual vs perceived widths) Values Per Condition')
+    plt.ylabel('R^2')
+    plt.xlabel('Condition')
+
+    d1_dom = r2_lists[0]
+    d1_non_dom = r2_lists[1]
+    d2_dom_1 = r2_lists[2]
+    d2_dom_2 = r2_lists[3]
+
+    for y1, y2, y3, y4 in zip(d1_dom, d1_non_dom, d2_dom_1, d2_dom_2):
+        x_points = [1, 2, 3, 4]
+        y_points = [y1, y2, y3, y4]
+        plt.plot(x_points, y_points, color='darkgrey', alpha=0.5)
+
+    for x_point, data in zip(x_points, r2_lists):
+        mean = np.mean(data)
+        ci = utils.confidence_interval(data)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="_", markerfacecolor='r', mec = 'r', markersize=8)
+
+    plt.legend(handles=legend_elements, loc='lower right')
+    plt.xticks(x_points,
+               labels=['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"])
+    plt.savefig(f'{path}/r2_summary.png')
     print(f'Saving difference of area difference by condition plots')
     plt.close()

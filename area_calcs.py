@@ -1,6 +1,7 @@
 import utils
 from collections import namedtuple
 
+
 def minimiser_area_calc(y_at_x2, y_at_x10):
     h = 8
     area = trapezium_area(y_at_x2, y_at_x10, h)
@@ -95,6 +96,7 @@ def triangle_area(b, h):
     area = (b * h) / 2
     return area
 
+
 def bh_bd_wd_areas(current_subject_data):
     Pair = namedtuple('Pair', 'data_1 data_2')
 
@@ -118,8 +120,31 @@ def calculate_area(data_pair):
 
     if group == 'cross':
         total_area = reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a,
-                                                      y_at_x2_b,
-                                                      y_at_x10_b)
+                                           y_at_x2_b,
+                                           y_at_x10_b)
     else:
         total_area = reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b)
     return total_area
+
+
+def extract_area_number(condition_data):
+    intercept, slope = utils.calculate_regression(condition_data)
+    x_intersect, y_intersect = utils.point_of_intersection_with_reality(intercept, slope)
+    x2, x10, y_at_x2, y_at_x10 = utils.reg_line_endpoints(intercept, slope)
+    group = utils.subject_group(x_intersect, y_at_x2)
+
+    if group == 'crosser':
+        area_left, area_right, area_total = crosser_area_calc(x_intersect,
+                                                              y_intersect,
+                                                              y_at_x2,
+                                                              y_at_x10)
+    elif group == 'crosser_triangle':
+        area_left, area_right, area_total = crosser_triangle_area_calc(x_intersect,
+                                                                       y_intersect,
+                                                                       y_at_x2,
+                                                                       y_at_x10)
+    elif group == 'minimiser':
+        area_total = minimiser_area_calc(y_at_x2, y_at_x10)
+    else:
+        area_total = maximiser_area_calc(y_at_x2, y_at_x10)
+    return area_total
