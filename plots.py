@@ -400,7 +400,7 @@ def area_vs_r2_plot(all_subject_data):
     area_lists = [[], [], [], []]
     path = Path('./plots/group_plots')
 
-    for condition_number, condition_name in enumerate(condition_names, start = 0):
+    for condition_number, condition_name in enumerate(condition_names, start=0):
         for current_subject_data in all_subject_data:
             data_for_calcs = current_subject_data[condition_number]
             actual_widths = data_for_calcs.actual_widths
@@ -417,14 +417,17 @@ def area_vs_r2_plot(all_subject_data):
     print(r2_lists)
     print(area_lists)
 
-    plt.figure(figsize = (10, 10))
+    plt.figure(figsize=(10, 10))
     plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
     for subplot_index, (condition_r2_data, condition_area_data, condition_name) in enumerate(zip(r2_lists, area_lists, condition_names), start = 1):
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
-        utils.abline(slope, intercept)
+        #utils.abline(slope, intercept)
         plt.subplot(2, 2, subplot_index)
+        x_vals = np.array([1, 26])
+        y_vals = intercept + slope * x_vals
+        plt.plot(x_vals, y_vals, 'k--')
         plt.scatter(condition_area_data, condition_r2_data, marker = 'o', color = 'royalblue', alpha = 0.5)
-        plt.text(15, 0.75, f'{slope:4.2f}*x + {intercept:4.2f}', fontsize=12)
+        plt.text(15, 0.75, f'{slope:6.5f}*x + {intercept:4.2f}', fontsize=12)
         plt.xlim([1, 26])
         plt.ylim([0.7, 1])
         plt.grid()
