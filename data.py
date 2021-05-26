@@ -1,13 +1,13 @@
 from typing import NamedTuple
 
-
 import utils
 
+general_constants = utils.create_general_constants()
 
 def read_exp1(data_folder):
     blocked_data = []
     widest_lines = []
-    subjects = utils.exp1_subject_folders()
+    subjects = general_constants.SUBJECT_IDS
     for subject in subjects:
         blocked_data.append(_read_parse_exp1(data_folder, subject)[0])
         widest_lines.append(_read_parse_exp1(data_folder, subject)[1])
