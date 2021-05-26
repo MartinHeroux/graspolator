@@ -1,6 +1,10 @@
-import utils
+import numpy as np
 from collections import namedtuple
+import matplotlib.pyplot as plt
+import scipy.stats as scp
 
+import utils
+import plot_funcs
 
 def minimiser_area_calc(y_at_x2, y_at_x10):
     h = 8
@@ -14,6 +18,16 @@ def maximiser_area_calc(y_at_x2, y_at_x10):
     area = trapezium_area(y_at_x2, y_at_x10, h)
     area_difference = (area - 48)
     return area_difference
+
+def compute_area_calc_inputs(data_pair):
+    intercept_a, slope_a = utils.calculate_regression(data_pair.data_1)
+    intercept_b, slope_b = utils.calculate_regression(data_pair.data_2)
+
+    x2_a, x10_a, y_at_x2_a, y_at_x10_a = reg_line_endpoints(intercept_a, slope_a)
+    x2_b, x10_b, y_at_x2_b, y_at_x10_b = reg_line_endpoints(intercept_b, slope_b)
+    x_intersect, y_intersect = point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b)
+
+    return x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b
 
 
 def crosser_area_calc(x_intersect, y_intersect, y_at_x2, y_at_x10):
@@ -127,11 +141,33 @@ def calculate_area(data_pair):
     return total_area
 
 
-def extract_area_number(condition_data):
-    intercept, slope = utils.calculate_regression(condition_data)
-    x_intersect, y_intersect = utils.point_of_intersection_with_reality(intercept, slope)
-    x2, x10, y_at_x2, y_at_x10 = utils.reg_line_endpoints(intercept, slope)
-    group = utils.subject_group(x_intersect, y_at_x2)
+def calculate_area_and_endpoints(actual, perceived):
+    intercept, slope = utils.calculate_regression_general(actual, perceived)
+    x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
+    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(intercept, slope)
+    group = subject_group(x_intersect, y_at_x2)
+
+    if group == 'crosser':
+        area_left, area_right, area_total = crosser_area_calc(x_intersect,
+                                                              y_intersect,
+                                                              y_at_x2,
+                                                              y_at_x10)
+    elif group == 'crosser_triangle':
+        area_left, area_right, area_total = crosser_triangle_area_calc(x_intersect,
+                                                                       y_intersect,
+                                                                       y_at_x2,
+                                                                       y_at_x10)
+    elif group == 'minimiser':
+        area_total = minimiser_area_calc(y_at_x2, y_at_x10)
+    else:
+        area_total = maximiser_area_calc(y_at_x2, y_at_x10)
+    return area_total, x2, x10, y_at_x2, y_at_x10
+
+def calculate_area(actual, perceived):
+    intercept, slope = utils.calculate_regression_general(actual, perceived)
+    x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
+    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(intercept, slope)
+    group = subject_group(x_intersect, y_at_x2)
 
     if group == 'crosser':
         area_left, area_right, area_total = crosser_area_calc(x_intersect,
@@ -148,3 +184,92 @@ def extract_area_number(condition_data):
     else:
         area_total = maximiser_area_calc(y_at_x2, y_at_x10)
     return area_total
+
+def calculate_data_pair_area_and_endpoints(data_pair_tuple):
+    intercept_a, slope_a = utils.calculate_regression(data_pair_tuple.data_1)
+    intercept_b, slope_b = utils.calculate_regression(data_pair_tuple.data_2)
+
+    x2_a, x10_a, y_at_x2_a, y_at_x10_a = reg_line_endpoints(intercept_a, slope_a)
+    x2_b, x10_b, y_at_x2_b, y_at_x10_b = reg_line_endpoints(intercept_b, slope_b)
+    x_intersect, y_intersect = point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b)
+    x_pair_a = [x2_a, x10_a]
+    x_pair_b = [x2_b, x10_b]
+    y_pair_a = [y_at_x2_a, y_at_x10_a]
+    y_pair_b = y_at_x2_b, y_at_x10_b
+    group = subject_group_reg_lines(x_intersect)
+    if group == 'cross':
+        total_area = reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b,
+                                                      y_at_x10_b)
+    else:
+        total_area = reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b)
+    return total_area, x_pair_a, x_pair_b, y_pair_a, y_pair_b
+
+def point_of_intersection_with_reality(intercept, slope):
+    m1, b1 = 1, 0
+    m2, b2 = slope, intercept
+    x_intersect = (b2 - b1) / (m1 - m2)
+    y_intersect = (x_intersect * slope) + intercept
+    return x_intersect, y_intersect
+
+
+def point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b):
+    m1, b1 = slope_a, intercept_a
+    m2, b2 = slope_b, intercept_b
+    x_intersect = (b2 - b1) / (m1 - m2)
+    y_intersect = (x_intersect * slope_a) + intercept_a
+    return x_intersect, y_intersect
+
+
+def reg_line_endpoints(intercept, slope):
+    x2 = 2
+    x10 = 10
+    y_at_x2 = slope * x2 + intercept
+    y_at_x10 = slope * x10 + intercept
+    return x2, x10, y_at_x2, y_at_x10
+
+
+def abline(slope, intercept):
+    """Plot a line from slope and intercept"""
+    axes = plt.gca()
+    x_vals = np.array(axes.get_xlim())
+    y_vals = intercept + slope * x_vals
+    plt.plot(x_vals, y_vals, 'k--')
+
+
+def subject_group(x_intersect, y_at_x2):
+    if 2 <= x_intersect <= 10 and y_at_x2 >= 0:
+        group = 'crosser'
+    elif 2 <= x_intersect <= 10:
+        group = 'crosser_triangle'
+    elif y_at_x2 >= 2:
+        group = 'maximiser'
+    else:
+        group = 'minimiser'
+    return group
+
+
+def subject_group_reg_lines(x_intersect):
+    if 2 <= x_intersect <= 10:
+        group = 'cross'
+    else:
+        group = 'no_cross'
+    return group
+
+def store_r2_and_area_lists(all_subject_data):
+    r2_area_name = namedtuple('subject', 'R2 AREA NAME')
+    r2_lists = [[], [], [], []]
+    area_lists = [[], [], [], []]
+
+    for subject_data in all_subject_data:
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(
+            subject_data)
+        subject_tuples = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
+        for subject_tuple in subject_tuples:
+            r_score, p_value = scp.pearsonr(subject_tuple.ACTUAL, subject_tuple.PERCEIVED)
+            r_squared = r_score ** 2
+            r2_lists[subject_tuple.DATA_INDEX].append(r_squared)
+
+            area_total = calculate_area(subject_tuple.ACTUAL, subject_tuple.PERCEIVED)
+            area_lists[subject_tuple.DATA_INDEX].append(area_total)
+
+    return r2_lists, area_lists
