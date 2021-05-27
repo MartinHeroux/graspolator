@@ -9,51 +9,58 @@ import numpy as np
 from matplotlib.lines import Line2D
 import scipy.stats as scp
 
-
 import utils
 import area_calcs
-import plot_funcs
+import plot_utils
 
 constants = utils.create_general_constants()
-plot_constants = plot_funcs.create_plot_constants()
+plot_constants = plot_utils.create_plot_constants()
+
 
 def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
     path = Path('./plots/group_plots')
-    minimiser = mpatches.Patch(color='firebrick', label='Minimiser')
-    maximiser = mpatches.Patch(color='green', label='Maximiser')
-    crosser = mpatches.Patch(color='royalblue', label='Crosser')
-    condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
+    legend_handles = [plot_constants.MINIMISER_PATCH,
+                      plot_constants.MAXIMISER_PATCH,
+                      plot_constants.CROSSER_PATCH]
+    y_points = []
+    subplot_indices = [1, 2, 3, 4]
 
     plt.figure(figsize=(15, 5))
     plt.suptitle(str('Participant Regression Lines'))
-    subplot_indices = [1, 2, 3, 4]
 
-    for condition_name, subplot_index in zip(condition_names, subplot_indices):
-        plt.subplot(1, 4, subplot_index)
-        plt.xticks(range(2, 11))
-        plt.xlim([1, 11])
-        plt.yticks(list(range(-1, 16)))
-        plt.ylim([-1, 16])
+    for subject_ID, subject_data in zip(subject_IDs, all_subject_data):
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
+            subject_data)
+        data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
+        for condition_tuple in data_list:
+            plt.subplot(1, 4, condition_tuple.PLOT_INDEX)
+            plt.title(condition_tuple.NAME, loc='right')
+            intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+            intersect_x, intersect_y = area_calcs.point_of_intersection_with_reality(intercept, slope)
+            x1, x2, y1, y2 = area_calcs.reg_line_endpoints(intercept, slope)
+            y_points.append(y1)
+            y_points.append(y2)
+            line_colour = plot_utils.subject_line_colour(intersect_x, y1)
+            print(f'{subject_ID} is {line_colour} on {condition_tuple.NAME}')
+            plt.plot([x1, x2], [y1, y2], color=line_colour, linewidth=0.5)
+        print(f'Reg line plotted subject {subject_ID}')
+
+    y_min, y_max = min(y_points)-1, max(y_points) + 1
+
+    for subplot in subplot_indices:
+        plt.subplot(1, 4, subplot)
+        plt.xticks(list(range(x1, x2+1)))
+        plt.xlim([x1 - 1, x2 + 1])
+        plt.yticks(list(range(int(y_min), int(y_max))))
+        plt.ylim([y_min, y_max])
         plt.grid()
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
-        plt.legend(handles=[minimiser, maximiser, crosser], loc='upper left')
+        plt.legend(handles=legend_handles, loc='upper left')
         plt.plot([2, 10], [2, 10], 'k--', linewidth=1.5)
-        plt.title(condition_name, loc='right')
 
-    for subject_ID, subject_data in zip(subject_IDs, all_subject_data):
-        for subplot_index, condition_data in zip(subplot_indices, subject_data):
-            plt.subplot(1, 4, subplot_index)
-
-            intercept, slope = utils.calculate_regression(condition_data)
-            x_intersect, y_intersect = utils.point_of_intersection_with_reality(intercept, slope)
-            x2, x10, y_at_x2, y_at_x10 = utils.reg_line_endpoints(intercept, slope)
-            line_colour = utils.subject_line_colour(x_intersect, y_at_x2)
-            plt.plot([x2, x10], [y_at_x2, y_at_x10], color=line_colour, linewidth=0.5)
-            print('Reg line plotted subplot {}, subject {}'.format(subplot_index, subject_ID))
-
-    plt.savefig('{}/{}'.format(path, 'reg_lines_by_group_by_condition'), dpi=300)
-    print(f'Saving whole group reg plots')
+    plt.savefig('{}/{}'.format(path, 'regression_lines_per_condition.png'), dpi=300)
+    print(f'Saving whole group regression plots')
     plt.close()
 
 
@@ -69,7 +76,7 @@ def group_consistency_plot(subject_IDs, all_subject_data):
     plt.xlabel('Condition Pair')
     plt.grid()
     x_points_base = [1, 2, 3]
-    plt.xticks(x_points_base, labels = ['Between Hands', 'Between Days', 'Within Day'])
+    plt.xticks(x_points_base, labels=['Between Hands', 'Between Days', 'Within Day'])
 
     for line_number, (subject_ID, current_subject_data) in enumerate(zip(subject_IDs, all_subject_data), start=1):
         y_points = []
@@ -82,7 +89,7 @@ def group_consistency_plot(subject_IDs, all_subject_data):
         between_hands, between_days, within_days = area_calcs.bh_bd_wd_areas(current_subject_data)
         y_points = [between_hands, between_days, within_days]
         rgb = np.random.rand(3, )
-        plt.plot(x_points_jitter, y_points, color=rgb, marker = 'o', alpha = 0.5)
+        plt.plot(x_points_jitter, y_points, color=rgb, marker='o', alpha=0.5)
 
     plt.savefig('{}/group_consistency_plot.png'.format(path))
     print(f'Saving group consistency plots')
@@ -133,14 +140,15 @@ def plot_difference_of_differences(all_subject_data):
     for x_point, data in zip(x_points_base, area_diff_list):
         mean = np.mean(data)
         ci = utils.confidence_interval(data)
-        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec = 'r', markersize=8)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
     plt.hlines(y=0, xmin=1, xmax=3, color='dimgrey', linestyle='--', lw=2)
-    plt.ylim(-(maximum_area_difference+1), (maximum_area_difference+1))
+    plt.ylim(-(maximum_area_difference + 1), (maximum_area_difference + 1))
     plt.legend(handles=legend_elements, loc='upper right')
     plt.savefig(path)
     print(f'Saving difference of area differences plots')
     plt.close()
+
 
 def plot_area_across_conditions(all_subject_data):
     path = Path('./plots/group_plots/all_subject_areas_by_condition')
@@ -161,7 +169,7 @@ def plot_area_across_conditions(all_subject_data):
     all_area_lists = []
 
     for subject_data in all_subject_data:
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
             subject_data)
 
         d1_dom_area = area_calcs.calculate_area(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)
@@ -176,31 +184,32 @@ def plot_area_across_conditions(all_subject_data):
 
     area_means, area_CIs = utils.store_area_means_CIs_per_condition(all_subject_data)
     for mean, ci, x_point in zip(area_means, area_CIs, x_points):
-        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec = 'r', markersize=8)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
     area_max, area_min = utils.max_min(all_area_lists)
-    plt.ylim(area_min-1, area_max+1)
+    plt.ylim(area_min - 1, area_max + 1)
     plt.legend(handles=legend_elements, loc='upper left')
     plt.grid()
     plt.savefig(path)
     print(f'Saving difference of area difference by condition plots')
     plt.close()
 
-def area_vs_r2_plot(all_subject_data):
 
+def area_vs_r2_plot(all_subject_data):
     path = Path('./plots/group_plots/area_vs_r2')
 
     r2_lists, area_lists = area_calcs.store_r2_and_area_lists(all_subject_data)
 
     plt.figure(figsize=(10, 10))
     plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
-    for subplot_index, (condition_r2_data, condition_area_data, condition_name) in enumerate(zip(r2_lists, area_lists, condition_names), start = 1):
+    for subplot_index, (condition_r2_data, condition_area_data, condition_name) in enumerate(
+            zip(r2_lists, area_lists, condition_names), start=1):
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
         plt.subplot(2, 2, subplot_index)
         x_vals = np.array([1, 26])
         y_vals = intercept + slope * x_vals
         plt.plot(x_vals, y_vals, 'k--')
-        plt.scatter(condition_area_data, condition_r2_data, marker = 'o', color = 'royalblue', alpha = 0.5)
+        plt.scatter(condition_area_data, condition_r2_data, marker='o', color='royalblue', alpha=0.5)
         plt.text(15, 0.75, f'{slope:6.5f}*x + {intercept:4.2f}', fontsize=12)
         plt.xlim([1, 26])
         plt.ylim([0.7, 1])
@@ -212,6 +221,7 @@ def area_vs_r2_plot(all_subject_data):
     plt.savefig('{}/{}'.format(path, 'area_vs_r2_plot_by_condition'), dpi=300)
     print(f'Saving area vs r2 plots')
     plt.close()
+
 
 def r2_group_plot(all_subject_data, subject_IDs):
     path = Path('./plots/group_plots/')
@@ -239,7 +249,7 @@ def r2_group_plot(all_subject_data, subject_IDs):
     means, cis = utils.store_r2_means_CIs_per_condition(all_subject_data)
 
     for mean, ci, x_point in zip(means, cis, x_points):
-        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='r', mec = 'r', markersize=8)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='r', mec='r', markersize=8)
 
     plt.legend(handles=legend_elements, loc='lower right')
     plt.xticks(x_points,
@@ -248,4 +258,3 @@ def r2_group_plot(all_subject_data, subject_IDs):
     plt.savefig(f'{path}/r2_summary.png')
     print(f'Saving difference of area difference by condition plots')
     plt.close()
-

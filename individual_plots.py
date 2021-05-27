@@ -5,10 +5,10 @@ import numpy as np
 
 import utils
 import area_calcs
-import plot_funcs
+import plot_utils
 
 general_constants = utils.create_general_constants()
-plot_constants = plot_funcs.create_plot_constants()
+plot_constants = plot_utils.create_plot_constants()
 SMALLEST_WIDTH = 2
 LARGEST_WIDTH = 10
 YLIM = [0, 14]
@@ -17,7 +17,7 @@ YLIM = [0, 14]
 def plot_subject_scatterplots_and_reg_lines(subject_ID, subject_data):
 
     path = Path('./plots/individual_plots/subject_regression_plots')
-    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(subject_data)
+    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(subject_data)
     data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
 
     plt.figure(figsize=(10, 10))
@@ -57,7 +57,7 @@ def plot_subject_scatterplots_and_reg_lines(subject_ID, subject_data):
 
 def plot_areas_between_reg_and_reality_lines(subject_ID, subject_data):
     path = Path('./plots/individual_plots/area_plots/regression_vs_reality')
-    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(subject_data)
+    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(subject_data)
     data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
 
     plt.figure(figsize=(10, 10))
@@ -97,7 +97,7 @@ def plot_areas_between_reg_and_reality_lines(subject_ID, subject_data):
 
 def area_between_conditions_plot(subject_ID, subject_data):
     path = Path('./plots/individual_plots/area_plots/between_condition_comparison')
-    data_pairs_tuple_list = plot_funcs.create_data_pair_plot_tuple(subject_data)
+    data_pairs_tuple_list = plot_utils.create_data_pair_plot_tuple(subject_data)
     plt.figure(figsize=(15, 7))
     plt.suptitle(str(subject_ID + ' Consistency Plots'))
 

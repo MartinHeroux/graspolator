@@ -4,7 +4,9 @@ import matplotlib.patches as mpatches
 
 def create_plot_constants():
     plot_constants = namedtuple('plot_constants', 'PLOT_SUBDIRECTORIES ACTUAL_WIDTH_RANGE PERCEIVED_WIDTH_RANGE ALPHA '
-                                                  'X_MIN X_MAX Y_MIN Y_MAX REALITY_LINE_MIN REALITY_LINE_MAX')
+                                                  'SMALLEST_WIDTH LARGEST_WIDTH Y_MIN Y_MAX REALITY_LINE_MIN '
+                                                  'REALITY_LINE_MAX '
+                                                  'MINIMISER_PATCH MAXIMISER_PATCH CROSSER_PATCH')
     return plot_constants(PLOT_SUBDIRECTORIES=['group_plots',
                                                'regression_plots',
                                                'consistency_plots',
@@ -12,19 +14,26 @@ def create_plot_constants():
                           ACTUAL_WIDTH_RANGE=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
                           PERCEIVED_WIDTH_RANGE=[0.5] + list(range(1, 15)),
                           ALPHA=0.5,
-                          X_MIN=2, X_MAX=10, Y_MIN=0, Y_MAX=14, REALITY_LINE_MIN=0, REALITY_LINE_MAX=14)
+                          SMALLEST_WIDTH=2, LARGEST_WIDTH=10, Y_MIN=0, Y_MAX=14, REALITY_LINE_MIN=0,
+                          REALITY_LINE_MAX=14,
+                          MINIMISER_PATCH=mpatches.Patch(color='firebrick', label='Minimiser'),
+                          MAXIMISER_PATCH=mpatches.Patch(color='green', label='Maximiser'),
+                          CROSSER_PATCH=mpatches.Patch(color='royalblue', label='Crosser'))
 
 
 def store_index_condition_data_tuple(subject_data):
     index_name_data = namedtuple('index_name_data', 'PLOT_INDEX DATA_INDEX NAME ACTUAL PERCEIVED')
-    d1_dom_tuple = index_name_data(PLOT_INDEX=1, DATA_INDEX=0, NAME='d1_dominant', ACTUAL=subject_data.day1_dominant.actual_widths,
+    d1_dom_tuple = index_name_data(PLOT_INDEX=1, DATA_INDEX=0, NAME='d1_dominant',
+                                   ACTUAL=subject_data.day1_dominant.actual_widths,
                                    PERCEIVED=subject_data.day1_dominant.perceived_widths)
     d1_non_dom_tuple = index_name_data(PLOT_INDEX=2, DATA_INDEX=1, NAME='d2_non_dominant',
                                        ACTUAL=subject_data.day1_non_dominant.actual_widths,
                                        PERCEIVED=subject_data.day1_non_dominant.perceived_widths)
-    d2_dom_1_tuple = index_name_data(PLOT_INDEX=3, DATA_INDEX=2, NAME='d2_dominant_1', ACTUAL=subject_data.day2_dominant_1.actual_widths,
+    d2_dom_1_tuple = index_name_data(PLOT_INDEX=3, DATA_INDEX=2, NAME='d2_dominant_1',
+                                     ACTUAL=subject_data.day2_dominant_1.actual_widths,
                                      PERCEIVED=subject_data.day2_dominant_1.perceived_widths)
-    d2_dom_2_tuple = index_name_data(PLOT_INDEX=4, DATA_INDEX=3, NAME='d2_dominant_2', ACTUAL=subject_data.day2_dominant_2.actual_widths,
+    d2_dom_2_tuple = index_name_data(PLOT_INDEX=4, DATA_INDEX=3, NAME='d2_dominant_2',
+                                     ACTUAL=subject_data.day2_dominant_2.actual_widths,
                                      PERCEIVED=subject_data.day2_dominant_2.perceived_widths)
     return d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
 
@@ -55,8 +64,8 @@ def create_data_pair_plot_tuple(subject_data):
 def subject_line_colour(intersection_x_value, y_when_x_equals_2):
     if 2 <= intersection_x_value <= 10:
         line_colour = 'royalblue'
-    elif y_when_x_equals_2 > 2:
-        line_colour = 'green'
-    else:
+    elif y_when_x_equals_2 < 2:
         line_colour = 'firebrick'
+    else:
+        line_colour = 'green'
     return line_colour

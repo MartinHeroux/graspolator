@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import statsmodels.api as sm
 import yaml
@@ -7,8 +8,7 @@ import numpy as np
 from scipy.stats import sem, t
 from collections import namedtuple
 
-import directories
-import plot_funcs
+import plot_utils
 import area_calcs
 
 
@@ -43,7 +43,7 @@ def read_yaml_corrections_file(fix_yaml):
 
 
 def merge_pdfs(source_directory):
-    filenames = directories.get_filename_list(source_directory)
+    filenames = get_filename_list(source_directory)
     merger = PdfFileMerger()
     for filename in filenames:
         pdf_path = str(Path('./randomised_plots_no_ID/', filename))
@@ -81,7 +81,7 @@ def store_r2_lists_per_condition(all_subject_data):
                                     'd1_dom_r2_list d1_non_dom_r2_list d2_dom_1_r2_list d2_dom_2_r2_list')
 
     for subject_data in all_subject_data:
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
             subject_data)
 
         d1_dom_r2s.append(calculate_r2(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)),
@@ -188,3 +188,38 @@ def calculate_and_save_r_squared_to_txt(all_subject_data):
     CONSTANTS = create_general_constants()
     for subject_ID, current_subject_data in zip(CONSTANTS.SUBJECT_IDS, all_subject_data):
         r_squared(subject_ID, current_subject_data)
+
+
+def create_directory(directory):
+    if not os.path.exists(f'./{directory}'):
+        os.makedirs(f'./{directory}')
+        print(f'created directory {directory}')
+
+
+def create_sub_directory(directory, sub_diretory):
+    if not os.path.exists(f'./{directory}/{sub_diretory}'):
+        os.makedirs(f'./{directory}/{sub_diretory}')
+        print(f'created directory {directory}/{sub_diretory}')
+
+
+def get_filename_list(directory):
+    filenames = []
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            filenames.append(filename)
+    return filenames
+
+
+def create_plot_subdirectories():
+    plot_subdirectories = ['group_plots',
+                           'individual_plots',
+                           'individual_plots/subject_regression_plots',
+                           'individual_plots/consistency_plots',
+                           'individual_plots/area_plots',
+                           'individual_plots/area_plots/regression_vs_reality',
+                           'individual_plots/area_plots/between_condition_comparison']
+    plot_path = Path('./plots')
+    for subdirectory in plot_subdirectories:
+        path = plot_path / subdirectory
+        if not os.path.exists(path):
+            os.makedirs(path)

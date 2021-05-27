@@ -3,7 +3,7 @@ from collections import namedtuple
 import matplotlib.pyplot as plt
 
 import utils
-import plot_funcs
+import plot_utils
 
 
 def minimiser_area_calc(y_at_x2, y_at_x10):
@@ -225,11 +225,11 @@ def point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b):
 
 
 def reg_line_endpoints(intercept, slope):
-    x2 = 2
-    x10 = 10
-    y_at_x2 = slope * x2 + intercept
-    y_at_x10 = slope * x10 + intercept
-    return x2, x10, y_at_x2, y_at_x10
+    x1 = 2
+    x2 = 10
+    y1 = slope * x1 + intercept
+    y2 = slope * x2 + intercept
+    return x1, x2, y1, y2
 
 
 def abline(slope, intercept):
@@ -267,7 +267,7 @@ def store_r2_and_area_tuples(all_subject_data, subject_IDs):
     r2_area_tuples = []
 
     for subject_data, subject_ID in zip(all_subject_data, subject_IDs):
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
             subject_data)
 
         r2s_areas_tuple = r2s_areas(subject_ID=subject_ID,
@@ -290,7 +290,7 @@ def store_area_lists_per_condition(all_subject_data):
                                     'd1_dom_area_list d1_non_dom_area_list d2_dom_1_area_list d2_dom_2_area_list')
 
     for subject_data in all_subject_data:
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
             subject_data)
 
         d1_dom_areas.append(calculate_area(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)),
