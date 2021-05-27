@@ -9,6 +9,9 @@ import plot_funcs
 
 general_constants = utils.create_general_constants()
 plot_constants = plot_funcs.create_plot_constants()
+SMALLEST_WIDTH = 2
+LARGEST_WIDTH = 10
+YLIM = [0, 14]
 
 
 def plot_subject_scatterplots_and_reg_lines(subject_ID, subject_data):
@@ -16,9 +19,6 @@ def plot_subject_scatterplots_and_reg_lines(subject_ID, subject_data):
     path = Path('./plots/individual_plots/subject_regression_plots')
     d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(subject_data)
     data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
-
-    perceived_max, perceived_min = utils.max_min([d1_dom_tuple.PERCEIVED, d1_non_dom_tuple.PERCEIVED, d2_dom_1_tuple.PERCEIVED, d2_dom_2_tuple.PERCEIVED])
-    actual_max, actual_min = utils.max_min([d1_dom_tuple.ACTUAL, d1_non_dom_tuple.ACTUAL, d2_dom_1_tuple.ACTUAL, d2_dom_2_tuple.ACTUAL])
 
     plt.figure(figsize=(10, 10))
     plt.suptitle(str(subject_ID + ' Scatterplot + Reg Line'))
@@ -28,41 +28,37 @@ def plot_subject_scatterplots_and_reg_lines(subject_ID, subject_data):
                  [plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  'k--')
         length_data = len(condition_tuple.PERCEIVED)
-        random_values = [random() / 4 for _ in range(length_data)]
-        x_data = np.array(condition_tuple.ACTUAL) + np.array(random_values)
+        jitter_values = [random() / 4 for _ in range(length_data)]
+        x_data = np.array(condition_tuple.ACTUAL) + np.array(jitter_values)
         plt.plot(x_data, condition_tuple.PERCEIVED, 'o', alpha=plot_constants.ALPHA)
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL,
                                                               condition_tuple.PERCEIVED)
 
-        x_min_plot, x_max_plot = perceived_min, perceived_max
-        y_min_plot = slope * x_min_plot + intercept
-        y_max_plot = slope * x_max_plot + intercept
-        plt.plot([x_min_plot, x_max_plot], [y_min_plot, y_max_plot])
+        # Creating points to plot regression line [x1, y1][x2, y2]
+        x1 = SMALLEST_WIDTH
+        x2 = LARGEST_WIDTH
+        y1 = slope * x1 + intercept
+        y2 = slope * x2 + intercept
+        plt.plot([x1, y1], [x2, y2])
         plt.text(2, 12, f'{slope:4.2f}*x + {intercept:4.2f}', fontsize=12)
-        plt.xticks(list(range(actual_min, actual_max)))
-        plt.xlim([actual_min, actual_max+1])
+        plt.xticks(list(range(x1, x2)))
+        plt.xlim([x1-1, x2+1])
         plt.yticks(plot_constants.PERCEIVED_WIDTH_RANGE)
-        plt.ylim(plot_constants.Y_MIN, (plot_constants.Y_MAX + 1))
+        plt.ylim(YLIM)
         plt.title(condition_tuple.NAME, loc='right')
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
-
-    path_to_save = str(str(path) + '/reg_lines_by_group_by_condition')
+    path_to_save = path / f'reg_plots_{subject_ID}.png'
     plt.savefig(path_to_save, dpi=300)
     print(f'Saving scatter plots and regressions for {subject_ID}')
     plt.close()
 
 
 def plot_areas_between_reg_and_reality_lines(subject_ID, subject_data):
-    path = Path('./plots/area_plots/regression_vs_reality')
+    path = Path('./plots/individual_plots/area_plots/regression_vs_reality')
     d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(subject_data)
     data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
-
-    perceived_max, perceived_min = utils.max_min(
-        [d1_dom_tuple.PERCEIVED, d1_non_dom_tuple.PERCEIVED, d2_dom_1_tuple.PERCEIVED, d2_dom_2_tuple.PERCEIVED])
-    actual_max, actual_min = utils.max_min(
-        [d1_dom_tuple.ACTUAL, d1_non_dom_tuple.ACTUAL, d2_dom_1_tuple.ACTUAL, d2_dom_2_tuple.ACTUAL])
 
     plt.figure(figsize=(10, 10))
     plt.suptitle(str(subject_ID + ' Area Plots (reality vs. regression lines)'))
@@ -95,8 +91,9 @@ def plot_areas_between_reg_and_reality_lines(subject_ID, subject_data):
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
 
-    plt.savefig(f'{path}/{subject_ID}_')
+    plt.savefig(path / f'{subject_ID}_areas.png')
     plt.close()
+
 
 def area_between_conditions_plot(subject_ID, subject_data):
     path = Path('./plots/individual_plots/area_plots/between_condition_comparison')
@@ -129,6 +126,5 @@ def area_between_conditions_plot(subject_ID, subject_data):
         plt.legend(handles=[data_pair_tuple.patch_1, data_pair_tuple.patch_2], loc='upper left')
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
-    plt.show()
     plt.savefig('{}/{}'.format(path, subject_ID))
     plt.close()
