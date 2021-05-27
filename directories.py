@@ -4,14 +4,15 @@ from pathlib import Path
 
 def create_plot_subdirectories():
     plot_subdirectories = ['group_plots',
-                           'indiviudal_plots,'
+                           'individual_plots',
                            'individual_plots/subject_regression_plots',
                            'individual_plots/consistency_plots',
                            'individual_plots/area_plots',
                            'individual_plots/area_plots/regression_vs_reality',
                            'individual_plots/area_plots/between_condition_comparison']
+    plot_path = Path('./plots')
     for subdirectory in plot_subdirectories:
-        path = Path(f'./plots/{subdirectory}')
+        path = plot_path / subdirectory
         if not os.path.exists(path):
             os.makedirs(path)
 

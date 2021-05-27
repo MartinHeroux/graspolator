@@ -1,7 +1,6 @@
 import numpy as np
 from collections import namedtuple
 import matplotlib.pyplot as plt
-import scipy.stats as scp
 
 import utils
 import plot_funcs

@@ -11,6 +11,7 @@ import directories
 import plot_funcs
 import area_calcs
 
+
 def calculate_regression(block):
     x = block.actual_widths
     y = block.perceived_widths
@@ -73,6 +74,7 @@ def confidence_interval(data):
     ci = std_err * t.ppf((1 + confidence) / 2, n - 1)
     return ci
 
+
 def store_r2_lists_per_condition(all_subject_data):
     d1_dom_r2s, d1_non_dom_r2s, d2_dom_1_r2s, d2_dom_2_r2s = [], [], [], []
     r2_area_list_tuple = namedtuple('r2s_area',
@@ -93,10 +95,12 @@ def store_r2_lists_per_condition(all_subject_data):
                                                 d2_dom_2_r2_list=d2_dom_2_r2s)
     return r2_lists_per_condition
 
+
 def calculate_r2(actual, perceived):
     r_score, p_value = scp.pearsonr(actual, perceived)
     r_squared = r_score ** 2
     return r_squared
+
 
 def calculate_mean_ci(data_list):
     mean = np.mean(data_list)
@@ -105,6 +109,7 @@ def calculate_mean_ci(data_list):
     std_err = sem(data_list)
     ci = std_err * t.ppf((1 + confidence) / 2, n - 1)
     return mean, ci
+
 
 def store_r2_means_CIs_per_condition(all_subject_data):
     r2_lists = store_r2_lists_per_condition(all_subject_data)
@@ -115,6 +120,7 @@ def store_r2_means_CIs_per_condition(all_subject_data):
     mean_lists = [d1_dom_mean, d1_non_dom_mean, d2_dom_1_mean, d2_dom_2_mean]
     ci_lists = [d1_dom_ci, d1_non_dom_ci, d2_dom_1_ci, d2_dom_2_ci]
     return mean_lists, ci_lists
+
 
 def store_area_means_CIs_per_condition(all_subject_data):
     area_lists = area_calcs.store_area_lists_per_condition(all_subject_data)
@@ -177,4 +183,8 @@ def max_min(list_of_lists):
     maximum, minimum = max(maximums_list), min(minimums_list)
     return maximum, minimum
 
-max_min([[1,2,3,4], [4,5,6,7]])
+
+def calculate_and_save_r_squared_to_txt(all_subject_data):
+    CONSTANTS = create_general_constants()
+    for subject_ID, current_subject_data in zip(CONSTANTS.SUBJECT_IDS, all_subject_data):
+        r_squared(subject_ID, current_subject_data)

@@ -10,7 +10,7 @@ def create_plot_constants():
                                                'consistency_plots',
                                                'area_plots'],
                           ACTUAL_WIDTH_RANGE=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-                          PERCEIVED_WIDTH_RANGE= [[0.5] + list(range(1, 15))],
+                          PERCEIVED_WIDTH_RANGE=[0.5] + list(range(1, 15)),
                           ALPHA=0.5,
                           X_MIN=2, X_MAX=10, Y_MIN=0, Y_MAX=14, REALITY_LINE_MIN=0, REALITY_LINE_MAX=14)
 
@@ -44,7 +44,7 @@ def create_data_pair_plot_tuple(subject_data):
                         label_2='d2_dom_a',
                         title='Between Days', colour_1='blue', colour_2='red',
                         patch_1=d1_dom, patch_2=d2_dom_a, subplot_index=2)
-    within_day = Pair(data_1=subject_data.day2_dominant_1, data_2=subject_data.day2_dominant_1, label_1='d2_dom_a',
+    within_day = Pair(data_1=subject_data.day2_dominant_1, data_2=subject_data.day2_dominant_2, label_1='d2_dom_a',
                       label_2='d2_dom_b',
                       title='Within Day', colour_1='red', colour_2='green', patch_1=d2_dom_a, patch_2=d2_dom_b,
                       subplot_index=3)
