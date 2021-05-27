@@ -6,6 +6,7 @@ import scipy.stats as scp
 import utils
 import plot_funcs
 
+
 def minimiser_area_calc(y_at_x2, y_at_x10):
     h = 8
     area = trapezium_area(y_at_x2, y_at_x10, h)
@@ -18,6 +19,7 @@ def maximiser_area_calc(y_at_x2, y_at_x10):
     area = trapezium_area(y_at_x2, y_at_x10, h)
     area_difference = (area - 48)
     return area_difference
+
 
 def compute_area_calc_inputs(data_pair):
     intercept_a, slope_a = utils.calculate_regression(data_pair.data_1)
@@ -163,6 +165,7 @@ def calculate_area_and_endpoints(actual, perceived):
         area_total = maximiser_area_calc(y_at_x2, y_at_x10)
     return area_total, x2, x10, y_at_x2, y_at_x10
 
+
 def calculate_area(actual, perceived):
     intercept, slope = utils.calculate_regression_general(actual, perceived)
     x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
@@ -185,6 +188,7 @@ def calculate_area(actual, perceived):
         area_total = maximiser_area_calc(y_at_x2, y_at_x10)
     return area_total
 
+
 def calculate_data_pair_area_and_endpoints(data_pair_tuple):
     intercept_a, slope_a = utils.calculate_regression(data_pair_tuple.data_1)
     intercept_b, slope_b = utils.calculate_regression(data_pair_tuple.data_2)
@@ -199,10 +203,11 @@ def calculate_data_pair_area_and_endpoints(data_pair_tuple):
     group = subject_group_reg_lines(x_intersect)
     if group == 'cross':
         total_area = reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b,
-                                                      y_at_x10_b)
+                                           y_at_x10_b)
     else:
         total_area = reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b)
     return total_area, x_pair_a, x_pair_b, y_pair_a, y_pair_b
+
 
 def point_of_intersection_with_reality(intercept, slope):
     m1, b1 = 1, 0
@@ -255,21 +260,49 @@ def subject_group_reg_lines(x_intersect):
         group = 'no_cross'
     return group
 
-def store_r2_and_area_lists(all_subject_data):
-    r2_area_name = namedtuple('subject', 'R2 AREA NAME')
-    r2_lists = [[], [], [], []]
-    area_lists = [[], [], [], []]
+
+def store_r2_and_area_tuples(all_subject_data, subject_IDs):
+    r2s_areas = namedtuple('r2s_area',
+                           'subject_ID d1_dom_r2 d1_non_dom_r2 d2_dom_1_r2 d2_dom_2_r2 d1_dom_area d1_non_dom_area '
+                           'd2_dom_1_area d2_dom_2_area')
+    r2_area_tuples = []
+
+    for subject_data, subject_ID in zip(all_subject_data, subject_IDs):
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(
+            subject_data)
+
+        r2s_areas_tuple = r2s_areas(subject_ID=subject_ID,
+                                    d1_dom_r2=utils.calculate_r2(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED),
+                                    d1_non_dom_r2=utils.calculate_r2(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED),
+                                    d2_dom_1_r2=utils.calculate_r2(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED),
+                                    d2_dom_2_r2=utils.calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED),
+                                    d1_dom_area=calculate_area(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED),
+                                    d1_non_dom_area=calculate_area(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED),
+                                    d2_dom_1_area=calculate_area(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED),
+                                    d2_dom_2_area=calculate_area(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED))
+
+        r2_area_tuples.append(r2s_areas_tuple)
+
+    return r2_area_tuples
+
+def store_area_lists_per_condition(all_subject_data):
+    d1_dom_areas, d1_non_dom_areas, d2_dom_1_areas, d2_dom_2_areas = [], [], [], []
+    r2_area_list_tuple = namedtuple('r2s_area',
+                                    'd1_dom_area_list d1_non_dom_area_list d2_dom_1_area_list d2_dom_2_area_list')
 
     for subject_data in all_subject_data:
         d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_funcs.store_index_condition_data_tuple(
             subject_data)
-        subject_tuples = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
-        for subject_tuple in subject_tuples:
-            r_score, p_value = scp.pearsonr(subject_tuple.ACTUAL, subject_tuple.PERCEIVED)
-            r_squared = r_score ** 2
-            r2_lists[subject_tuple.DATA_INDEX].append(r_squared)
 
-            area_total = calculate_area(subject_tuple.ACTUAL, subject_tuple.PERCEIVED)
-            area_lists[subject_tuple.DATA_INDEX].append(area_total)
+        d1_dom_areas.append(calculate_area(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)),
+        d1_non_dom_areas.append(calculate_area(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)),
+        d2_dom_1_areas.append(calculate_area(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)),
+        d2_dom_2_areas.append(calculate_area(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED))
 
-    return r2_lists, area_lists
+    area_lists_per_condition = r2_area_list_tuple(d1_dom_area_list=d1_dom_areas,
+                                                d1_non_dom_area_list=d1_non_dom_areas,
+                                                d2_dom_1_area_list=d2_dom_1_areas,
+                                                d2_dom_2_area_list=d2_dom_2_areas)
+    return area_lists_per_condition
+
+
