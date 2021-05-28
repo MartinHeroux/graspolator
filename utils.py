@@ -211,9 +211,36 @@ def create_plot_subdirectories():
 
 
 def reg_line_endpoints(actual, perceived):
-    intercept, slope = utils.calculate_regression_general(actual, perceived)
+    intercept, slope = calculate_regression_general(actual, perceived)
     x1 = 2
     x2 = 10
     y1 = slope * x1 + intercept
     y2 = slope * x2 + intercept
     return x1, x2, y1, y2
+
+
+def plot_list_tuple():
+    plotting = namedtuple('PLOTS', 'blinded_scatterplots '
+                                   'individual_regressions '
+                                   'regression_lines_per_condition '
+                                   'individual_areas_to_reality '
+                                   'individual_areas_between_conditions '
+                                   'group_areas_between_conditions '
+                                   'group_areas_difference_of_differences '
+                                   'group_areas_per_conditions '
+                                   'group_areas_vs_r2_per_condition '
+                                   'group_r2_per_condition ')
+    plotting(blinded_scatterplots=True,
+             individual_regressions=True,
+             regression_lines_per_condition=True,
+             individual_areas_to_reality=True,
+             individual_areas_between_conditions=True,
+             group_areas_between_conditions=True,
+             group_areas_difference_of_differences=True,
+             group_areas_per_conditions=True,
+             group_areas_vs_r2_per_condition=True,
+             group_r2_per_condition=True)
+    return plotting
+
+
+plots_to_plot = plot_list_tuple()

@@ -46,17 +46,17 @@ def condition_pair_tuple(subject_data):
 
     Pair = namedtuple('Pair', 'data_1 data_2 label_1 label_2 title colour_1 colour_2 patch_1 patch_2 subplot_index')
     dom_vs_non_dom = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day1_non_dominant, label_1='d1_dom',
-                         label_2='d1_non_dom',
-                         title='Between Hands', colour_1='blue', colour_2='orange', patch_1=d1_dom,
-                         patch_2=d1_non_dom, subplot_index=1)
+                          label_2='d1_non_dom',
+                          title='Between Hands', colour_1='blue', colour_2='orange', patch_1=d1_dom,
+                          patch_2=d1_non_dom, subplot_index=1)
     dom_d1_vs_d2 = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day2_dominant_1, label_1='d1_dom',
                         label_2='d2_dom_a',
                         title='Between Days', colour_1='blue', colour_2='red',
                         patch_1=d1_dom, patch_2=d2_dom_a, subplot_index=2)
     dom_d2_vs_d2 = Pair(data_1=subject_data.day2_dominant_1, data_2=subject_data.day2_dominant_2, label_1='d2_dom_a',
-                      label_2='d2_dom_b',
-                      title='Within Day', colour_1='red', colour_2='green', patch_1=d2_dom_a, patch_2=d2_dom_b,
-                      subplot_index=3)
+                        label_2='d2_dom_b',
+                        title='Within Day', colour_1='red', colour_2='green', patch_1=d2_dom_a, patch_2=d2_dom_b,
+                        subplot_index=3)
     return dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
 
 
@@ -68,4 +68,3 @@ def subject_line_colour(intersection_x_value, y_when_x_equals_2):
     else:
         line_colour = 'green'
     return line_colour
-

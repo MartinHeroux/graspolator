@@ -33,7 +33,7 @@ def individual_areas_between_conditions(all_subject_data):
 
 
 def group_areas_between_conditions(all_subject_data):
-    plot_group.consistency_between_conditions(CONSTANTS.SUBJECT_IDS, all_subject_data)
+    plot_group.consistency_between_conditions(all_subject_data)
 
 
 def group_areas_difference_of_differences(all_subject_data):

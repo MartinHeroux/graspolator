@@ -4,6 +4,7 @@ import utils
 
 general_constants = utils.create_general_constants()
 
+
 def read_exp1(data_folder):
     blocked_data = []
     widest_lines = []
@@ -40,12 +41,13 @@ def _fix_data(current_subject_data, subject_folder, subject):
             index.reverse()
             for index in index:
                 current_subject_data.pop(index)
-                current_subject_data.pop(index-1)
+                current_subject_data.pop(index - 1)
             return current_subject_data
         else:
             current_subject_data.pop(deletion_target)
             current_subject_data.pop(deletion_target - 1)
         return current_subject_data
+
 
 def _read_subject_data(subject_folder):
     path_to_data_file = subject_folder / (subject_folder.name + "_data.txt")

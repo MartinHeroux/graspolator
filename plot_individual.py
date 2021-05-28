@@ -101,14 +101,16 @@ def area_between_conditions_plot(subject_ID, subject_data):
     path = Path('./plots/individual_plots/area_plots/between_condition_comparison')
     dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = plot_utils.condition_pair_tuple(subject_data)
     data_pairs_tuple_list = dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
+    dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(subject_data)
+    data_pairs_area_list = dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area
+
     plt.figure(figsize=(15, 7))
     plt.suptitle(str(subject_ID + ' Consistency Plots'))
 
-    for data_pair_tuple in data_pairs_tuple_list:
+    for data_pair_tuple, data_pair_area in zip(data_pairs_tuple_list, data_pairs_area_list):
         print(data_pair_tuple.title)
         plt.subplot(1, 3, data_pair_tuple.subplot_index)
 
-        total_area = calculate_area._condition_pair_area(data_pair_tuple)
         x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuple)
 
         plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuple.colour_1, label=data_pair_tuple.label_1)
@@ -125,7 +127,7 @@ def area_between_conditions_plot(subject_ID, subject_data):
         plt.xlim([plot_constants.X_MIN, (plot_constants.X_MAX + 1)])
         plt.yticks(plot_constants.PERCEIVED_WIDTH_RANGE)
         plt.ylim([plot_constants.Y_MIN, plot_constants.Y_MAX])
-        plt.text(2, 12, f'Area Difference = {total_area:4.2f}', fontsize=12)
+        plt.text(2, 12, f'Area Difference = {data_pair_area:4.2f}', fontsize=12)
         plt.title(data_pair_tuple.title, loc='right')
         plt.legend(handles=[data_pair_tuple.patch_1, data_pair_tuple.patch_2], loc='upper left')
         plt.ylabel('Perceived width (cm)')

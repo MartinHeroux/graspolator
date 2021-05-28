@@ -20,6 +20,7 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
                       plot_constants.MAXIMISER_PATCH,
                       plot_constants.CROSSER_PATCH]
     y_points = []
+    x_points = []
     subplot_indices = [1, 2, 3, 4]
 
     plt.figure(figsize=(15, 5))
@@ -37,17 +38,20 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
             x1, x2, y1, y2 = utils.reg_line_endpoints(intercept, slope)
             y_points.append(y1)
             y_points.append(y2)
+            x_points.append(x1)
+            x_points.append(x2)
             line_colour = plot_utils.subject_line_colour(intersect_x, y1)
             print(f'{subject_ID} is {line_colour} on {condition_tuple.NAME}')
             plt.plot([x1, x2], [y1, y2], color=line_colour, linewidth=0.5)
         print(f'Reg line plotted subject {subject_ID}')
 
-    y_min, y_max = min(y_points)-1, max(y_points) + 1
+    y_min, y_max = min(y_points) - 1, max(y_points) + 1
+    x_min, x_max = min(x_points) - 1, max(x_points) + 1
 
     for subplot in subplot_indices:
         plt.subplot(1, 4, subplot)
-        plt.xticks(list(range(x1, x2+1)))
-        plt.xlim([x1 - 1, x2 + 1])
+        plt.xticks(list(range(x_min, x_max)))
+        plt.xlim([x_min, x_max])
         plt.yticks(list(range(int(y_min), int(y_max))))
         plt.ylim([y_min, y_max])
         plt.grid()
@@ -62,10 +66,9 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
 
 
 def consistency_between_conditions(all_subject_data):
-
     path = Path('./plots/group_plots/')
     color_map = cm.get_cmap('copper', 12)
-    ## TODO decide on method of colouring lines in figure
+    # TODO decide on method of colouring lines in figure
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('Area Difference Between Conditions'))
@@ -75,7 +78,7 @@ def consistency_between_conditions(all_subject_data):
     x_points_base = [1, 2, 3]
     plt.xticks(x_points_base, labels=['D1 dom - D1 non dom', 'D1 dom - D2 dom', 'D2 dom (a) - D2 dom (b)'])
 
-    for line_number, subject_data in enumerate(all_subject_data, start = 1):
+    for line_number, subject_data in enumerate(all_subject_data, start=1):
         jitter_values = [random() / 40 for _ in range(len(x_points_base))]
         if line_number < 15:
             x_points_jitter = np.array(x_points_base) + np.array(jitter_values)
@@ -102,7 +105,7 @@ def difference_of_differences(all_subject_data):
     x_points_base = [1, 2, 3]
     plt.xticks(x_points_base,
                labels=['Between Hands - Within Day', 'Between Hands - Between Days', 'Within Day - Between Days'])
-    ## TODO discuss how best to label the differences on x axis
+    # TODO discuss how best to label the differences on x axis
     plt.yticks(range(-10, 10))
     key_text = str('Between Hands = difference between hands in two test sessions the same day \n'
                    'Within Day = difference between right hand in two test sessions on different days \n'
@@ -135,11 +138,12 @@ def difference_of_differences(all_subject_data):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
     plt.hlines(y=0, xmin=1, xmax=3, color='dimgrey', linestyle='--', lw=2)
-    plt.ylim(-(area_max), (area_max + 1))
+    plt.ylim(-area_max, (area_max + 1))
     plt.yticks(y_range)
     plt.legend(handles=legend_elements, loc='upper right')
-    plt.text(0.08, 0.01, key_text, fontsize=10, bbox=dict(facecolor='none', edgecolor='red'), transform=plt.gcf().transFigure)
-    plt.savefig(path, bbox_inches = 'tight')
+    plt.text(0.08, 0.01, key_text, fontsize=10, bbox=dict(facecolor='none', edgecolor='red'),
+             transform=plt.gcf().transFigure)
+    plt.savefig(path, bbox_inches='tight')
     print(f'Saving difference of area differences plots')
     plt.close()
 
