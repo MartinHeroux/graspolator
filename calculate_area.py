@@ -267,4 +267,9 @@ def store_area_lists_per_condition(all_subject_data):
                                                 d2_dom_2_area_list=d2_dom_2_areas)
     return area_lists_per_condition
 
-
+def difference_of_difference_areas(subject_data):
+    dom_vs_non_dom_area, dom_d1_vs_d2_area, d2_dom_vs_dom_area = between_conditions(subject_data)
+    hands_vs_day = dom_vs_non_dom_area - d2_dom_vs_dom_area
+    hands_vs_days = dom_vs_non_dom_area - dom_d1_vs_d2_area
+    day_vs_days = d2_dom_vs_dom_area - dom_d1_vs_d2_area
+    return hands_vs_day, hands_vs_days, day_vs_days

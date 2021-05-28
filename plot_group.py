@@ -68,7 +68,8 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
 def consistency_between_conditions(all_subject_data):
 
     path = Path('./plots/group_plots/')
-    color_map = cm.get_cmap('viridis', 12)
+    color_map = cm.get_cmap('copper', 12)
+    ## TODO decide on method of colouring lines in figure
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('Area Difference Between Conditions'))
@@ -87,14 +88,14 @@ def consistency_between_conditions(all_subject_data):
         colour_index = rd.uniform(0, 1)
         dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(subject_data)
         y_points = [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
-        plt.plot(x_points_jitter, y_points, color=color_map(colour_index), marker='o', alpha=0.5)
+        plt.plot(x_points_jitter, y_points, color=color_map(colour_index), marker='o', alpha=0.4)
 
     plt.savefig('{}/group_consistency_plot.png'.format(path))
     print(f'Saving group consistency plots')
     plt.close()
 
 
-def plot_difference_of_differences(all_subject_data):
+def difference_of_differences(all_subject_data):
     path = Path('./plots/group_plots/difference_of_differences_plot')
 
     plt.figure(figsize=(7, 10))
@@ -106,44 +107,42 @@ def plot_difference_of_differences(all_subject_data):
     plt.xticks(x_points_base,
                labels=['Between Hands - Within Day', 'Between Hands - Between Days', 'Within Day - Between Days'])
     plt.yticks(range(-10, 10))
-
+    key_text = str('Between Hands = difference between hands in two test sessions the same day \n'
+                   'Within Day = difference between right hand in two test sessions on different days \n'
+                   'Between Days = difference between the right hand in two test sessions the same day')
     legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
                        Line2D([0], [0], marker='^', label='Mean Area Difference', mec='r',
                               markerfacecolor='r', markersize=8, linestyle='None'),
                        Line2D([0], [0], color='black', label='95% Confidence Interval', lw=2)]
 
-    all_bh_wd = []
-    all_bh_bd = []
-    all_wd_bd = []
+    hands_vs_day_list, hands_vs_days_list, day_vs_days_list = [], [], []
 
-    for current_subject_data in all_subject_data:
-        between_hands_area, between_day_area, within_day_area = calculate_area.between_conditions(
-            current_subject_data)
-        bh_wd = between_hands_area - within_day_area
-        bh_bd = between_hands_area - between_day_area
-        wd_bd = within_day_area - between_day_area
+    for subject_data in all_subject_data:
+        hands_vs_day, hands_vs_days, day_vs_days = calculate_area.difference_of_difference_areas(subject_data)
 
-        all_bh_wd.append(bh_wd)
-        all_bh_bd.append(bh_bd)
-        all_wd_bd.append(wd_bd)
+        hands_vs_day_list.append(hands_vs_day)
+        hands_vs_days_list.append(hands_vs_days)
+        day_vs_days_list.append(day_vs_days)
 
-        y_points = [bh_wd, bh_bd, wd_bd]
+        y_points = [hands_vs_day, hands_vs_days, day_vs_days]
 
         plt.plot(x_points_base, y_points, color='silver', alpha=0.5)
 
-    area_diff_list = [all_bh_wd, all_bh_bd, all_wd_bd]
-    maximum_area_differences = [max(all_bh_wd), max(all_bh_bd), max(all_wd_bd)]
-    maximum_area_difference = max(maximum_area_differences)
+    area_diff_list = [hands_vs_day_list, hands_vs_days_list, day_vs_days_list]
+    area_max, area_min = utils.max_min(area_diff_list)
+    y_range = range(int(-area_max), int(area_max + 2))
+    print(y_range)
 
-    for x_point, data in zip(x_points_base, area_diff_list):
-        mean = np.mean(data)
-        ci = utils.confidence_interval(data)
+    for x_point, area_list in zip(x_points_base, area_diff_list):
+        mean, ci = utils.calculate_mean_ci(area_list)
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
     plt.hlines(y=0, xmin=1, xmax=3, color='dimgrey', linestyle='--', lw=2)
-    plt.ylim(-(maximum_area_difference + 1), (maximum_area_difference + 1))
+    plt.ylim(-(area_max), (area_max + 1))
+    plt.yticks(y_range)
     plt.legend(handles=legend_elements, loc='upper right')
-    plt.savefig(path)
+    plt.text(0.08, 0.01, key_text, fontsize=10, bbox=dict(facecolor='none', edgecolor='red'), transform=plt.gcf().transFigure)
+    plt.savefig(path, bbox_inches = 'tight')
     print(f'Saving difference of area differences plots')
     plt.close()
 

@@ -37,12 +37,10 @@ def group_areas_between_conditions(all_subject_data):
 
 
 def group_areas_difference_of_differences(all_subject_data):
-    ##TODO begin reformat
-    plot_group.plot_difference_of_differences(all_subject_data)
+    plot_group.difference_of_differences(all_subject_data)
 
 
 def group_areas_per_conditions(all_subject_data):
-    # reformatted and runs
     plot_group.area_per_condition_plot(all_subject_data)
 
 
