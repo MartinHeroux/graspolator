@@ -4,7 +4,7 @@ from random import random
 import numpy as np
 
 import utils
-import area_calcs
+import calculate_area
 import plot_utils
 
 general_constants = utils.create_general_constants()
@@ -14,10 +14,10 @@ LARGEST_WIDTH = 10
 YLIM = [0, 14]
 
 
-def plot_subject_scatterplots_and_reg_lines(subject_ID, subject_data):
-
+def scatterplots_and_reg_lines(subject_ID, subject_data):
     path = Path('./plots/individual_plots/subject_regression_plots')
-    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(subject_data)
+    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
+        subject_data)
     data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
 
     plt.figure(figsize=(10, 10))
@@ -43,7 +43,7 @@ def plot_subject_scatterplots_and_reg_lines(subject_ID, subject_data):
         plt.plot([x1, y1], [x2, y2])
         plt.text(2, 12, f'{slope:4.2f}*x + {intercept:4.2f}', fontsize=12)
         plt.xticks(list(range(x1, x2)))
-        plt.xlim([x1-1, x2+1])
+        plt.xlim([x1 - 1, x2 + 1])
         plt.yticks(plot_constants.PERCEIVED_WIDTH_RANGE)
         plt.ylim(YLIM)
         plt.title(condition_tuple.NAME, loc='right')
@@ -55,9 +55,10 @@ def plot_subject_scatterplots_and_reg_lines(subject_ID, subject_data):
     plt.close()
 
 
-def plot_areas_between_reg_and_reality_lines(subject_ID, subject_data):
+def areas_between_regression_and_reality(subject_ID, subject_data):
     path = Path('./plots/individual_plots/area_plots/regression_vs_reality')
-    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(subject_data)
+    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
+        subject_data)
     data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
 
     plt.figure(figsize=(10, 10))
@@ -69,12 +70,13 @@ def plot_areas_between_reg_and_reality_lines(subject_ID, subject_data):
                  'k--')
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+        x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+        area = calculate_area.calculate_area(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
 
-        area_total, x2, x10, y_at_x2, y_at_x10 = area_calcs.calculate_area_and_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
-        text = str(f'area_difference = {area_total:4.2f}')
+        text = str(f'area_difference = {area:4.2f}')
 
-        x_colour_points, y_points_reality, y_points_reg  = np.array([x2, x10]), np.array([x2, x10]), np.array([y_at_x2, y_at_x10])
-        plt.plot([x2, x10], [y_at_x2, y_at_x10], color='royalblue')
+        x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
+        plt.plot([x1, x2], [y1, y2], color='royalblue')
         plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality > y_points_reg),
                          color='C0', alpha=0.3, interpolate=True)
         plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality < y_points_reg),
@@ -97,7 +99,8 @@ def plot_areas_between_reg_and_reality_lines(subject_ID, subject_data):
 
 def area_between_conditions_plot(subject_ID, subject_data):
     path = Path('./plots/individual_plots/area_plots/between_condition_comparison')
-    data_pairs_tuple_list = plot_utils.create_data_pair_plot_tuple(subject_data)
+    dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = plot_utils.condition_pair_tuple(subject_data)
+    data_pairs_tuple_list = dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
     plt.figure(figsize=(15, 7))
     plt.suptitle(str(subject_ID + ' Consistency Plots'))
 
@@ -105,14 +108,15 @@ def area_between_conditions_plot(subject_ID, subject_data):
         print(data_pair_tuple.title)
         plt.subplot(1, 3, data_pair_tuple.subplot_index)
 
-        total_area, x_pair_a, x_pair_b, y_pair_a, y_pair_b = area_calcs.calculate_data_pair_area_and_endpoints(data_pair_tuple)
+        total_area = calculate_area._condition_pair_area(data_pair_tuple)
+        x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuple)
 
-        plt.plot(x_pair_a, y_pair_a, color=data_pair_tuple.colour_1, label=data_pair_tuple.label_1)
-        plt.plot(x_pair_b, y_pair_b, color=data_pair_tuple.colour_2, label=data_pair_tuple.label_2)
+        plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuple.colour_1, label=data_pair_tuple.label_1)
+        plt.plot(x1_x2_b, y1_y2_b, color=data_pair_tuple.colour_2, label=data_pair_tuple.label_2)
 
         x_colour_points = np.array([2, 10])
-        y_points_a = np.array(y_pair_a)
-        y_points_b = np.array(y_pair_b)
+        y_points_a = np.array(y1_y2_a)
+        y_points_b = np.array(y1_y2_b)
 
         plt.fill_between(x_colour_points, y_points_a, y_points_b,
                          color='gray', alpha=0.3, interpolate=True)

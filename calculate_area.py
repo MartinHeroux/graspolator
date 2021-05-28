@@ -74,7 +74,43 @@ def crosser_triangle_area_calc(x_intersect, y_intersect, y_at_x2, y_at_x10):
     return area_left, area_right, area_difference
 
 
-def reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b):
+def trapezium_area(a, b, h):
+    a_plus_b_div_2 = (a + b) / 2
+    area = a_plus_b_div_2 * h
+    return area
+
+
+def triangle_area(b, h):
+    area = (b * h) / 2
+    return area
+
+
+def between_conditions(subject_data):
+    dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = plot_utils.condition_pair_tuple(subject_data)
+
+    dom_vs_non_dom_area = _condition_pair_area(dom_vs_non_dom)
+    dom_d1_vs_d2_area = _condition_pair_area(dom_d1_vs_d2)
+    dom_d2_vs_d2_area = _condition_pair_area(dom_d2_vs_d2)
+    print('comparison areas calculated')
+
+    return dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area
+
+
+def _condition_pair_area(condition_pair_tuple):
+    intercept_a, slope_a = utils.calculate_regression(condition_pair_tuple.data_1)
+    intercept_b, slope_b = utils.calculate_regression(condition_pair_tuple.data_2)
+
+    x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = condition_pair_endpoints(condition_pair_tuple)
+    intersect_x, intersect_y = point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b)
+    group = subject_group_reg_lines(intersect_x)
+    if group == 'cross':
+        total_area = _reg_line_crosser_area(intersect_x, intersect_y, y1_y2_a[0], y1_y2_a[1], y1_y2_b[0],
+                                            y1_y2_b[1])
+    else:
+        total_area = _reg_line_no_cross_area(y1_y2_a[0], y1_y2_a[1], y1_y2_b[0], y1_y2_b[1])
+    return total_area
+
+def _reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b):
     h_left_trapezium = x_intersect - 2
     h_right_trapezium = 10 - x_intersect
 
@@ -91,7 +127,7 @@ def reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_
     return total_area
 
 
-def reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b):
+def _reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b):
     h = 8
 
     area_a = trapezium_area(y_at_x2_a, y_at_x10_a, h)
@@ -100,75 +136,18 @@ def reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b):
     total_area = abs(area_a - area_b)
     return total_area
 
-
-def trapezium_area(a, b, h):
-    a_plus_b_div_2 = (a + b) / 2
-    area = a_plus_b_div_2 * h
-    return area
-
-
-def triangle_area(b, h):
-    area = (b * h) / 2
-    return area
-
-
-def bh_bd_wd_areas(current_subject_data):
-    Pair = namedtuple('Pair', 'data_1 data_2')
-
-    between_hands = Pair(data_1=current_subject_data[0], data_2=current_subject_data[1])
-    between_day = Pair(data_1=current_subject_data[0], data_2=current_subject_data[2])
-    within_day = Pair(data_1=current_subject_data[2], data_2=current_subject_data[3])
-    print('tuples created')
-
-    between_hands_area = calculate_area(between_hands)
-    between_day_area = calculate_area(between_day)
-    within_day_area = calculate_area(within_day)
-    print('comparison areas calculated')
-
-    return between_hands_area, between_day_area, within_day_area
-
-
-def calculate_area(data_pair):
-    x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b = utils.compute_area_calc_inputs(
-        data_pair)
-    group = utils.subject_group_reg_lines(x_intersect)
-
-    if group == 'cross':
-        total_area = reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a,
-                                           y_at_x2_b,
-                                           y_at_x10_b)
-    else:
-        total_area = reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b)
-    return total_area
-
-
-def calculate_area_and_endpoints(actual, perceived):
+def reg_line_endpoints(actual, perceived):
     intercept, slope = utils.calculate_regression_general(actual, perceived)
-    x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
-    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(intercept, slope)
-    group = subject_group(x_intersect, y_at_x2)
-
-    if group == 'crosser':
-        area_left, area_right, area_total = crosser_area_calc(x_intersect,
-                                                              y_intersect,
-                                                              y_at_x2,
-                                                              y_at_x10)
-    elif group == 'crosser_triangle':
-        area_left, area_right, area_total = crosser_triangle_area_calc(x_intersect,
-                                                                       y_intersect,
-                                                                       y_at_x2,
-                                                                       y_at_x10)
-    elif group == 'minimiser':
-        area_total = minimiser_area_calc(y_at_x2, y_at_x10)
-    else:
-        area_total = maximiser_area_calc(y_at_x2, y_at_x10)
-    return area_total, x2, x10, y_at_x2, y_at_x10
-
+    x1 = 2
+    x2 = 10
+    y1 = slope * x1 + intercept
+    y2 = slope * x2 + intercept
+    return x1, x2, y1, y2
 
 def calculate_area(actual, perceived):
     intercept, slope = utils.calculate_regression_general(actual, perceived)
     x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
-    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(intercept, slope)
+    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(actual, perceived)
     group = subject_group(x_intersect, y_at_x2)
 
     if group == 'crosser':
@@ -188,24 +167,16 @@ def calculate_area(actual, perceived):
     return area_total
 
 
-def calculate_data_pair_area_and_endpoints(data_pair_tuple):
-    intercept_a, slope_a = utils.calculate_regression(data_pair_tuple.data_1)
-    intercept_b, slope_b = utils.calculate_regression(data_pair_tuple.data_2)
+def condition_pair_endpoints(condition_pair_tuple):
 
-    x2_a, x10_a, y_at_x2_a, y_at_x10_a = reg_line_endpoints(intercept_a, slope_a)
-    x2_b, x10_b, y_at_x2_b, y_at_x10_b = reg_line_endpoints(intercept_b, slope_b)
-    x_intersect, y_intersect = point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b)
-    x_pair_a = [x2_a, x10_a]
-    x_pair_b = [x2_b, x10_b]
-    y_pair_a = [y_at_x2_a, y_at_x10_a]
-    y_pair_b = y_at_x2_b, y_at_x10_b
-    group = subject_group_reg_lines(x_intersect)
-    if group == 'cross':
-        total_area = reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b,
-                                           y_at_x10_b)
-    else:
-        total_area = reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b)
-    return total_area, x_pair_a, x_pair_b, y_pair_a, y_pair_b
+    x1_a, x2_a, y1_a, y2_a = reg_line_endpoints(condition_pair_tuple.data_1[0], condition_pair_tuple.data_1[1])
+    x1_b, x2_b, y1_b, y2_b = reg_line_endpoints(condition_pair_tuple.data_2[0], condition_pair_tuple.data_2[1])
+    x1_x2_a = [x1_a, x2_a]
+    x1_x2_b = [x1_b, x2_b]
+    y1_y2_a = [y1_a, y2_a]
+    y1_y2_b = [y1_b, y2_b]
+    return x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b
+
 
 
 def point_of_intersection_with_reality(intercept, slope):
@@ -222,14 +193,6 @@ def point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b):
     x_intersect = (b2 - b1) / (m1 - m2)
     y_intersect = (x_intersect * slope_a) + intercept_a
     return x_intersect, y_intersect
-
-
-def reg_line_endpoints(intercept, slope):
-    x1 = 2
-    x2 = 10
-    y1 = slope * x1 + intercept
-    y2 = slope * x2 + intercept
-    return x1, x2, y1, y2
 
 
 def abline(slope, intercept):

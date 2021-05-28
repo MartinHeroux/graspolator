@@ -8,9 +8,10 @@ from collections import namedtuple
 import numpy as np
 from matplotlib.lines import Line2D
 import scipy.stats as scp
+from matplotlib import cm
 
 import utils
-import area_calcs
+import calculate_area
 import plot_utils
 
 constants = utils.create_general_constants()
@@ -36,8 +37,8 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
             plt.subplot(1, 4, condition_tuple.PLOT_INDEX)
             plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
-            intersect_x, intersect_y = area_calcs.point_of_intersection_with_reality(intercept, slope)
-            x1, x2, y1, y2 = area_calcs.reg_line_endpoints(intercept, slope)
+            intersect_x, intersect_y = calculate_area.point_of_intersection_with_reality(intercept, slope)
+            x1, x2, y1, y2 = calculate_area.reg_line_endpoints(intercept, slope)
             y_points.append(y1)
             y_points.append(y2)
             line_colour = plot_utils.subject_line_colour(intersect_x, y1)
@@ -64,32 +65,29 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
     plt.close()
 
 
-def group_consistency_plot(subject_IDs, all_subject_data):
-    if not os.path.exists('./plots/group_plots'):
-        os.makedirs('./plots/group_plots')
+def consistency_between_conditions(all_subject_data):
 
     path = Path('./plots/group_plots/')
+    color_map = cm.get_cmap('viridis', 12)
 
     plt.figure(figsize=(7, 10))
-    plt.suptitle(str('All Subject Consistency Plot'))
+    plt.suptitle(str('Area Difference Between Conditions'))
     plt.ylabel('Area Difference Between Regression Lines (cm^2)')
-    plt.xlabel('Condition Pair')
+    plt.xlabel('Condition Comparison')
     plt.grid()
     x_points_base = [1, 2, 3]
-    plt.xticks(x_points_base, labels=['Between Hands', 'Between Days', 'Within Day'])
+    plt.xticks(x_points_base, labels=['D1 dom - D1 non dom', 'D1 dom - D2 dom', 'D2 dom (a) - D2 dom (b)'])
 
-    for line_number, (subject_ID, current_subject_data) in enumerate(zip(subject_IDs, all_subject_data), start=1):
-        y_points = []
+    for line_number, subject_data in enumerate(all_subject_data, start = 1):
         jitter_values = [random() / 40 for _ in range(len(x_points_base))]
         if line_number < 15:
             x_points_jitter = np.array(x_points_base) + np.array(jitter_values)
         else:
             x_points_jitter = np.array(x_points_base) - np.array(jitter_values)
-
-        between_hands, between_days, within_days = area_calcs.bh_bd_wd_areas(current_subject_data)
-        y_points = [between_hands, between_days, within_days]
-        rgb = np.random.rand(3, )
-        plt.plot(x_points_jitter, y_points, color=rgb, marker='o', alpha=0.5)
+        colour_index = rd.uniform(0, 1)
+        dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(subject_data)
+        y_points = [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
+        plt.plot(x_points_jitter, y_points, color=color_map(colour_index), marker='o', alpha=0.5)
 
     plt.savefig('{}/group_consistency_plot.png'.format(path))
     print(f'Saving group consistency plots')
@@ -119,7 +117,7 @@ def plot_difference_of_differences(all_subject_data):
     all_wd_bd = []
 
     for current_subject_data in all_subject_data:
-        between_hands_area, between_day_area, within_day_area = area_calcs.bh_bd_wd_areas(
+        between_hands_area, between_day_area, within_day_area = calculate_area.between_conditions(
             current_subject_data)
         bh_wd = between_hands_area - within_day_area
         bh_bd = between_hands_area - between_day_area
@@ -150,7 +148,7 @@ def plot_difference_of_differences(all_subject_data):
     plt.close()
 
 
-def plot_area_across_conditions(all_subject_data):
+def area_per_condition_plot(all_subject_data):
     path = Path('./plots/group_plots/all_subject_areas_by_condition')
 
     plt.figure(figsize=(10, 10))
@@ -172,10 +170,10 @@ def plot_area_across_conditions(all_subject_data):
         d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
             subject_data)
 
-        d1_dom_area = area_calcs.calculate_area(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)
-        d1_non_dom_area = area_calcs.calculate_area(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)
-        d2_dom_1_area = area_calcs.calculate_area(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)
-        d2_dom_2_area = area_calcs.calculate_area(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED)
+        d1_dom_area = calculate_area.calculate_area(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)
+        d1_non_dom_area = calculate_area.calculate_area(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)
+        d2_dom_1_area = calculate_area.calculate_area(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)
+        d2_dom_2_area = calculate_area.calculate_area(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED)
 
         y_points = [d1_dom_area, d1_non_dom_area, d2_dom_1_area, d2_dom_2_area]
         all_area_lists.append(y_points)
@@ -198,7 +196,7 @@ def plot_area_across_conditions(all_subject_data):
 def area_vs_r2_plot(all_subject_data):
     path = Path('./plots/group_plots/area_vs_r2')
 
-    r2_lists, area_lists = area_calcs.store_r2_and_area_lists(all_subject_data)
+    r2_lists, area_lists = calculate_area.store_r2_and_area_lists(all_subject_data)
 
     plt.figure(figsize=(10, 10))
     plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
@@ -223,7 +221,7 @@ def area_vs_r2_plot(all_subject_data):
     plt.close()
 
 
-def r2_group_plot(all_subject_data, subject_IDs):
+def r2_per_condition_plot(all_subject_data, subject_IDs):
     path = Path('./plots/group_plots/')
 
     legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
@@ -231,7 +229,7 @@ def r2_group_plot(all_subject_data, subject_IDs):
                               markerfacecolor='r', markersize=8, linestyle='None'),
                        Line2D([0], [0], color='black', label='95% Confidence Interval', lw=2)]
 
-    r2_area_tuples = area_calcs.store_r2_and_area_tuples(all_subject_data, subject_IDs)
+    r2_area_tuples = calculate_area.store_r2_and_area_tuples(all_subject_data, subject_IDs)
 
     plt.figure(figsize=(10, 10))
     plt.suptitle('R^2 (actual vs perceived widths) Values Per Condition')

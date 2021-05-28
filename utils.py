@@ -9,7 +9,7 @@ from scipy.stats import sem, t
 from collections import namedtuple
 
 import plot_utils
-import area_calcs
+import calculate_area
 
 
 def calculate_regression(block):
@@ -123,7 +123,7 @@ def store_r2_means_CIs_per_condition(all_subject_data):
 
 
 def store_area_means_CIs_per_condition(all_subject_data):
-    area_lists = area_calcs.store_area_lists_per_condition(all_subject_data)
+    area_lists = calculate_area.store_area_lists_per_condition(all_subject_data)
     d1_dom_mean, d1_dom_ci = calculate_mean_ci(area_lists.d1_dom_area_list)
     d1_non_dom_mean, d1_non_dom_ci = calculate_mean_ci(area_lists.d1_non_dom_area_list)
     d2_dom_1_mean, d2_dom_1_ci = calculate_mean_ci(area_lists.d2_dom_1_area_list)

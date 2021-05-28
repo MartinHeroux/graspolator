@@ -38,27 +38,26 @@ def store_index_condition_data_tuple(subject_data):
     return d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
 
 
-def create_data_pair_plot_tuple(subject_data):
+def condition_pair_tuple(subject_data):
     d1_dom = mpatches.Patch(color='blue', label='Day 1 Dominant')
     d1_non_dom = mpatches.Patch(color='orange', label='Day 1 Non Dominant')
     d2_dom_a = mpatches.Patch(color='red', label='Day 2 Dominant A')
     d2_dom_b = mpatches.Patch(color='green', label='Day 2 Dominant B')
 
     Pair = namedtuple('Pair', 'data_1 data_2 label_1 label_2 title colour_1 colour_2 patch_1 patch_2 subplot_index')
-    between_hands = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day1_non_dominant, label_1='d1_dom',
+    dom_vs_non_dom = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day1_non_dominant, label_1='d1_dom',
                          label_2='d1_non_dom',
                          title='Between Hands', colour_1='blue', colour_2='orange', patch_1=d1_dom,
                          patch_2=d1_non_dom, subplot_index=1)
-    between_days = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day2_dominant_1, label_1='d1_dom',
+    dom_d1_vs_d2 = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day2_dominant_1, label_1='d1_dom',
                         label_2='d2_dom_a',
                         title='Between Days', colour_1='blue', colour_2='red',
                         patch_1=d1_dom, patch_2=d2_dom_a, subplot_index=2)
-    within_day = Pair(data_1=subject_data.day2_dominant_1, data_2=subject_data.day2_dominant_2, label_1='d2_dom_a',
+    dom_d2_vs_d2 = Pair(data_1=subject_data.day2_dominant_1, data_2=subject_data.day2_dominant_2, label_1='d2_dom_a',
                       label_2='d2_dom_b',
                       title='Within Day', colour_1='red', colour_2='green', patch_1=d2_dom_a, patch_2=d2_dom_b,
                       subplot_index=3)
-    data_pairs_tuple_list = [between_hands, between_days, within_day]
-    return data_pairs_tuple_list
+    return dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
 
 
 def subject_line_colour(intersection_x_value, y_when_x_equals_2):
