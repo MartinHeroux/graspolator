@@ -45,7 +45,6 @@ def group_areas_per_conditions(all_subject_data):
 
 
 def group_areas_vs_r2_per_condition(all_subject_data):
-    ##TODO begin reformat
     plot_group.area_vs_r2_plot(all_subject_data)
 
 

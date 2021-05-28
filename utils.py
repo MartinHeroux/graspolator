@@ -28,13 +28,6 @@ def calculate_regression_general(x, y):
     return intercept, slope
 
 
-def calculate_regression_all_data(actual, perceived):
-    actual = sm.add_constant(actual)
-    model = sm.OLS(perceived, actual).fit()
-    intercept, slope = model.params
-    return intercept, slope
-
-
 def read_yaml_corrections_file(fix_yaml):
     if not fix_yaml.is_file():
         return
@@ -50,50 +43,6 @@ def merge_pdfs(source_directory):
         merger.append(pdf_path)
     merger.write("concatenated.pdf")
     merger.close()
-
-
-def r_squared(subject_ID, current_subject_data):
-    condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
-    r_square_file = open("r_squared_values.txt", "a")
-    r_square_file.write(f'subject: {subject_ID} \n')
-    for condition_name, condition_data in zip(condition_names, current_subject_data):
-        r_square_file = open("r_squared_values.txt", "a")
-        actual_widths = condition_data.actual_widths
-        perceived_widths = condition_data.perceived_widths
-        r_score, p_value = scp.pearsonr(actual_widths, perceived_widths)
-        r_squared = r_score ** 2
-        line_to_write = [f" {condition_name} r_squared: {r_squared:4.2f} \n"]
-        r_square_file.writelines(line_to_write)
-    r_square_file.close
-
-
-def confidence_interval(data):
-    confidence = 0.95
-    n = len(data)
-    std_err = sem(data)
-    ci = std_err * t.ppf((1 + confidence) / 2, n - 1)
-    return ci
-
-
-def store_r2_lists_per_condition(all_subject_data):
-    d1_dom_r2s, d1_non_dom_r2s, d2_dom_1_r2s, d2_dom_2_r2s = [], [], [], []
-    r2_area_list_tuple = namedtuple('r2s_area',
-                                    'd1_dom_r2_list d1_non_dom_r2_list d2_dom_1_r2_list d2_dom_2_r2_list')
-
-    for subject_data in all_subject_data:
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
-            subject_data)
-
-        d1_dom_r2s.append(calculate_r2(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)),
-        d1_non_dom_r2s.append(calculate_r2(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)),
-        d2_dom_1_r2s.append(calculate_r2(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)),
-        d2_dom_2_r2s.append(calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED))
-
-    r2_lists_per_condition = r2_area_list_tuple(d1_dom_r2_list=d1_dom_r2s,
-                                                d1_non_dom_r2_list=d1_non_dom_r2s,
-                                                d2_dom_1_r2_list=d2_dom_1_r2s,
-                                                d2_dom_2_r2_list=d2_dom_2_r2s)
-    return r2_lists_per_condition
 
 
 def calculate_r2(actual, perceived):
@@ -112,7 +61,7 @@ def calculate_mean_ci(data_list):
 
 
 def store_r2_means_CIs_per_condition(all_subject_data):
-    r2_lists = store_r2_lists_per_condition(all_subject_data)
+    r2_lists = store_r2_lists(all_subject_data)
     d1_dom_mean, d1_dom_ci = calculate_mean_ci(r2_lists.d1_dom_r2_list)
     d1_non_dom_mean, d1_non_dom_ci = calculate_mean_ci(r2_lists.d1_non_dom_r2_list)
     d2_dom_1_mean, d2_dom_1_ci = calculate_mean_ci(r2_lists.d2_dom_1_r2_list)
@@ -122,8 +71,29 @@ def store_r2_means_CIs_per_condition(all_subject_data):
     return mean_lists, ci_lists
 
 
+def store_r2_lists(all_subject_data):
+    d1_dom_r2s, d1_non_dom_r2s, d2_dom_1_r2s, d2_dom_2_r2s = [], [], [], []
+    r2_area_list_tuple = namedtuple('r2s_area',
+                                    'd1_dom_r2_list d1_non_dom_r2_list d2_dom_1_r2_list d2_dom_2_r2_list')
+
+    for subject_data in all_subject_data:
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
+            subject_data)
+
+        d1_dom_r2s.append(calculate_r2(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)),
+        d1_non_dom_r2s.append(calculate_r2(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)),
+        d2_dom_1_r2s.append(calculate_r2(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)),
+        d2_dom_2_r2s.append(calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED))
+
+    r2_lists = r2_area_list_tuple(d1_dom_r2_list=d1_dom_r2s,
+                                  d1_non_dom_r2_list=d1_non_dom_r2s,
+                                  d2_dom_1_r2_list=d2_dom_1_r2s,
+                                  d2_dom_2_r2_list=d2_dom_2_r2s)
+    return r2_lists
+
+
 def store_area_means_CIs_per_condition(all_subject_data):
-    area_lists = calculate_area.store_area_lists_per_condition(all_subject_data)
+    area_lists = calculate_area.group_areas(all_subject_data)
     d1_dom_mean, d1_dom_ci = calculate_mean_ci(area_lists.d1_dom_area_list)
     d1_non_dom_mean, d1_non_dom_ci = calculate_mean_ci(area_lists.d1_non_dom_area_list)
     d2_dom_1_mean, d2_dom_1_ci = calculate_mean_ci(area_lists.d2_dom_1_area_list)
@@ -185,9 +155,24 @@ def max_min(list_of_lists):
 
 
 def calculate_and_save_r_squared_to_txt(all_subject_data):
-    CONSTANTS = create_general_constants()
-    for subject_ID, current_subject_data in zip(CONSTANTS.SUBJECT_IDS, all_subject_data):
-        r_squared(subject_ID, current_subject_data)
+    constants = create_general_constants()
+    for subject_ID, current_subject_data in zip(constants.SUBJECT_IDS, all_subject_data):
+        _r_squared(subject_ID, current_subject_data)
+
+
+def _r_squared(subject_ID, current_subject_data):
+    condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
+    r_square_file = open("r_squared_values.txt", "a")
+    r_square_file.write(f'subject: {subject_ID} \n')
+    for condition_name, condition_data in zip(condition_names, current_subject_data):
+        r_square_file = open("r_squared_values.txt", "a")
+        actual_widths = condition_data.actual_widths
+        perceived_widths = condition_data.perceived_widths
+        r_score, p_value = scp.pearsonr(actual_widths, perceived_widths)
+        r_squared = r_score ** 2
+        line_to_write = [f" {condition_name} r_squared: {r_squared:4.2f} \n"]
+        r_square_file.writelines(line_to_write)
+    r_square_file.close
 
 
 def create_directory(directory):
@@ -223,3 +208,12 @@ def create_plot_subdirectories():
         path = plot_path / subdirectory
         if not os.path.exists(path):
             os.makedirs(path)
+
+
+def reg_line_endpoints(actual, perceived):
+    intercept, slope = utils.calculate_regression_general(actual, perceived)
+    x1 = 2
+    x2 = 10
+    y1 = slope * x1 + intercept
+    y2 = slope * x2 + intercept
+    return x1, x2, y1, y2

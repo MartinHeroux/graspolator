@@ -1,13 +1,9 @@
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 from pathlib import Path
 from random import random
 import random as rd
-import os
-from collections import namedtuple
 import numpy as np
 from matplotlib.lines import Line2D
-import scipy.stats as scp
 from matplotlib import cm
 
 import utils
@@ -38,7 +34,7 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
             plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
             intersect_x, intersect_y = calculate_area.point_of_intersection_with_reality(intercept, slope)
-            x1, x2, y1, y2 = calculate_area.reg_line_endpoints(intercept, slope)
+            x1, x2, y1, y2 = utils.reg_line_endpoints(intercept, slope)
             y_points.append(y1)
             y_points.append(y2)
             line_colour = plot_utils.subject_line_colour(intersect_x, y1)
@@ -106,6 +102,7 @@ def difference_of_differences(all_subject_data):
     x_points_base = [1, 2, 3]
     plt.xticks(x_points_base,
                labels=['Between Hands - Within Day', 'Between Hands - Between Days', 'Within Day - Between Days'])
+    ## TODO discuss how best to label the differences on x axis
     plt.yticks(range(-10, 10))
     key_text = str('Between Hands = difference between hands in two test sessions the same day \n'
                    'Within Day = difference between right hand in two test sessions on different days \n'
@@ -169,10 +166,10 @@ def area_per_condition_plot(all_subject_data):
         d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
             subject_data)
 
-        d1_dom_area = calculate_area.calculate_area(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)
-        d1_non_dom_area = calculate_area.calculate_area(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)
-        d2_dom_1_area = calculate_area.calculate_area(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)
-        d2_dom_2_area = calculate_area.calculate_area(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED)
+        d1_dom_area = calculate_area.actual_vs_perceived(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)
+        d1_non_dom_area = calculate_area.actual_vs_perceived(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)
+        d2_dom_1_area = calculate_area.actual_vs_perceived(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)
+        d2_dom_2_area = calculate_area.actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED)
 
         y_points = [d1_dom_area, d1_non_dom_area, d2_dom_1_area, d2_dom_2_area]
         all_area_lists.append(y_points)
@@ -194,13 +191,13 @@ def area_per_condition_plot(all_subject_data):
 
 def area_vs_r2_plot(all_subject_data):
     path = Path('./plots/group_plots/area_vs_r2')
-
-    r2_lists, area_lists = calculate_area.store_r2_and_area_lists(all_subject_data)
+    area_lists = calculate_area.group_areas(all_subject_data)
+    r2_lists = utils.store_r2_lists(all_subject_data)
 
     plt.figure(figsize=(10, 10))
     plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
     for subplot_index, (condition_r2_data, condition_area_data, condition_name) in enumerate(
-            zip(r2_lists, area_lists, condition_names), start=1):
+            zip(r2_lists, area_lists, constants.CONDITION_NAMES), start=1):
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
         plt.subplot(2, 2, subplot_index)
         x_vals = np.array([1, 26])
@@ -215,7 +212,7 @@ def area_vs_r2_plot(all_subject_data):
         plt.xlabel('Area (cm^2)')
         plt.ylabel('R^2 Value')
         plt.tight_layout()
-    plt.savefig('{}/{}'.format(path, 'area_vs_r2_plot_by_condition'), dpi=300)
+    plt.savefig(path, dpi=300)
     print(f'Saving area vs r2 plots')
     plt.close()
 

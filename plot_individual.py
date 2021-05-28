@@ -70,8 +70,8 @@ def areas_between_regression_and_reality(subject_ID, subject_data):
                  'k--')
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
-        x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
-        area = calculate_area.calculate_area(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+        x1, x2, y1, y2 = utils.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+        area = calculate_area.actual_vs_perceived(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
 
         text = str(f'area_difference = {area:4.2f}')
 
