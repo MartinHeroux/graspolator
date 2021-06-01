@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 import utils
 import plot_utils
-from utils import reg_line_endpoints
+from utils import calculate_regression_general, calculate_mean_ci
 
 
 def trapezium_area(a, b, h):
@@ -24,7 +24,6 @@ def between_conditions(subject_data):
     dom_vs_non_dom_area = _condition_pair_area(dom_vs_non_dom)
     dom_d1_vs_d2_area = _condition_pair_area(dom_d1_vs_d2)
     dom_d2_vs_d2_area = _condition_pair_area(dom_d2_vs_d2)
-    print('comparison areas calculated')
 
     return dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area
 
@@ -260,3 +259,23 @@ def difference_of_difference_areas(subject_data):
     hands_vs_days = dom_vs_non_dom_area - dom_d1_vs_d2_area
     day_vs_days = d2_dom_vs_dom_area - dom_d1_vs_d2_area
     return hands_vs_day, hands_vs_days, day_vs_days
+
+
+def reg_line_endpoints(actual, perceived):
+    intercept, slope = calculate_regression_general(actual, perceived)
+    x1 = 2
+    x2 = 10
+    y1 = slope * x1 + intercept
+    y2 = slope * x2 + intercept
+    return x1, x2, y1, y2
+
+
+def store_area_means_CIs_per_condition(all_subject_data):
+    area_lists = group_areas(all_subject_data)
+    d1_dom_mean, d1_dom_ci = utils.calculate_mean_ci(area_lists.d1_dom_area_list)
+    d1_non_dom_mean, d1_non_dom_ci = utils.calculate_mean_ci(area_lists.d1_non_dom_area_list)
+    d2_dom_1_mean, d2_dom_1_ci = utils.calculate_mean_ci(area_lists.d2_dom_1_area_list)
+    d2_dom_2_mean, d2_dom_2_ci = utils.calculate_mean_ci(area_lists.d2_dom_2_area_list)
+    mean_lists = [d1_dom_mean, d1_non_dom_mean, d2_dom_1_mean, d2_dom_2_mean]
+    ci_lists = [d1_dom_ci, d1_non_dom_ci, d2_dom_1_ci, d2_dom_2_ci]
+    return mean_lists, ci_lists

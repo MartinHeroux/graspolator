@@ -2,6 +2,7 @@ from pathlib import Path
 import utils
 import plot_individual
 import plot_group
+from collections import namedtuple
 
 CONSTANTS = utils.create_general_constants()
 
@@ -50,3 +51,8 @@ def group_areas_vs_r2_per_condition(all_subject_data):
 
 def group_r2_per_condition(all_subject_data):
     plot_group.r2_per_condition_plot(all_subject_data, CONSTANTS.SUBJECT_IDS)
+
+
+
+
+

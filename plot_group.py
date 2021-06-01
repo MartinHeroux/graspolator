@@ -35,13 +35,12 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
             plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
             intersect_x, intersect_y = calculate_area.point_of_intersection_with_reality(intercept, slope)
-            x1, x2, y1, y2 = utils.reg_line_endpoints(intercept, slope)
+            x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
             y_points.append(y1)
             y_points.append(y2)
             x_points.append(x1)
             x_points.append(x2)
             line_colour = plot_utils.subject_line_colour(intersect_x, y1)
-            print(f'{subject_ID} is {line_colour} on {condition_tuple.NAME}')
             plt.plot([x1, x2], [y1, y2], color=line_colour, linewidth=0.5)
         print(f'Reg line plotted subject {subject_ID}')
 
@@ -61,7 +60,7 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
         plt.plot([2, 10], [2, 10], 'k--', linewidth=1.5)
 
     plt.savefig('{}/{}'.format(path, 'regression_lines_per_condition.png'), dpi=300)
-    print(f'Saving whole group regression plots')
+    print('Group regression plots saved in {}/{}'.format(path, 'regression_lines_per_condition.png'))
     plt.close()
 
 
@@ -75,6 +74,7 @@ def consistency_between_conditions(all_subject_data):
     plt.ylabel('Area Difference Between Regression Lines (cm^2)')
     plt.xlabel('Condition Comparison')
     plt.grid()
+    y_points_list = []
     x_points_base = [1, 2, 3]
     plt.xticks(x_points_base, labels=['D1 dom - D1 non dom', 'D1 dom - D2 dom', 'D2 dom (a) - D2 dom (b)'])
 
@@ -87,10 +87,13 @@ def consistency_between_conditions(all_subject_data):
         colour_index = rd.uniform(0, 1)
         dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(subject_data)
         y_points = [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
+        y_points_list.append(y_points)
         plt.plot(x_points_jitter, y_points, color=color_map(colour_index), marker='o', alpha=0.4)
 
+    y_max, y_min = utils.max_min(y_points_list)
+    plt.ylim([y_min, (y_max+1)])
     plt.savefig('{}/group_consistency_plot.png'.format(path))
-    print(f'Saving group consistency plots')
+    print(f'Group consistency plots saved in {path}')
     plt.close()
 
 
@@ -131,7 +134,6 @@ def difference_of_differences(all_subject_data):
     area_diff_list = [hands_vs_day_list, hands_vs_days_list, day_vs_days_list]
     area_max, area_min = utils.max_min(area_diff_list)
     y_range = range(int(-area_max), int(area_max + 2))
-    print(y_range)
 
     for x_point, area_list in zip(x_points_base, area_diff_list):
         mean, ci = utils.calculate_mean_ci(area_list)
@@ -144,7 +146,7 @@ def difference_of_differences(all_subject_data):
     plt.text(0.08, 0.01, key_text, fontsize=10, bbox=dict(facecolor='none', edgecolor='red'),
              transform=plt.gcf().transFigure)
     plt.savefig(path, bbox_inches='tight')
-    print(f'Saving difference of area differences plots')
+    print(f'Difference of difference plot saved in {path}')
     plt.close()
 
 
@@ -180,7 +182,7 @@ def area_per_condition_plot(all_subject_data):
 
         plt.plot(x_points, y_points, color='darkgrey', alpha=0.5)
 
-    area_means, area_CIs = utils.store_area_means_CIs_per_condition(all_subject_data)
+    area_means, area_CIs = calculate_area.store_area_means_CIs_per_condition(all_subject_data)
     for mean, ci, x_point in zip(area_means, area_CIs, x_points):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
@@ -189,7 +191,7 @@ def area_per_condition_plot(all_subject_data):
     plt.legend(handles=legend_elements, loc='upper left')
     plt.grid()
     plt.savefig(path)
-    print(f'Saving difference of area difference by condition plots')
+    print(f'Area difference per condition plots saved in {path}')
     plt.close()
 
 
@@ -217,7 +219,7 @@ def area_vs_r2_plot(all_subject_data):
         plt.ylabel('R^2 Value')
         plt.tight_layout()
     plt.savefig(path, dpi=300)
-    print(f'Saving area vs r2 plots')
+    print(f'Area vs r2 plots saved in {path}')
     plt.close()
 
 
@@ -254,5 +256,5 @@ def r2_per_condition_plot(all_subject_data, subject_IDs):
                labels=['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"])
     plt.grid()
     plt.savefig(f'{path}/r2_summary.png')
-    print(f'Saving difference of area difference by condition plots')
+    print(f'R^2 per condition plot saved in {path}')
     plt.close()

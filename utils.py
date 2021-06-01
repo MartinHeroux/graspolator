@@ -9,7 +9,6 @@ from scipy.stats import sem, t
 from collections import namedtuple
 
 import plot_utils
-import calculate_area
 
 
 def calculate_regression(block):
@@ -90,17 +89,6 @@ def store_r2_lists(all_subject_data):
                                   d2_dom_1_r2_list=d2_dom_1_r2s,
                                   d2_dom_2_r2_list=d2_dom_2_r2s)
     return r2_lists
-
-
-def store_area_means_CIs_per_condition(all_subject_data):
-    area_lists = calculate_area.group_areas(all_subject_data)
-    d1_dom_mean, d1_dom_ci = calculate_mean_ci(area_lists.d1_dom_area_list)
-    d1_non_dom_mean, d1_non_dom_ci = calculate_mean_ci(area_lists.d1_non_dom_area_list)
-    d2_dom_1_mean, d2_dom_1_ci = calculate_mean_ci(area_lists.d2_dom_1_area_list)
-    d2_dom_2_mean, d2_dom_2_ci = calculate_mean_ci(area_lists.d2_dom_2_area_list)
-    mean_lists = [d1_dom_mean, d1_non_dom_mean, d2_dom_1_mean, d2_dom_2_mean]
-    ci_lists = [d1_dom_ci, d1_non_dom_ci, d2_dom_1_ci, d2_dom_2_ci]
-    return mean_lists, ci_lists
 
 
 def create_general_constants():
@@ -199,7 +187,6 @@ def create_plot_subdirectories():
     plot_subdirectories = ['group_plots',
                            'individual_plots',
                            'individual_plots/subject_regression_plots',
-                           'individual_plots/consistency_plots',
                            'individual_plots/area_plots',
                            'individual_plots/area_plots/regression_vs_reality',
                            'individual_plots/area_plots/between_condition_comparison']
@@ -210,37 +197,4 @@ def create_plot_subdirectories():
             os.makedirs(path)
 
 
-def reg_line_endpoints(actual, perceived):
-    intercept, slope = calculate_regression_general(actual, perceived)
-    x1 = 2
-    x2 = 10
-    y1 = slope * x1 + intercept
-    y2 = slope * x2 + intercept
-    return x1, x2, y1, y2
 
-
-def plot_list_tuple():
-    plotting = namedtuple('PLOTS', 'blinded_scatterplots '
-                                   'individual_regressions '
-                                   'regression_lines_per_condition '
-                                   'individual_areas_to_reality '
-                                   'individual_areas_between_conditions '
-                                   'group_areas_between_conditions '
-                                   'group_areas_difference_of_differences '
-                                   'group_areas_per_conditions '
-                                   'group_areas_vs_r2_per_condition '
-                                   'group_r2_per_condition ')
-    plotting(blinded_scatterplots=True,
-             individual_regressions=True,
-             regression_lines_per_condition=True,
-             individual_areas_to_reality=True,
-             individual_areas_between_conditions=True,
-             group_areas_between_conditions=True,
-             group_areas_difference_of_differences=True,
-             group_areas_per_conditions=True,
-             group_areas_vs_r2_per_condition=True,
-             group_r2_per_condition=True)
-    return plotting
-
-
-plots_to_plot = plot_list_tuple()

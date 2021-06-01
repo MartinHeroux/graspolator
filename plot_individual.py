@@ -11,7 +11,7 @@ general_constants = utils.create_general_constants()
 plot_constants = plot_utils.create_plot_constants()
 SMALLEST_WIDTH = 2
 LARGEST_WIDTH = 10
-YLIM = [0, 14]
+YLIM = [0, 15]
 
 
 def scatterplots_and_reg_lines(subject_ID, subject_data):
@@ -40,15 +40,20 @@ def scatterplots_and_reg_lines(subject_ID, subject_data):
         x2 = LARGEST_WIDTH
         y1 = slope * x1 + intercept
         y2 = slope * x2 + intercept
-        plt.plot([x1, y1], [x2, y2])
+        if y2 < 15:
+            y_max = 15
+        else:
+            y_max = y2
+        plt.plot([x1, x2], [y1, y2], color='b')
         plt.text(2, 12, f'{slope:4.2f}*x + {intercept:4.2f}', fontsize=12)
-        plt.xticks(list(range(x1, x2)))
+        plt.xticks(list(range(x1, (x2 + 1))))
         plt.xlim([x1 - 1, x2 + 1])
         plt.yticks(plot_constants.PERCEIVED_WIDTH_RANGE)
-        plt.ylim(YLIM)
+        plt.ylim([0, y_max])
         plt.title(condition_tuple.NAME, loc='right')
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
+        plt.grid()
     path_to_save = path / f'reg_plots_{subject_ID}.png'
     plt.savefig(path_to_save, dpi=300)
     print(f'Saving scatter plots and regressions for {subject_ID}')
@@ -70,7 +75,11 @@ def areas_between_regression_and_reality(subject_ID, subject_data):
                  'k--')
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
-        x1, x2, y1, y2 = utils.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+        x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+        if y2 < 15:
+            y_max = 14
+        else:
+            y_max = y2
         area = calculate_area.actual_vs_perceived(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
 
         text = str(f'area_difference = {area:4.2f}')
@@ -83,16 +92,17 @@ def areas_between_regression_and_reality(subject_ID, subject_data):
                          color='C0', alpha=0.3, interpolate=True)
 
         plt.text(2, 12, f'{slope:4.2f}*x + {intercept:4.2f}', fontsize=12)
-        plt.text(2, 9, text, fontsize=10)
+        plt.text(2, 10, text, fontsize=10)
 
         plt.xticks(plot_constants.ACTUAL_WIDTH_RANGE)
-        plt.xlim([plot_constants.X_MIN, (plot_constants.X_MAX + 1)])
-        plt.yticks(plot_constants.PERCEIVED_WIDTH_RANGE)
-        plt.ylim([plot_constants.Y_MIN, plot_constants.Y_MAX])
+        plt.xlim([(plot_constants.SMALLEST_WIDTH - 1), (plot_constants.LARGEST_WIDTH + 1)])
+        plt.yticks(list(range(int(y1 - 1), int(y_max + 1))))
+        plt.ylim([(y1 - 1), (y_max + 1)])
+        plt.grid()
         plt.title(condition_tuple.NAME, loc='right')
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
-
+    print(f'area between regression and reality saved for {subject_ID} in {path}')
     plt.savefig(path / f'{subject_ID}_areas.png')
     plt.close()
 
@@ -106,12 +116,16 @@ def area_between_conditions_plot(subject_ID, subject_data):
 
     plt.figure(figsize=(15, 7))
     plt.suptitle(str(subject_ID + ' Consistency Plots'))
+    y_points = []
+    y_text_points = []
 
     for data_pair_tuple, data_pair_area in zip(data_pairs_tuple_list, data_pairs_area_list):
-        print(data_pair_tuple.title)
         plt.subplot(1, 3, data_pair_tuple.subplot_index)
 
         x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuple)
+        y_points.append(y1_y2_b)
+        y_points.append(y1_y2_a)
+        y_text_points.append(int(y1_y2_a[1]))
 
         plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuple.colour_1, label=data_pair_tuple.label_1)
         plt.plot(x1_x2_b, y1_y2_b, color=data_pair_tuple.colour_2, label=data_pair_tuple.label_2)
@@ -124,13 +138,22 @@ def area_between_conditions_plot(subject_ID, subject_data):
                          color='gray', alpha=0.3, interpolate=True)
 
         plt.xticks(plot_constants.ACTUAL_WIDTH_RANGE)
-        plt.xlim([plot_constants.X_MIN, (plot_constants.X_MAX + 1)])
-        plt.yticks(plot_constants.PERCEIVED_WIDTH_RANGE)
-        plt.ylim([plot_constants.Y_MIN, plot_constants.Y_MAX])
-        plt.text(2, 12, f'Area Difference = {data_pair_area:4.2f}', fontsize=12)
+        plt.xlim([(plot_constants.SMALLEST_WIDTH - 1), (plot_constants.LARGEST_WIDTH + 1)])
         plt.title(data_pair_tuple.title, loc='right')
         plt.legend(handles=[data_pair_tuple.patch_1, data_pair_tuple.patch_2], loc='upper left')
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
+        plt.grid()
+
+    y_max, y_min = utils.max_min(y_points)
+    y_text_point = max(y_text_points)
+
+    for data_pair_tuple, data_pair_area in zip(data_pairs_tuple_list, data_pairs_area_list):
+        plt.subplot(1, 3, data_pair_tuple.subplot_index)
+        plt.ylim([y_min, (y_max + 2)])
+        plt.yticks(range(int(y_min), int((y_max + 2))))
+        plt.text(2, (y_text_point-1), f'Area Difference = {data_pair_area:4.2f}', fontsize=12)
+
+    print(f'area between condition plot saved for {subject_ID} in {path}')
     plt.savefig('{}/{}'.format(path, subject_ID))
     plt.close()
