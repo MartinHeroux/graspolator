@@ -4,9 +4,6 @@ from pathlib import Path
 
 import utils_lovisa
 
-data_folder = Path('./data/exp2')
-
-parsed_group_data = process_blocked_data(data_folder)
 
 def process_blocked_data(data_folder):
     all_subject_blocked_data = _store_raw_blocked_data(data_folder)
