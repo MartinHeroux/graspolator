@@ -36,4 +36,5 @@ def condition_plot_inputs(subject_data):
                                     PERCEIVED=subject_data.WIDTH_LINE.PERCEIVED, PLOT_INDEX=2)
     width_width_inputs = plot_inputs(NAME='Present Width Pick Width', ACTUAL=subject_data.WIDTH_WIDTH.ACTUAL,
                                     PERCEIVED=subject_data.WIDTH_WIDTH.PERCEIVED, PLOT_INDEX=3)
-    return line_width_inputs, width_line_inputs, width_width_inputs
+    tuples = line_width_inputs, width_line_inputs, width_width_inputs
+    return tuples

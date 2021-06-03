@@ -14,16 +14,17 @@ LARGEST_WIDTH = 10
 YLIM = [0, 15]
 
 
-def scatterplots_and_reg_lines(subject_ID, subject_data):
-    path = Path('./plots/individual_plots/subject_regression_plots')
-    d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
-        subject_data)
-    data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
+def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
 
-    plt.figure(figsize=(10, 10))
+    plot = 'scatterplot_regression'
+    path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
+    data_list = utils.create_data_tuples(experiment, subject_data)
+    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions(experiment)
+
+    plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Scatterplot + Reg Line'))
     for condition_tuple in data_list:
-        plt.subplot(2, 2, condition_tuple.PLOT_INDEX)
+        plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
         plt.plot([plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  [plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  'k--')
@@ -36,8 +37,8 @@ def scatterplots_and_reg_lines(subject_ID, subject_data):
                                                               condition_tuple.PERCEIVED)
 
         # Creating points to plot regression line [x1, y1][x2, y2]
-        x1 = SMALLEST_WIDTH
-        x2 = LARGEST_WIDTH
+        x1 = x_lims[0]
+        x2 = x_lims[1]
         y1 = slope * x1 + intercept
         y2 = slope * x2 + intercept
         if y2 < 15:
@@ -46,7 +47,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data):
             y_max = y2
         plt.plot([x1, x2], [y1, y2], color='b')
         plt.text(2, 12, f'{slope:4.2f}*x + {intercept:4.2f}', fontsize=12)
-        plt.xticks(list(range(x1, (x2 + 1))))
+        plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
         plt.xlim([x1 - 1, x2 + 1])
         plt.yticks(plot_constants.PERCEIVED_WIDTH_RANGE)
         plt.ylim([0, y_max])
@@ -54,8 +55,8 @@ def scatterplots_and_reg_lines(subject_ID, subject_data):
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
         plt.grid()
-    path_to_save = path / f'reg_plots_{subject_ID}.png'
-    plt.savefig(path_to_save, dpi=300)
+
+    plt.savefig(path, dpi=300, bbox_inches = 'tight')
     print(f'Saving scatter plots and regressions for {subject_ID}')
     plt.close()
 

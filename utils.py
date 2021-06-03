@@ -9,6 +9,7 @@ from scipy.stats import sem, t
 from collections import namedtuple
 
 import plot_utils
+import utils_lovisa
 
 
 def calculate_regression(block):
@@ -196,5 +197,29 @@ def create_plot_subdirectories():
         if not os.path.exists(path):
             os.makedirs(path)
 
+def create_data_tuples(experiment, subject_data):
+    if experiment == 'exp1':
+        plot_inputs = plot_utils.store_index_condition_data_tuple(subject_data)
+    else:
+        plot_inputs = utils_lovisa.condition_plot_inputs(subject_data)
+    return plot_inputs
 
+def create_individual_plot_save_path(experiment, plot, subject_ID):
+    path = Path(f'./plots/{experiment}/individual_plots/{plot}')
+    if not os.path.exists(path):
+        os.makedirs(path)
+    savepath = Path(f'./plots/{experiment}/individual_plots/{plot}/{plot}_{subject_ID}.png')
+    return savepath
 
+def subplot_dimensions(experiment):
+    if experiment == 'exp1':
+        subplot_width = 2
+        subplot_length = 2
+        x_range = [2, 10]
+        fig_size = [10,10]
+    else:
+        subplot_width = 1
+        subplot_length = 3
+        x_range = [3, 9]
+        fig_size = [5, 15]
+    return subplot_width, subplot_length, x_range, fig_size

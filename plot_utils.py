@@ -6,7 +6,7 @@ def create_plot_constants():
     plot_constants = namedtuple('plot_constants', 'PLOT_SUBDIRECTORIES ACTUAL_WIDTH_RANGE PERCEIVED_WIDTH_RANGE ALPHA '
                                                   'SMALLEST_WIDTH LARGEST_WIDTH Y_MIN Y_MAX REALITY_LINE_MIN '
                                                   'REALITY_LINE_MAX '
-                                                  'MINIMISER_PATCH MAXIMISER_PATCH CROSSER_PATCH')
+                                                  'MINIMISER_PATCH MAXIMISER_PATCH CROSSER_PATCH WIDE_SIZE SQUARE_SIZE')
     return plot_constants(PLOT_SUBDIRECTORIES=['group_plots',
                                                'regression_plots',
                                                'consistency_plots',
@@ -18,7 +18,8 @@ def create_plot_constants():
                           REALITY_LINE_MAX=14,
                           MINIMISER_PATCH=mpatches.Patch(color='firebrick', label='Minimiser'),
                           MAXIMISER_PATCH=mpatches.Patch(color='green', label='Maximiser'),
-                          CROSSER_PATCH=mpatches.Patch(color='royalblue', label='Crosser'))
+                          CROSSER_PATCH=mpatches.Patch(color='royalblue', label='Crosser'),
+                          WIDE_SIZE= [15, 5], SQUARE_SIZE=[10, 10])
 
 
 def store_index_condition_data_tuple(subject_data):
@@ -35,7 +36,8 @@ def store_index_condition_data_tuple(subject_data):
     d2_dom_2_tuple = index_name_data(PLOT_INDEX=4, DATA_INDEX=3, NAME='d2_dominant_2',
                                      ACTUAL=subject_data.day2_dominant_2.actual_widths,
                                      PERCEIVED=subject_data.day2_dominant_2.perceived_widths)
-    return d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
+    tuples = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
+    return tuples
 
 
 def condition_pair_tuple(subject_data):
