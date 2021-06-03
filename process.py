@@ -34,7 +34,7 @@ def _create_plot_dispatcher():
                                        'group_areas_between_conditions group_areas_difference_of_differences '
                                        'group_areas_per_conditions group_areas_vs_r2_per_condition '
                                        'group_r2_per_condition')
-
+    # change 'run' to 'skip' to alter which plots are made
     A = plot_dispatch._make([plot.individual_regressions, 'run'])
     B = plot_dispatch._make([plot.regression_lines_per_condition, 'run'])
     C = plot_dispatch._make([plot.individual_areas_to_reality, 'run'])
