@@ -218,7 +218,14 @@ def create_individual_plot_save_path(experiment, plot, subject_ID):
     savepath = Path(f'./plots/{experiment}/individual_plots/{plot}/{plot}_{subject_ID}.png')
     return savepath
 
-def subplot_dimensions_regressions(experiment):
+def create_group_plot_save_path(experiment, plot):
+    path = Path(f'./plots/{experiment}/group_plots/')
+    if not os.path.exists(path):
+        os.makedirs(path)
+    savepath = Path(f'./plots/{experiment}/group_plots/{plot}.png')
+    return savepath
+
+def plot_constants_regressions_ind(experiment):
     if experiment == 'exp1':
         subplot_width = 2
         subplot_length = 2
@@ -230,6 +237,7 @@ def subplot_dimensions_regressions(experiment):
         x_range = [3, 9]
         fig_size = [15, 5]
     return subplot_width, subplot_length, x_range, fig_size
+
 
 def subplot_dimensions_area_differences(experiment):
     if experiment == 'exp1':

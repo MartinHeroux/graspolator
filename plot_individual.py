@@ -20,7 +20,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
     plot = 'scatterplot_regression'
     path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
-    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions_regressions(experiment)
+    subplot_width, subplot_length, x_lims, fig_size = utils.plot_constants_regressions_ind(experiment)
 
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Scatterplot + Reg Line'))
@@ -66,7 +66,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
     plot = 'area_between_reg_and_reality'
     path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
-    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions_regressions(experiment)
+    subplot_width, subplot_length, x_lims, fig_size = utils.plot_constants_regressions_ind(experiment)
 
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Area Plots (reality vs. regression lines)'))

@@ -14,54 +14,61 @@ constants = utils.create_general_constants()
 plot_constants = plot_utils.create_plot_constants()
 
 
-def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
-    path = Path('./plots/group_plots')
+def plot_subject_reg_lines_by_category(experiment, subjects, all_subject_data):
+    plot = 'reg_lines_by_group'
+    path = utils.create_group_plot_save_path(experiment, plot)
     legend_handles = [plot_constants.MINIMISER_PATCH,
                       plot_constants.MAXIMISER_PATCH,
                       plot_constants.CROSSER_PATCH]
     y_points = []
     x_points = []
-    subplot_indices = [1, 2, 3, 4]
+
+    if experiment == 'exp1':
+        subplot_indices = [1, 2, 3, 4]
+        subplot_width = 1
+        subplot_length = 4
+    else:
+        subplot_indices = [1, 2, 3]
+        subplot_width = 1
+        subplot_length = 3
 
     plt.figure(figsize=(15, 5))
     plt.suptitle(str('Participant Regression Lines'))
 
-    for subject_ID, subject_data in zip(subject_IDs, all_subject_data):
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
-            subject_data)
-        data_list = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
+    for subject_ID, subject_data in zip(subjects, all_subject_data):
+        data_list = utils.create_data_tuples(experiment, subject_data)
         for condition_tuple in data_list:
-            plt.subplot(1, 4, condition_tuple.PLOT_INDEX)
+            plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
             plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
             intersect_x, intersect_y = calculate_area.point_of_intersection_with_reality(intercept, slope)
             x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
-                                                               'exp1')
+                                                               experiment)
             y_points.append(y1)
             y_points.append(y2)
             x_points.append(x1)
             x_points.append(x2)
-            line_colour = plot_utils.subject_line_colour(intersect_x, y1)
+            line_colour = plot_utils.subject_line_colour(intersect_x, y1, experiment)
             plt.plot([x1, x2], [y1, y2], color=line_colour, linewidth=0.5)
-        print(f'Reg line plotted subject {subject_ID}')
+            print(f'Reg line plotted subject {subject_ID}')
 
-    y_min, y_max = min(y_points) - 1, max(y_points) + 1
-    x_min, x_max = min(x_points) - 1, max(x_points) + 1
+        y_min, y_max = min(y_points) - 1, max(y_points) + 1
+        x_min, x_max = min(x_points) - 1, max(x_points) + 1
 
-    for subplot in subplot_indices:
-        plt.subplot(1, 4, subplot)
-        plt.xticks(list(range(x_min, x_max)))
-        plt.xlim([x_min, x_max])
-        plt.yticks(list(range(int(y_min), int(y_max))))
-        plt.ylim([y_min, y_max])
-        plt.grid()
-        plt.ylabel('Perceived width (cm)')
-        plt.xlabel('Actual width (cm)')
-        plt.legend(handles=legend_handles, loc='upper left')
-        plt.plot([2, 10], [2, 10], 'k--', linewidth=1.5)
+        for subplot in subplot_indices:
+            plt.subplot(subplot_width, subplot_length, subplot)
+            plt.xticks(list(range(x_min, x_max)))
+            plt.xlim([x_min, x_max])
+            plt.yticks(list(range(int(y_min), int(y_max))))
+            plt.ylim([y_min, y_max])
+            plt.ylabel('Perceived width (cm)')
+            plt.xlabel('Actual width (cm)')
+            plt.legend(handles=legend_handles, loc='upper left')
+            plt.plot([2, 10], [2, 10], 'k--', linewidth=1.5)
+            plt.grid()
 
-    plt.savefig('{}/{}'.format(path, 'regression_lines_per_condition.png'), dpi=300)
-    print('Group regression plots saved in {}/{}'.format(path, 'regression_lines_per_condition.png'))
+    plt.savefig(path, dpi=300)
+    print(f'Group regression plots saved in {path}')
     plt.close()
 
 
@@ -93,7 +100,7 @@ def consistency_between_conditions(experiment, all_subject_data):
         plt.plot(x_points_jitter, y_points, color=color_map(colour_index), marker='o', alpha=0.4)
 
     y_max, y_min = utils.max_min(y_points_list)
-    plt.ylim([y_min, (y_max+1)])
+    plt.ylim([y_min, (y_max + 1)])
     plt.savefig('{}/group_consistency_plot.png'.format(path))
     print(f'Group consistency plots saved in {path}')
     plt.close()

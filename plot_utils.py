@@ -88,10 +88,17 @@ def _condition_pair_tuple_exp2(subject_data):
     return linefirst_vs_widthfirst
 
 
-def subject_line_colour(intersection_x_value, y_when_x_equals_2):
-    if 2 <= intersection_x_value <= 10:
+def subject_line_colour(intersection_x_value, y_when_x_equals_2, experiment):
+    if experiment == 'exp1':
+        x1 = 2
+        x2 = 10
+    elif experiment == 'exp2':
+        x1 = 3
+        x2 = 9
+
+    if x1 <= intersection_x_value <= x2:
         line_colour = 'royalblue'
-    elif y_when_x_equals_2 < 2:
+    elif y_when_x_equals_2 < x1:
         line_colour = 'firebrick'
     else:
         line_colour = 'green'
