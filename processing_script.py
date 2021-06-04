@@ -1,20 +1,13 @@
-from pathlib import Path
 import process
-import data_lovisa
-import utils_lovisa
 
-#---------------KATHY------------------------------#
+# change string below to match experiment to process
+# either 'exp1' or 'exp2' (Kathy and Lovisa respectively)
+experiment = 'exp2'
 
-all_subject_data_exp1 = process.import_and_parse_data()
+all_subject_data, subjects = process.return_data_and_subjects(experiment)
 
-process.plot_by_dispatcher_key(all_subject_data_exp1)
+process.plot_by_dispatcher_key(all_subject_data, experiment, subjects)
 
-#--------------LOVISA-------------------------------#
 
-all_subject_data_lovisa = data_lovisa.process_blocked_data()
-
-subject_data = all_subject_data_lovisa[0]
 subject_ID = 'sub01'
-
-experiment = 'exp1'
-subjects = utils_lovisa.get_directory_list(Path('./data/exp2'))
+subject_data = all_subject_data[1]

@@ -183,6 +183,13 @@ def get_filename_list(directory):
             filenames.append(filename)
     return filenames
 
+def get_directory_list(directory):
+    directories = []
+    for root, dirs, files in os.walk(directory):
+        for directory in dirs:
+            directories.append(directory)
+    return directories
+
 
 def create_plot_subdirectories():
     plot_subdirectories = ['group_plots',
@@ -221,5 +228,7 @@ def subplot_dimensions(experiment):
         subplot_width = 1
         subplot_length = 3
         x_range = [3, 9]
-        fig_size = [5, 15]
+        fig_size = [15, 5]
     return subplot_width, subplot_length, x_range, fig_size
+
+

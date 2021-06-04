@@ -35,7 +35,8 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
             plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
             intersect_x, intersect_y = calculate_area.point_of_intersection_with_reality(intercept, slope)
-            x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+            x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
+                                                               'exp1')
             y_points.append(y1)
             y_points.append(y2)
             x_points.append(x1)

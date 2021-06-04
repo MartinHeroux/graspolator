@@ -4,6 +4,7 @@ from collections import namedtuple
 import utils
 import data
 import plot
+import data_lovisa
 
 DATA_FOLDER_EXP1 = Path('./data/exp1')
 DATA_FOLDER_EXP2 = Path('./data/exp2')
@@ -16,13 +17,13 @@ def import_and_parse_data():
     all_subject_data, widest_lines = data.read_exp1(DATA_FOLDER_EXP1)
     return all_subject_data
 
-def plot_by_dispatcher_key(all_subject_data):
+def plot_by_dispatcher_key(all_subject_data, experiment, subjects):
     dispatcher = _create_plot_dispatcher()
 
     for key in dispatcher:
         if key.COMMAND == 'run':
             print(f'\n{key.PLOT} initiated')
-            key.PLOT(all_subject_data)
+            key.PLOT(all_subject_data, experiment, subjects)
         else:
             print(f'\n{key.PLOT} skipped')
     print('\n All done :)')
@@ -48,4 +49,17 @@ def _create_plot_dispatcher():
     plot_summary = plot_summary._make([A, B, C, D, E, F, G, H, I])
     return plot_summary
 
+def return_data_and_subjects(experiment):
+    if experiment == 'exp1':
+        all_subject_data = import_and_parse_data()
+        subjects = utils.get_directory_list(Path('./data/exp1'))
 
+    elif experiment == 'exp2':
+        all_subject_data = data_lovisa.process_blocked_data()
+        subjects = utils.get_directory_list(Path('./data/exp2'))
+
+    else: print('no experiment name defined')
+
+    return all_subject_data, subjects
+
+all_subject_data, subjects = return_data_and_subjects('exp2')

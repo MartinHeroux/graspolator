@@ -89,7 +89,7 @@ def _reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b):
 def actual_vs_perceived(actual, perceived):
     intercept, slope = utils.calculate_regression_general(actual, perceived)
     x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
-    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(actual, perceived)
+    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(actual, perceived, 'exp1')
     group = _subject_group(x_intersect, y_at_x2)
 
     if group == 'crosser':
@@ -179,8 +179,8 @@ def _maximiser_area_calc(y_at_x2, y_at_x10):
 
 
 def condition_pair_endpoints(condition_pair_tuple):
-    x1_a, x2_a, y1_a, y2_a = reg_line_endpoints(condition_pair_tuple.data_1[0], condition_pair_tuple.data_1[1])
-    x1_b, x2_b, y1_b, y2_b = reg_line_endpoints(condition_pair_tuple.data_2[0], condition_pair_tuple.data_2[1])
+    x1_a, x2_a, y1_a, y2_a = reg_line_endpoints(condition_pair_tuple.data_1[0], condition_pair_tuple.data_1[1], 'exp1')
+    x1_b, x2_b, y1_b, y2_b = reg_line_endpoints(condition_pair_tuple.data_2[0], condition_pair_tuple.data_2[1], 'exp1')
     x1_x2_a = [x1_a, x2_a]
     x1_x2_b = [x1_b, x2_b]
     y1_y2_a = [y1_a, y2_a]
@@ -261,10 +261,15 @@ def difference_of_difference_areas(subject_data):
     return hands_vs_day, hands_vs_days, day_vs_days
 
 
-def reg_line_endpoints(actual, perceived):
+def reg_line_endpoints(actual, perceived, experiment):
     intercept, slope = calculate_regression_general(actual, perceived)
-    x1 = 2
-    x2 = 10
+    if experiment == 'exp1':
+        x1 = 2
+        x2 = 10
+    elif experiment == 'exp2':
+        x1 = 3
+        x2 = 9
+    else: print('experiment not defined')
     y1 = slope * x1 + intercept
     y2 = slope * x2 + intercept
     return x1, x2, y1, y2

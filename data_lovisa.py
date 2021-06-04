@@ -2,6 +2,7 @@ from collections import namedtuple
 from typing import NamedTuple
 from pathlib import Path
 
+import utils
 import utils_lovisa
 
 
@@ -78,7 +79,7 @@ def _parse_kathy_block(kathy_experiment_block, subject_ID):
 
 def _store_raw_blocked_data(data_folder):
     all_subject_blocked_data = []
-    subjects = utils_lovisa.get_directory_list(Path('./data/exp2'))
+    subjects = utils.get_directory_list(Path('./data/exp2'))
     for subject in subjects:
         all_subject_blocked_data.append(_read_block_exp1(data_folder, subject))
     return all_subject_blocked_data, subjects
