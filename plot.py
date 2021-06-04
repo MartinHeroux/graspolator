@@ -32,7 +32,7 @@ def individual_areas_to_reality(all_subject_data, experiment, subjects):
     for subject_ID, current_subject_data in zip(subjects, all_subject_data):
         plot_individual.areas_between_regression_and_reality(subject_ID, current_subject_data, experiment)
 
-# done for exp2, exp 1 needs fix
+# done
 def individual_areas_between_conditions(all_subject_data, experiment, subjects):
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         plot_individual.area_between_conditions_plot(subject_ID, subject_data, experiment)

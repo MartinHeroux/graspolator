@@ -124,54 +124,51 @@ def area_between_conditions_plot(subject_ID, subject_data, experiment):
     if experiment == 'exp1':
         plt.figure(figsize=(15, 5))
         plt.suptitle(str(subject_ID + ' Consistency Plot'))
+
         for data_pair_tuple, data_pair_area in zip(data_pair_tuples, data_pair_areas):
-            _plot_between_conditions_exp1(data_pair_tuple, data_pair_area, experiment, x_lims,
-                                          subplot_width, subplot_length, path, subject_ID)
+            y_points = []
+
+            area_patch = mpatches.Patch(color='gray', alpha=0.3, label=f'Area = {data_pair_area:4.2f}')
+
+            plt.subplot(subplot_width, subplot_length, data_pair_tuple.subplot_index)
+
+            x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuple, experiment)
+            y_points.append(y1_y2_b)
+            y_points.append(y1_y2_a)
+
+            plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuple.colour_1, label=data_pair_tuple.label_1)
+            plt.plot(x1_x2_b, y1_y2_b, color=data_pair_tuple.colour_2, label=data_pair_tuple.label_2)
+
+            x_colour_points = np.array(x_lims)
+            y_points_a = np.array(y1_y2_a)
+            y_points_b = np.array(y1_y2_b)
+
+            plt.fill_between(x_colour_points, y_points_a, y_points_b,
+                             color='gray', alpha=0.3, interpolate=True)
+
+            plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
+            plt.xlim([x_lims[0] - 1, x_lims[1] + 1])
+            plt.title(data_pair_tuple.title, loc='right')
+            plt.legend(handles=[data_pair_tuple.patch_1, data_pair_tuple.patch_2, area_patch], loc='upper left')
+            plt.ylabel('Perceived width (cm)')
+            plt.xlabel('Actual width (cm)')
+            plt.grid()
+
+            y_max, y_min = utils.max_min(y_points)
+
+            plt.ylim([y_min, (y_max + 2)])
+            plt.yticks(range(int(y_min), int((y_max + 2))))
+
+        plt.savefig(path)
+        print(f'area between condition plot saved for {subject_ID} in {path}')
+        plt.close()
+
     elif experiment == 'exp2':
         plt.figure(figsize=(5, 7))
         _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment, x_lims,
                                       subplot_width, subplot_length, path, subject_ID)
 
 
-
-def _plot_between_conditions_exp1(data_pair_tuple, data_pairs_area, experiment, x_lims,
-                                  subplot_width, subplot_length, path, subject_ID):
-    y_points = []
-
-    area_patch = mpatches.Patch(color='gray', alpha=0.3, label=f'Area = {data_pairs_area:4.2f}')
-
-    plt.subplot(subplot_width, subplot_length, data_pair_tuple.subplot_index)
-
-    x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuple, experiment)
-    y_points.append(y1_y2_b)
-    y_points.append(y1_y2_a)
-
-    plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuple.colour_1, label=data_pair_tuple.label_1)
-    plt.plot(x1_x2_b, y1_y2_b, color=data_pair_tuple.colour_2, label=data_pair_tuple.label_2)
-
-    x_colour_points = np.array(x_lims)
-    y_points_a = np.array(y1_y2_a)
-    y_points_b = np.array(y1_y2_b)
-
-    plt.fill_between(x_colour_points, y_points_a, y_points_b,
-                     color='gray', alpha=0.3, interpolate=True)
-
-    plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
-    plt.xlim([x_lims[0] - 1, x_lims[1] + 1])
-    plt.title(data_pair_tuple.title, loc='right')
-    plt.legend(handles=[data_pair_tuple.patch_1, data_pair_tuple.patch_2, area_patch], loc='upper left')
-    plt.ylabel('Perceived width (cm)')
-    plt.xlabel('Actual width (cm)')
-    plt.grid()
-
-    y_max, y_min = utils.max_min(y_points)
-
-    plt.ylim([y_min, (y_max + 2)])
-    plt.yticks(range(int(y_min), int((y_max + 2))))
-
-    print(f'area between condition plot saved for {subject_ID} in {path}')
-    plt.savefig(path)
-    plt.close()
 
 
 def _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment, x_lims,
