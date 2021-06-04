@@ -13,8 +13,8 @@ import utils_lovisa
 
 
 def calculate_regression(block):
-    x = block.actual_widths
-    y = block.perceived_widths
+    x = block.ACTUAL
+    y = block.PERCEIVED
     x = sm.add_constant(x)
     model = sm.OLS(y, x).fit()
     intercept, slope = model.params
@@ -218,7 +218,7 @@ def create_individual_plot_save_path(experiment, plot, subject_ID):
     savepath = Path(f'./plots/{experiment}/individual_plots/{plot}/{plot}_{subject_ID}.png')
     return savepath
 
-def subplot_dimensions(experiment):
+def subplot_dimensions_regressions(experiment):
     if experiment == 'exp1':
         subplot_width = 2
         subplot_length = 2
@@ -231,4 +231,15 @@ def subplot_dimensions(experiment):
         fig_size = [15, 5]
     return subplot_width, subplot_length, x_range, fig_size
 
-
+def subplot_dimensions_area_differences(experiment):
+    if experiment == 'exp1':
+        subplot_width = 1
+        subplot_length = 3
+        x_range = [2, 10]
+        fig_size = (15, 7)
+    else:
+        subplot_width = 1
+        subplot_length = 1
+        x_range = [3, 9]
+        fig_size = [15, 5]
+    return subplot_width, subplot_length, x_range, fig_size

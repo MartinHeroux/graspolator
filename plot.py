@@ -18,7 +18,7 @@ def blinded_scatterplots(all_subject_data):
         plot_group.random_plot(plot, subject_ID, current_subject_data)
     utils.merge_pdfs(Path('./randomised_plots_no_ID'))
 
-
+# done
 def individual_regressions(all_subject_data, experiment, subjects):
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         plot_individual.scatterplots_and_reg_lines(subject_ID, subject_data, experiment)
@@ -27,12 +27,12 @@ def individual_regressions(all_subject_data, experiment, subjects):
 def regression_lines_per_condition(all_subject_data):
     plot_group.plot_subject_reg_lines_by_category(CONSTANTS.SUBJECT_IDS, all_subject_data)
 
-
+# done
 def individual_areas_to_reality(all_subject_data, experiment, subjects):
     for subject_ID, current_subject_data in zip(subjects, all_subject_data):
         plot_individual.areas_between_regression_and_reality(subject_ID, current_subject_data, experiment)
 
-
+# done for exp2, exp 1 needs fix
 def individual_areas_between_conditions(all_subject_data, experiment, subjects):
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         plot_individual.area_between_conditions_plot(subject_ID, subject_data, experiment)

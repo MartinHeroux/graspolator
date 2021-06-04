@@ -65,7 +65,7 @@ def plot_subject_reg_lines_by_category(subject_IDs, all_subject_data):
     plt.close()
 
 
-def consistency_between_conditions(all_subject_data):
+def consistency_between_conditions(experiment, all_subject_data):
     path = Path('./plots/group_plots/')
     color_map = cm.get_cmap('copper', 12)
     # TODO decide on method of colouring lines in figure
@@ -86,7 +86,8 @@ def consistency_between_conditions(all_subject_data):
         else:
             x_points_jitter = np.array(x_points_base) - np.array(jitter_values)
         colour_index = rd.uniform(0, 1)
-        dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(subject_data)
+        dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(experiment,
+                                                                                                      subject_data),
         y_points = [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
         y_points_list.append(y_points)
         plt.plot(x_points_jitter, y_points, color=color_map(colour_index), marker='o', alpha=0.4)
@@ -173,17 +174,18 @@ def area_per_condition_plot(all_subject_data):
         d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
             subject_data)
 
-        d1_dom_area = calculate_area.actual_vs_perceived(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)
-        d1_non_dom_area = calculate_area.actual_vs_perceived(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)
-        d2_dom_1_area = calculate_area.actual_vs_perceived(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)
-        d2_dom_2_area = calculate_area.actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED)
+        d1_dom_area = calculate_area.actual_vs_perceived(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED, experiment)
+        d1_non_dom_area = calculate_area.actual_vs_perceived(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED,
+                                                             experiment)
+        d2_dom_1_area = calculate_area.actual_vs_perceived(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED, experiment)
+        d2_dom_2_area = calculate_area.actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED, experiment)
 
         y_points = [d1_dom_area, d1_non_dom_area, d2_dom_1_area, d2_dom_2_area]
         all_area_lists.append(y_points)
 
         plt.plot(x_points, y_points, color='darkgrey', alpha=0.5)
 
-    area_means, area_CIs = calculate_area.store_area_means_CIs_per_condition(all_subject_data)
+    area_means, area_CIs = calculate_area.store_area_means_CIs_per_condition(all_subject_data, experiment)
     for mean, ci, x_point in zip(area_means, area_CIs, x_points):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
@@ -198,7 +200,7 @@ def area_per_condition_plot(all_subject_data):
 
 def area_vs_r2_plot(all_subject_data):
     path = Path('./plots/group_plots/area_vs_r2')
-    area_lists = calculate_area.group_areas(all_subject_data)
+    area_lists = calculate_area.group_areas(all_subject_data, experiment)
     r2_lists = utils.store_r2_lists(all_subject_data)
 
     plt.figure(figsize=(10, 10))
@@ -232,7 +234,7 @@ def r2_per_condition_plot(all_subject_data, subject_IDs):
                               markerfacecolor='r', markersize=8, linestyle='None'),
                        Line2D([0], [0], color='black', label='95% Confidence Interval', lw=2)]
 
-    r2_area_tuples = calculate_area.store_r2_and_area_tuples(all_subject_data, subject_IDs)
+    r2_area_tuples = calculate_area.store_r2_and_area_tuples(all_subject_data, subject_IDs, experiment)
 
     plt.figure(figsize=(10, 10))
     plt.suptitle('R^2 (actual vs perceived widths) Values Per Condition')

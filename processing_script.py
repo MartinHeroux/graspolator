@@ -2,7 +2,7 @@ import process
 
 # change string below to match experiment to process
 # either 'exp1' or 'exp2' (Kathy and Lovisa respectively)
-experiment = 'exp2'
+experiment = 'exp1'
 
 all_subject_data, subjects = process.return_data_and_subjects(experiment)
 

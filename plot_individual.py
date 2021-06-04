@@ -20,7 +20,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
     plot = 'scatterplot_regression'
     path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
-    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions(experiment)
+    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions_regressions(experiment)
 
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Scatterplot + Reg Line'))
@@ -66,7 +66,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
     plot = 'area_between_reg_and_reality'
     path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
-    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions(experiment)
+    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions_regressions(experiment)
 
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Area Plots (reality vs. regression lines)'))
@@ -84,7 +84,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
         else:
             y_max = y2
 
-        area = calculate_area.actual_vs_perceived(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+        area = calculate_area.actual_vs_perceived(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, experiment)
 
         x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
         plt.plot([x1, x2], [y1, y2], color='royalblue')
@@ -93,9 +93,10 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
         plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality < y_points_reg),
                          color='C0', alpha=0.3, interpolate=True)
 
-        legend_handles = [Line2D([0], [0], color='royalblue', lw=2, label=f'Regression Line\n(y = {slope:4.2f}*x + {intercept:4.2f})'),
+        legend_handles = [Line2D([0], [0], color='royalblue', lw=2,
+                                 label=f'Regression Line\n(y = {slope:4.2f}*x + {intercept:4.2f})'),
                           Line2D([0], [0], color='black', linestyle='--', label='Reality Line (y = x)', lw=2),
-                          mpatches.Patch(color='royalblue', alpha = 0.3, label=f'Area = {area:4.2f}')]
+                          mpatches.Patch(color='royalblue', alpha=0.3, label=f'Area = {area:4.2f}')]
 
         plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
         plt.xlim([x1 - 1, x2 + 1])
@@ -111,53 +112,119 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
     plt.close()
 
 
-def area_between_conditions_plot(subject_ID, subject_data):
-    path = Path('./plots/individual_plots/area_plots/between_condition_comparison')
-    dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = plot_utils.condition_pair_tuple(subject_data)
-    data_pairs_tuple_list = dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
-    dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(subject_data)
-    data_pairs_area_list = dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area
+def area_between_conditions_plot(subject_ID, subject_data, experiment):
+    plot = 'area_difference_between_conditions'
+    path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
 
-    plt.figure(figsize=(15, 7))
-    plt.suptitle(str(subject_ID + ' Consistency Plots'))
+    data_pair_tuples = plot_utils.condition_pair_tuple(experiment, subject_data)
+    data_pair_areas = calculate_area.between_conditions(experiment, subject_data)
+
+    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions_area_differences(experiment)
+
+    if experiment == 'exp1':
+        plt.figure(figsize=(15, 5))
+        plt.suptitle(str(subject_ID + ' Consistency Plot'))
+        for data_pair_tuple, data_pair_area in zip(data_pair_tuples, data_pair_areas):
+            _plot_between_conditions_exp1(data_pair_tuple, data_pair_area, experiment, x_lims,
+                                          subplot_width, subplot_length, path, subject_ID)
+    elif experiment == 'exp2':
+        plt.figure(figsize=(5, 7))
+        _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment, x_lims,
+                                      subplot_width, subplot_length, path, subject_ID)
+
+
+
+def _plot_between_conditions_exp1(data_pair_tuple, data_pairs_area, experiment, x_lims,
+                                  subplot_width, subplot_length, path, subject_ID):
     y_points = []
-    y_text_points = []
 
-    for data_pair_tuple, data_pair_area in zip(data_pairs_tuple_list, data_pairs_area_list):
-        plt.subplot(1, 3, data_pair_tuple.subplot_index)
+    area_patch = mpatches.Patch(color='gray', alpha=0.3, label=f'Area = {data_pairs_area:4.2f}')
 
-        x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuple)
-        y_points.append(y1_y2_b)
-        y_points.append(y1_y2_a)
-        y_text_points.append(int(y1_y2_a[1]))
+    plt.subplot(subplot_width, subplot_length, data_pair_tuple.subplot_index)
 
-        plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuple.colour_1, label=data_pair_tuple.label_1)
-        plt.plot(x1_x2_b, y1_y2_b, color=data_pair_tuple.colour_2, label=data_pair_tuple.label_2)
+    x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuple, experiment)
+    y_points.append(y1_y2_b)
+    y_points.append(y1_y2_a)
 
-        x_colour_points = np.array([2, 10])
-        y_points_a = np.array(y1_y2_a)
-        y_points_b = np.array(y1_y2_b)
+    plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuple.colour_1, label=data_pair_tuple.label_1)
+    plt.plot(x1_x2_b, y1_y2_b, color=data_pair_tuple.colour_2, label=data_pair_tuple.label_2)
 
-        plt.fill_between(x_colour_points, y_points_a, y_points_b,
-                         color='gray', alpha=0.3, interpolate=True)
+    x_colour_points = np.array(x_lims)
+    y_points_a = np.array(y1_y2_a)
+    y_points_b = np.array(y1_y2_b)
 
-        plt.xticks(plot_constants.ACTUAL_WIDTH_RANGE)
-        plt.xlim([(plot_constants.SMALLEST_WIDTH - 1), (plot_constants.LARGEST_WIDTH + 1)])
-        plt.title(data_pair_tuple.title, loc='right')
-        plt.legend(handles=[data_pair_tuple.patch_1, data_pair_tuple.patch_2], loc='upper left')
-        plt.ylabel('Perceived width (cm)')
-        plt.xlabel('Actual width (cm)')
-        plt.grid()
+    plt.fill_between(x_colour_points, y_points_a, y_points_b,
+                     color='gray', alpha=0.3, interpolate=True)
+
+    plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
+    plt.xlim([x_lims[0] - 1, x_lims[1] + 1])
+    plt.title(data_pair_tuple.title, loc='right')
+    plt.legend(handles=[data_pair_tuple.patch_1, data_pair_tuple.patch_2, area_patch], loc='upper left')
+    plt.ylabel('Perceived width (cm)')
+    plt.xlabel('Actual width (cm)')
+    plt.grid()
 
     y_max, y_min = utils.max_min(y_points)
-    y_text_point = max(y_text_points)
 
-    for data_pair_tuple, data_pair_area in zip(data_pairs_tuple_list, data_pairs_area_list):
-        plt.subplot(1, 3, data_pair_tuple.subplot_index)
-        plt.ylim([y_min, (y_max + 2)])
-        plt.yticks(range(int(y_min), int((y_max + 2))))
-        plt.text(2, (y_text_point - 1), f'Area Difference = {data_pair_area:4.2f}', fontsize=12)
+    plt.ylim([y_min, (y_max + 2)])
+    plt.yticks(range(int(y_min), int((y_max + 2))))
 
     print(f'area between condition plot saved for {subject_ID} in {path}')
-    plt.savefig('{}/{}'.format(path, subject_ID))
+    plt.savefig(path)
+    plt.close()
+
+
+def _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment, x_lims,
+                                  subplot_width, subplot_length, path, subject_ID):
+
+    y_points = []
+
+    area_line_first, area_width_first = data_pair_areas[0], data_pair_areas[1]
+    area_difference = abs(area_line_first - area_width_first)
+    text = f'Absolute Area Difference = {area_difference:4.2f}'
+
+    legend_handles = [Line2D([0], [0], color='royalblue', lw=2, label='Show Line Pick Width'),
+                      Line2D([0], [0], color='orange', label='Present Width Pick Line', lw=2),
+                      Line2D([0], [0], color='black', linestyle='--', label='Reality Line (y = x)', lw=2),
+                      mpatches.Patch(color='royalblue', alpha=0.3, label=f'Area = {area_line_first:4.2f}'),
+                      mpatches.Patch(color='orange', alpha=0.3, label=f'Area = {area_width_first:4.2f}'),
+                      mpatches.Patch(color='none', label=text)]
+
+    plt.subplot(subplot_width, subplot_length, data_pair_tuples.subplot_index)
+
+    x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuples, experiment)
+    x1_x2_reality, y1_y2_reality = [3, 9], [3, 9]
+
+    y_points.append(y1_y2_b)
+    y_points.append(y1_y2_a)
+
+    plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuples.colour_1, label=data_pair_tuples.label_1)
+    plt.plot(x1_x2_b, y1_y2_b, color=data_pair_tuples.colour_2, label=data_pair_tuples.label_2)
+    plt.plot(x1_x2_reality, y1_y2_reality, color='black', linestyle='--', label='Reality line')
+
+    x_colour_points = np.array(x_lims)
+    y_points_a = np.array(y1_y2_a)
+    y_points_b = np.array(y1_y2_b)
+    y_points_reality = np.array(y1_y2_reality)
+
+    plt.fill_between(x_colour_points, y_points_a, y_points_reality,
+                     color='royalblue', alpha=0.3, interpolate=True)
+    plt.fill_between(x_colour_points, y_points_b, y_points_reality,
+                     color='orange', alpha=0.3, interpolate=True)
+
+    plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
+    plt.xlim([x_lims[0] - 1, x_lims[1] + 1])
+    plt.title(f'Reciprocal Condition Area Difference {subject_ID}', loc='right')
+    plt.legend(handles=legend_handles, loc='upper left')
+    plt.ylabel('Perceived width (cm)')
+    plt.xlabel('Actual width (cm)')
+    plt.grid()
+
+    y_max, y_min = utils.max_min(y_points)
+
+    plt.ylim([y_min, (y_max + 2)])
+    plt.yticks(range(int(y_min), int((y_max + 2))))
+
+    print(f'area between condition plot saved for {subject_ID} in {path}')
+    plt.savefig(path)
     plt.close()

@@ -19,7 +19,7 @@ def create_plot_constants():
                           MINIMISER_PATCH=mpatches.Patch(color='firebrick', label='Minimiser'),
                           MAXIMISER_PATCH=mpatches.Patch(color='green', label='Maximiser'),
                           CROSSER_PATCH=mpatches.Patch(color='royalblue', label='Crosser'),
-                          WIDE_SIZE= [15, 5], SQUARE_SIZE=[10, 10])
+                          WIDE_SIZE=[15, 5], SQUARE_SIZE=[10, 10])
 
 
 def store_index_condition_data_tuple(subject_data):
@@ -40,7 +40,18 @@ def store_index_condition_data_tuple(subject_data):
     return tuples
 
 
-def condition_pair_tuple(subject_data):
+def condition_pair_tuple(experiment, subject_data):
+    if experiment == 'exp1':
+        tuple_list = _condition_pair_tuple_exp1(subject_data)
+    elif experiment == 'exp2':
+        tuple_list = _condition_pair_tuple_exp2(subject_data)
+    else:
+        print('experiment not defined tuple list')
+
+    return tuple_list
+
+
+def _condition_pair_tuple_exp1(subject_data):
     d1_dom = mpatches.Patch(color='blue', label='Day 1 Dominant')
     d1_non_dom = mpatches.Patch(color='orange', label='Day 1 Non Dominant')
     d2_dom_a = mpatches.Patch(color='red', label='Day 2 Dominant A')
@@ -59,7 +70,22 @@ def condition_pair_tuple(subject_data):
                         label_2='d2_dom_b',
                         title='Within Day', colour_1='red', colour_2='green', patch_1=d2_dom_a, patch_2=d2_dom_b,
                         subplot_index=3)
-    return dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
+    tuple_list = dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
+    return tuple_list
+
+
+def _condition_pair_tuple_exp2(subject_data):
+    line_width = mpatches.Patch(color='blue', label='Show Line Pick Width')
+    width_line = mpatches.Patch(color='orange', label='Present Width Pick Line')
+
+    Pair = namedtuple('Pair', 'data_1 data_2 label_1 label_2 title colour_1 colour_2 patch_1 patch_2 subplot_index')
+
+    linefirst_vs_widthfirst = Pair(data_1=subject_data.LINE_WIDTH, data_2=subject_data.WIDTH_LINE, label_1='line_width',
+                                   label_2='width_line',
+                                   title='Reciprocal Condition Area Difference', colour_1='blue', colour_2='orange',
+                                   patch_1=line_width,
+                                   patch_2=width_line, subplot_index=1)
+    return linefirst_vs_widthfirst
 
 
 def subject_line_colour(intersection_x_value, y_when_x_equals_2):

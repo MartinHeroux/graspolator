@@ -121,16 +121,16 @@ def _swap_order(list_of_lists):
 
 def _extract_blocks(actual_widths, perceived_widths):
     day1_dominant = Block(
-        actual_widths=actual_widths[0], perceived_widths=perceived_widths[0]
+        ACTUAL=actual_widths[0], PERCEIVED=perceived_widths[0]
     )
     day1_non_dominant = Block(
-        actual_widths=actual_widths[1], perceived_widths=perceived_widths[1]
+        ACTUAL=actual_widths[1], PERCEIVED=perceived_widths[1]
     )
     day2_dominant_1 = Block(
-        actual_widths=actual_widths[2], perceived_widths=perceived_widths[2]
+        ACTUAL=actual_widths[2], PERCEIVED=perceived_widths[2]
     )
     day2_dominant_2 = Block(
-        actual_widths=actual_widths[3], perceived_widths=perceived_widths[3]
+        ACTUAL=actual_widths[3], PERCEIVED=perceived_widths[3]
     )
     return Blocks(
         day1_dominant=day1_dominant,
@@ -141,8 +141,8 @@ def _extract_blocks(actual_widths, perceived_widths):
 
 
 class Block(NamedTuple):
-    actual_widths: list
-    perceived_widths: list
+    ACTUAL: list
+    PERCEIVED: list
 
 
 class Blocks(NamedTuple):
