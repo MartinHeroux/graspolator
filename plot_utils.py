@@ -25,17 +25,17 @@ def create_plot_constants():
 def store_index_condition_data_tuple(subject_data):
     index_name_data = namedtuple('index_name_data', 'PLOT_INDEX DATA_INDEX NAME ACTUAL PERCEIVED')
     d1_dom_tuple = index_name_data(PLOT_INDEX=1, DATA_INDEX=0, NAME='d1_dominant',
-                                   ACTUAL=subject_data.day1_dominant.actual_widths,
-                                   PERCEIVED=subject_data.day1_dominant.perceived_widths)
+                                   ACTUAL=subject_data.day1_dominant.ACTUAL,
+                                   PERCEIVED=subject_data.day1_dominant.PERCEIVED)
     d1_non_dom_tuple = index_name_data(PLOT_INDEX=2, DATA_INDEX=1, NAME='d2_non_dominant',
-                                       ACTUAL=subject_data.day1_non_dominant.actual_widths,
-                                       PERCEIVED=subject_data.day1_non_dominant.perceived_widths)
+                                       ACTUAL=subject_data.day1_non_dominant.ACTUAL,
+                                       PERCEIVED=subject_data.day1_non_dominant.PERCEIVED)
     d2_dom_1_tuple = index_name_data(PLOT_INDEX=3, DATA_INDEX=2, NAME='d2_dominant_1',
-                                     ACTUAL=subject_data.day2_dominant_1.actual_widths,
-                                     PERCEIVED=subject_data.day2_dominant_1.perceived_widths)
+                                     ACTUAL=subject_data.day2_dominant_1.ACTUAL,
+                                     PERCEIVED=subject_data.day2_dominant_1.PERCEIVED)
     d2_dom_2_tuple = index_name_data(PLOT_INDEX=4, DATA_INDEX=3, NAME='d2_dominant_2',
-                                     ACTUAL=subject_data.day2_dominant_2.actual_widths,
-                                     PERCEIVED=subject_data.day2_dominant_2.perceived_widths)
+                                     ACTUAL=subject_data.day2_dominant_2.ACTUAL,
+                                     PERCEIVED=subject_data.day2_dominant_2.PERCEIVED)
     tuples = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
     return tuples
 
@@ -60,15 +60,15 @@ def _condition_pair_tuple_exp1(subject_data):
     Pair = namedtuple('Pair', 'data_1 data_2 label_1 label_2 title colour_1 colour_2 patch_1 patch_2 subplot_index')
     dom_vs_non_dom = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day1_non_dominant, label_1='d1_dom',
                           label_2='d1_non_dom',
-                          title='Between Hands', colour_1='blue', colour_2='orange', patch_1=d1_dom,
+                          title='D1 dominant - D1 non-dominant', colour_1='blue', colour_2='orange', patch_1=d1_dom,
                           patch_2=d1_non_dom, subplot_index=1)
     dom_d1_vs_d2 = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day2_dominant_1, label_1='d1_dom',
                         label_2='d2_dom_a',
-                        title='Between Days', colour_1='blue', colour_2='red',
+                        title='D1 dominant - D2 dominant', colour_1='blue', colour_2='red',
                         patch_1=d1_dom, patch_2=d2_dom_a, subplot_index=2)
     dom_d2_vs_d2 = Pair(data_1=subject_data.day2_dominant_1, data_2=subject_data.day2_dominant_2, label_1='d2_dom_a',
                         label_2='d2_dom_b',
-                        title='Within Day', colour_1='red', colour_2='green', patch_1=d2_dom_a, patch_2=d2_dom_b,
+                        title='D2 dominant a - D2 dominant b', colour_1='red', colour_2='green', patch_1=d2_dom_a, patch_2=d2_dom_b,
                         subplot_index=3)
     tuple_list = dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
     return tuple_list
@@ -103,3 +103,4 @@ def subject_line_colour(intersection_x_value, y_when_x_equals_2, experiment):
     else:
         line_colour = 'green'
     return line_colour
+

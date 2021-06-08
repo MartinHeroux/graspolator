@@ -14,7 +14,7 @@ constants = utils.create_general_constants()
 plot_constants = plot_utils.create_plot_constants()
 
 
-def plot_subject_reg_lines_by_category(experiment, subjects, all_subject_data):
+def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
     plot = 'reg_lines_by_group'
     path = utils.create_group_plot_save_path(experiment, plot)
     legend_handles = [plot_constants.MINIMISER_PATCH,
@@ -159,16 +159,19 @@ def difference_of_differences(all_subject_data):
     plt.close()
 
 
-def area_per_condition_plot(all_subject_data):
-    path = Path('./plots/group_plots/all_subject_areas_by_condition')
+def area_per_condition_plot(all_subject_data, experiment):
+    plot = 'area_difference_between_conditions'
+    path = utils.create_group_plot_save_path(experiment, plot)
 
     plt.figure(figsize=(10, 10))
-    plt.suptitle(str('Area Between Regression and Reality Per Condition'))
+    plt.suptitle(str('Area Between Regression and Reality Lines'))
     plt.ylabel('Area Between Lines (cm^2)')
     plt.xlabel('Condition')
-    x_points = [1, 2, 3, 4]
-    plt.xticks(x_points,
-               labels=constants.CONDITION_NAMES)
+
+    x_points = utils.x_points_group_plot(experiment)
+    x_labels = utils.x_ticks_group_plot(experiment)
+
+    plt.xticks(x_points, labels=x_labels)
 
     legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
                        Line2D([0], [0], marker='^', label='Mean Area Difference', mec='r',
@@ -178,52 +181,59 @@ def area_per_condition_plot(all_subject_data):
     all_area_lists = []
 
     for subject_data in all_subject_data:
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
-            subject_data)
+        data_pair_tuples = utils.create_data_tuples(experiment, subject_data)
+        y_points = []
 
-        d1_dom_area = calculate_area.actual_vs_perceived(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED, experiment)
-        d1_non_dom_area = calculate_area.actual_vs_perceived(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED,
-                                                             experiment)
-        d2_dom_1_area = calculate_area.actual_vs_perceived(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED, experiment)
-        d2_dom_2_area = calculate_area.actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED, experiment)
+        for tuple in data_pair_tuples:
+            y_points.append(calculate_area.actual_vs_perceived(tuple.ACTUAL, tuple.PERCEIVED, experiment))
 
-        y_points = [d1_dom_area, d1_non_dom_area, d2_dom_1_area, d2_dom_2_area]
         all_area_lists.append(y_points)
 
         plt.plot(x_points, y_points, color='darkgrey', alpha=0.5)
 
     area_means, area_CIs = calculate_area.store_area_means_CIs_per_condition(all_subject_data, experiment)
+
     for mean, ci, x_point in zip(area_means, area_CIs, x_points):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
     area_max, area_min = utils.max_min(all_area_lists)
-    plt.ylim(area_min - 1, area_max + 1)
-    plt.legend(handles=legend_elements, loc='upper left')
+    plt.ylim(area_min - 1, area_max + 2)
+    plt.legend(handles=legend_elements, loc='best')
     plt.grid()
     plt.savefig(path)
-    print(f'Area difference per condition plots saved in {path}')
+    print(f'Area per condition plots saved in {path}')
     plt.close()
 
 
-def area_vs_r2_plot(all_subject_data):
-    path = Path('./plots/group_plots/area_vs_r2')
-    area_lists = calculate_area.group_areas(all_subject_data, experiment)
-    r2_lists = utils.store_r2_lists(all_subject_data)
+def area_vs_r2_plot(all_subject_data, experiment):
+    plot = 'area_r2_regression'
+    path = utils.create_group_plot_save_path(experiment, plot)
 
-    plt.figure(figsize=(10, 10))
+    area_lists = calculate_area.group_areas(all_subject_data, experiment)
+    r2_lists = utils.store_r2_lists(all_subject_data, experiment)
+    x_labels = utils.x_ticks_group_plot(experiment)
+    subplot_indices = utils.x_points_group_plot(experiment)
+
+
+    plt.figure(figsize=(20, 10))
     plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
-    for subplot_index, (condition_r2_data, condition_area_data, condition_name) in enumerate(
-            zip(r2_lists, area_lists, constants.CONDITION_NAMES), start=1):
+    for subplot_index, condition_r2_data, condition_area_data, condition_name in zip(subplot_indices, r2_lists, area_lists, x_labels):
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
-        plt.subplot(2, 2, subplot_index)
-        x_vals = np.array([1, 26])
+        plt.subplot(subplot_indices[0], subplot_indices[-1], subplot_index)
+        x_vals = np.array([min(condition_area_data), max(condition_area_data)])
         y_vals = intercept + slope * x_vals
-        plt.plot(x_vals, y_vals, 'k--')
+        plt.plot(x_vals, y_vals, color = 'b')
         plt.scatter(condition_area_data, condition_r2_data, marker='o', color='royalblue', alpha=0.5)
-        plt.text(15, 0.75, f'{slope:6.5f}*x + {intercept:4.2f}', fontsize=12)
-        plt.xlim([1, 26])
-        plt.ylim([0.7, 1])
+
+        legend_handles = [Line2D([0], [0], color='b', lw=2,
+                                 label=f'Regression Line\n(y = {slope:6.4f}*x + {intercept:4.2f})'),
+                          Line2D([0], [0], marker='o', label='Individual subject (n = 30)', mec='royalblue',
+                                 markerfacecolor='royalblue', markersize=8, linestyle='None')]
+
+        plt.xlim(min(condition_area_data)-1, max(condition_area_data)+1)
+        plt.ylim(min(condition_r2_data)-0.01, max(condition_r2_data)+0.01)
         plt.grid()
+        plt.legend(handles = legend_handles)
         plt.title(condition_name, loc='right')
         plt.xlabel('Area (cm^2)')
         plt.ylabel('R^2 Value')
@@ -233,38 +243,46 @@ def area_vs_r2_plot(all_subject_data):
     plt.close()
 
 
-def r2_per_condition_plot(all_subject_data, subject_IDs):
-    path = Path('./plots/group_plots/')
+def r2_per_condition_plot(all_subject_data, experiment):
+    plot = 'r2_per_condition'
+    path = utils.create_group_plot_save_path(experiment, plot)
 
     legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
                        Line2D([0], [0], marker='o', label='Mean R^2', mec='r',
                               markerfacecolor='r', markersize=8, linestyle='None'),
                        Line2D([0], [0], color='black', label='95% Confidence Interval', lw=2)]
 
-    r2_area_tuples = calculate_area.store_r2_and_area_tuples(all_subject_data, subject_IDs, experiment)
-
     plt.figure(figsize=(10, 10))
     plt.suptitle('R^2 (actual vs perceived widths) Values Per Condition')
     plt.ylabel('R^2')
     plt.xlabel('Condition')
-    x_points = [1, 2, 3, 4]
+    x_points = utils.x_points_group_plot(experiment)
+    x_labels = utils.x_ticks_group_plot(experiment)
 
-    for r2_area_tuple in r2_area_tuples:
-        y_points = [r2_area_tuple.d1_dom_r2,
-                    r2_area_tuple.d1_non_dom_r2,
-                    r2_area_tuple.d2_dom_1_r2,
-                    r2_area_tuple.d2_dom_2_r2]
+    plt.xticks(x_points, labels=x_labels)
+    all_r2_lists = []
+
+    for subject_data in all_subject_data:
+        data_pair_tuples = utils.create_data_tuples(experiment, subject_data)
+        y_points = []
+
+        for tuple in data_pair_tuples:
+            y_points.append(utils.calculate_r2(tuple.ACTUAL, tuple.PERCEIVED))
+
+        all_r2_lists.append(y_points)
+
         plt.plot(x_points, y_points, color='darkgrey', alpha=0.5)
 
-    means, cis = utils.store_r2_means_CIs_per_condition(all_subject_data)
+    mean_list, ci_list = utils.store_r2_means_CIs_per_condition(all_subject_data, experiment)
 
-    for mean, ci, x_point in zip(means, cis, x_points):
+    for mean, ci, x_point in zip(mean_list, ci_list, x_points):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='r', mec='r', markersize=8)
 
+    r2_max, r2_min = utils.max_min(all_r2_lists)
+    plt.ylim(r2_min - 0.01, 1.01)
+
     plt.legend(handles=legend_elements, loc='lower right')
-    plt.xticks(x_points,
-               labels=['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"])
     plt.grid()
-    plt.savefig(f'{path}/r2_summary.png')
+    plt.savefig(path)
     print(f'R^2 per condition plot saved in {path}')
     plt.close()

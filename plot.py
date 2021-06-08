@@ -23,9 +23,9 @@ def individual_regressions(all_subject_data, experiment, subjects):
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         plot_individual.scatterplots_and_reg_lines(subject_ID, subject_data, experiment)
 
-
-def regression_lines_per_condition(all_subject_data):
-    plot_group.plot_subject_reg_lines_by_category(CONSTANTS.SUBJECT_IDS, all_subject_data)
+# done
+def regression_lines_per_condition(all_subject_data, experiment, subjects):
+    plot_group.subject_reg_lines_by_category(experiment, subjects, all_subject_data)
 
 # done
 def individual_areas_to_reality(all_subject_data, experiment, subjects):
@@ -45,17 +45,17 @@ def group_areas_between_conditions(all_subject_data):
 def group_areas_difference_of_differences(all_subject_data):
     plot_group.difference_of_differences(all_subject_data)
 
+# done
+def group_areas_per_conditions(all_subject_data, experiment):
+    plot_group.area_per_condition_plot(all_subject_data, experiment)
 
-def group_areas_per_conditions(all_subject_data):
-    plot_group.area_per_condition_plot(all_subject_data)
-
-
+# done
 def group_areas_vs_r2_per_condition(all_subject_data):
     plot_group.area_vs_r2_plot(all_subject_data)
 
-
-def group_r2_per_condition(all_subject_data):
-    plot_group.r2_per_condition_plot(all_subject_data, CONSTANTS.SUBJECT_IDS)
+# done
+def group_r2_per_condition(all_subject_data, subjects):
+    plot_group.r2_per_condition_plot(all_subject_data, subjects)
 
 
 

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 import utils
 import plot_utils
+import utils_lovisa
 from utils import calculate_regression_general, calculate_mean_ci
 
 
@@ -105,7 +106,6 @@ def _subject_group_reg_lines_exp2(x_intersect):
     return group
 
 
-
 def _reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b, experiment):
     if experiment == 'exp1':
         x1 = 2
@@ -148,7 +148,7 @@ def _reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b, experi
 def actual_vs_perceived(actual, perceived, experiment):
     intercept, slope = utils.calculate_regression_general(actual, perceived)
     x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
-    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(actual, perceived, 'exp1')
+    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(actual, perceived, experiment)
     group = _subject_group(x_intersect, y_at_x2, experiment)
 
     if group == 'crosser':
@@ -300,7 +300,8 @@ def abline(slope, intercept):
     plt.plot(x_vals, y_vals, 'k--')
 
 
-def store_r2_and_area_tuples(all_subject_data, subject_IDs, experiment):
+def store_r2_and_area_tuples_exp1(all_subject_data, subject_IDs):
+    experiment = 'exp1'
     r2s_areas = namedtuple('r2s_area',
                            'subject_ID d1_dom_r2 d1_non_dom_r2 d2_dom_1_r2 d2_dom_2_r2 d1_dom_area d1_non_dom_area '
                            'd2_dom_1_area d2_dom_2_area')
@@ -329,10 +330,42 @@ def store_r2_and_area_tuples(all_subject_data, subject_IDs, experiment):
 
     return r2_area_tuples
 
+def store_r2_and_area_tuples_exp2(all_subject_data, subject_IDs):
+    experiment = 'exp2'
+    r2s_areas = namedtuple('r2s_area',
+                           'subject_ID line_width_r2 width_line_r2 width_width_r2 line_width_area width_line_area '
+                           'width_width_area')
+    r2_area_tuples = []
+
+    for subject_data, subject_ID in zip(all_subject_data, subject_IDs):
+        data_tuples = utils_lovisa.condition_plot_inputs(subject_data)
+
+        line_width, width_line, width_width = data_tuples[0], data_tuples[1], data_tuples[2]
+
+        r2s_areas_tuple = r2s_areas(subject_ID=subject_ID,
+                                    line_width_r2= utils.calculate_r2(line_width.ACTUAL, line_width.PERCEIVED),
+                                    width_line_r2= utils.calculate_r2(width_line.ACTUAL, width_line.PERCEIVED),
+                                    width_width_r2= utils.calculate_r2(width_width.ACTUAL, width_width.PERCEIVED),
+                                    line_width_area= actual_vs_perceived(line_width.ACTUAL, line_width.PERCEIVED, experiment),
+                                    width_line_area= actual_vs_perceived(width_line.ACTUAL, width_line.PERCEIVED, experiment),
+                                    width_width_area= actual_vs_perceived(width_width.ACTUAL, width_width.PERCEIVED, experiment))
+
+        r2_area_tuples.append(r2s_areas_tuple)
+
+    return r2_area_tuples
 
 def group_areas(all_subject_data, experiment):
+    if experiment == 'exp1':
+        area_lists_per_condition = _group_areas_exp1(all_subject_data)
+    else:
+        area_lists_per_condition = _group_areas_exp2(all_subject_data)
+
+    return area_lists_per_condition
+
+def _group_areas_exp1(all_subject_data):
+    experiment = 'exp1'
     d1_dom_areas, d1_non_dom_areas, d2_dom_1_areas, d2_dom_2_areas = [], [], [], []
-    r2_area_list_tuple = namedtuple('r2s_area',
+    area_list_tuple = namedtuple('r2s_area',
                                     'd1_dom_area_list d1_non_dom_area_list d2_dom_1_area_list d2_dom_2_area_list')
 
     for subject_data in all_subject_data:
@@ -344,12 +377,31 @@ def group_areas(all_subject_data, experiment):
         d2_dom_1_areas.append(actual_vs_perceived(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED, experiment)),
         d2_dom_2_areas.append(actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED, experiment))
 
-    area_lists_per_condition = r2_area_list_tuple(d1_dom_area_list=d1_dom_areas,
+    area_lists_per_condition = area_list_tuple(d1_dom_area_list=d1_dom_areas,
                                                   d1_non_dom_area_list=d1_non_dom_areas,
                                                   d2_dom_1_area_list=d2_dom_1_areas,
                                                   d2_dom_2_area_list=d2_dom_2_areas)
     return area_lists_per_condition
 
+def _group_areas_exp2(all_subject_data):
+    experiment = 'exp2'
+    line_width_areas, width_line_areas, width_width_areas = [], [], []
+    area_list_tuple = namedtuple('r2s_area',
+                                    'line_width_area_list width_line_area_list width_width_area_list')
+
+    for subject_data in all_subject_data:
+        data_tuples = utils_lovisa.condition_plot_inputs(subject_data)
+
+        line_width, width_line, width_width = data_tuples[0], data_tuples[1], data_tuples[2]
+
+        line_width_areas.append(actual_vs_perceived(line_width.ACTUAL, line_width.PERCEIVED, experiment)),
+        width_line_areas.append(actual_vs_perceived(width_line.ACTUAL, width_line.PERCEIVED, experiment)),
+        width_width_areas.append(actual_vs_perceived(width_width.ACTUAL, width_width.PERCEIVED, experiment))
+
+    area_lists_per_condition = area_list_tuple(line_width_area_list=line_width_areas,
+                                               width_line_area_list=width_line_areas,
+                                               width_width_area_list=width_width_areas)
+    return area_lists_per_condition
 
 def difference_of_difference_areas(experiment, subject_data):
     dom_vs_non_dom_area, dom_d1_vs_d2_area, d2_dom_vs_dom_area = between_conditions(experiment,
@@ -376,11 +428,22 @@ def reg_line_endpoints(actual, perceived, experiment):
 
 
 def store_area_means_CIs_per_condition(all_subject_data, experiment):
-    area_lists = group_areas(all_subject_data, experiment)
-    d1_dom_mean, d1_dom_ci = utils.calculate_mean_ci(area_lists.d1_dom_area_list)
-    d1_non_dom_mean, d1_non_dom_ci = utils.calculate_mean_ci(area_lists.d1_non_dom_area_list)
-    d2_dom_1_mean, d2_dom_1_ci = utils.calculate_mean_ci(area_lists.d2_dom_1_area_list)
-    d2_dom_2_mean, d2_dom_2_ci = utils.calculate_mean_ci(area_lists.d2_dom_2_area_list)
-    mean_lists = [d1_dom_mean, d1_non_dom_mean, d2_dom_1_mean, d2_dom_2_mean]
-    ci_lists = [d1_dom_ci, d1_non_dom_ci, d2_dom_1_ci, d2_dom_2_ci]
-    return mean_lists, ci_lists
+    if experiment == 'exp1':
+        area_lists = _group_areas_exp1(all_subject_data)
+
+        d1_dom_mean, d1_dom_ci = utils.calculate_mean_ci(area_lists.d1_dom_area_list)
+        d1_non_dom_mean, d1_non_dom_ci = utils.calculate_mean_ci(area_lists.d1_non_dom_area_list)
+        d2_dom_1_mean, d2_dom_1_ci = utils.calculate_mean_ci(area_lists.d2_dom_1_area_list)
+        d2_dom_2_mean, d2_dom_2_ci = utils.calculate_mean_ci(area_lists.d2_dom_2_area_list)
+        mean_list = [d1_dom_mean, d1_non_dom_mean, d2_dom_1_mean, d2_dom_2_mean]
+        ci_list = [d1_dom_ci, d1_non_dom_ci, d2_dom_1_ci, d2_dom_2_ci]
+
+    else:
+        area_lists = _group_areas_exp2(all_subject_data)
+        line_width_mean, line_width_ci = utils.calculate_mean_ci(area_lists.line_width_area_list)
+        width_line_mean, width_line_ci = utils.calculate_mean_ci(area_lists.width_line_area_list)
+        width_width_mean, width_width_ci = utils.calculate_mean_ci(area_lists.width_width_area_list)
+        mean_list = [line_width_mean, width_line_mean, width_width_mean]
+        ci_list = [line_width_ci, width_line_ci, width_width_ci]
+
+    return mean_list, ci_list

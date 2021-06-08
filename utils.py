@@ -60,21 +60,35 @@ def calculate_mean_ci(data_list):
     return mean, ci
 
 
-def store_r2_means_CIs_per_condition(all_subject_data):
-    r2_lists = store_r2_lists(all_subject_data)
-    d1_dom_mean, d1_dom_ci = calculate_mean_ci(r2_lists.d1_dom_r2_list)
-    d1_non_dom_mean, d1_non_dom_ci = calculate_mean_ci(r2_lists.d1_non_dom_r2_list)
-    d2_dom_1_mean, d2_dom_1_ci = calculate_mean_ci(r2_lists.d2_dom_1_r2_list)
-    d2_dom_2_mean, d2_dom_2_ci = calculate_mean_ci(r2_lists.d2_dom_2_r2_list)
-    mean_lists = [d1_dom_mean, d1_non_dom_mean, d2_dom_1_mean, d2_dom_2_mean]
-    ci_lists = [d1_dom_ci, d1_non_dom_ci, d2_dom_1_ci, d2_dom_2_ci]
-    return mean_lists, ci_lists
+def calculate_ci(data_list):
+    confidence = 0.95
+    n = len(data_list)
+    std_err = sem(data_list)
+    ci = std_err * t.ppf((1 + confidence) / 2, n - 1)
+    return ci
 
 
-def store_r2_lists(all_subject_data):
+def store_r2_means_CIs_per_condition(all_subject_data, experiment):
+    r2_lists = store_r2_lists(all_subject_data, experiment)
+    mean_list = []
+    ci_list = []
+    for r2_list in r2_lists:
+        mean_list.append(np.mean(r2_list))
+        ci_list.append(calculate_ci(r2_list))
+    return mean_list, ci_list
+
+
+def store_r2_lists(all_subject_data, experiment):
+    if experiment == 'exp1':
+        r2_lists = _store_r2_lists_exp1(all_subject_data)
+    else:
+        r2_lists = _store_r2_lists_exp2(all_subject_data)
+    return r2_lists
+
+
+def _store_r2_lists_exp1(all_subject_data):
     d1_dom_r2s, d1_non_dom_r2s, d2_dom_1_r2s, d2_dom_2_r2s = [], [], [], []
-    r2_area_list_tuple = namedtuple('r2s_area',
-                                    'd1_dom_r2_list d1_non_dom_r2_list d2_dom_1_r2_list d2_dom_2_r2_list')
+    r2_list_tuple = namedtuple('r2', 'd1_dom_r2_list d1_non_dom_r2_list d2_dom_1_r2_list d2_dom_2_r2_list')
 
     for subject_data in all_subject_data:
         d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
@@ -85,19 +99,40 @@ def store_r2_lists(all_subject_data):
         d2_dom_1_r2s.append(calculate_r2(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)),
         d2_dom_2_r2s.append(calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED))
 
-    r2_lists = r2_area_list_tuple(d1_dom_r2_list=d1_dom_r2s,
-                                  d1_non_dom_r2_list=d1_non_dom_r2s,
-                                  d2_dom_1_r2_list=d2_dom_1_r2s,
-                                  d2_dom_2_r2_list=d2_dom_2_r2s)
+    r2_lists = r2_list_tuple(d1_dom_r2_list=d1_dom_r2s,
+                             d1_non_dom_r2_list=d1_non_dom_r2s,
+                             d2_dom_1_r2_list=d2_dom_1_r2s,
+                             d2_dom_2_r2_list=d2_dom_2_r2s)
+    return r2_lists
+
+
+def _store_r2_lists_exp2(all_subject_data):
+    line_width_r2s, width_line_r2s, width_width_r2s = [], [], []
+    r2_list_tuple = namedtuple('r2s',
+                               'line_width_r2_list width_line_r2_list, width_width_r2_list')
+
+    for subject_data in all_subject_data:
+        data_tuples = utils_lovisa.condition_plot_inputs(subject_data)
+
+        line_width, width_line, width_width = data_tuples[0], data_tuples[1], data_tuples[2]
+
+        line_width_r2s.append(calculate_r2(line_width.ACTUAL, line_width.PERCEIVED)),
+        width_line_r2s.append(calculate_r2(width_line.ACTUAL, width_line.PERCEIVED)),
+        width_width_r2s.append(calculate_r2(width_width.ACTUAL, width_width.PERCEIVED))
+
+    r2_lists = r2_list_tuple(line_width_r2_list=line_width_r2s,
+                             width_line_r2_list=width_line_r2s,
+                             width_width_r2_list=width_width_r2s)
     return r2_lists
 
 
 def create_general_constants():
-    general_constants = namedtuple('constants', 'CONDITION_NAMES CONDITION_PAIRS SUBJECT_IDS')
-    return general_constants(CONDITION_NAMES=['day1_dominant',
-                                              'day1_non_dominant',
-                                              'day2_dominant_1',
-                                              'day2_dominant_2'],
+    general_constants = namedtuple('constants', 'CONDITION_NAMES_EXP1 CONDITION_NAMES_EXP2 CONDITION_PAIRS SUBJECT_IDS')
+    return general_constants(CONDITION_NAMES_EXP1=['day1_dominant',
+                                                   'day1_non_dominant',
+                                                   'day2_dominant_1',
+                                                   'day2_dominant_2'],
+                             CONDITION_NAMES_EXP2=['line_width', 'width_line', 'width_width'],
                              CONDITION_PAIRS=['between_hands',
                                               'between_days',
                                               'within_day'],
@@ -183,6 +218,7 @@ def get_filename_list(directory):
             filenames.append(filename)
     return filenames
 
+
 def get_directory_list(directory):
     directories = []
     for root, dirs, files in os.walk(directory):
@@ -204,12 +240,14 @@ def create_plot_subdirectories():
         if not os.path.exists(path):
             os.makedirs(path)
 
+
 def create_data_tuples(experiment, subject_data):
     if experiment == 'exp1':
         plot_inputs = plot_utils.store_index_condition_data_tuple(subject_data)
     else:
         plot_inputs = utils_lovisa.condition_plot_inputs(subject_data)
     return plot_inputs
+
 
 def create_individual_plot_save_path(experiment, plot, subject_ID):
     path = Path(f'./plots/{experiment}/individual_plots/{plot}')
@@ -218,6 +256,7 @@ def create_individual_plot_save_path(experiment, plot, subject_ID):
     savepath = Path(f'./plots/{experiment}/individual_plots/{plot}/{plot}_{subject_ID}.png')
     return savepath
 
+
 def create_group_plot_save_path(experiment, plot):
     path = Path(f'./plots/{experiment}/group_plots/')
     if not os.path.exists(path):
@@ -225,12 +264,13 @@ def create_group_plot_save_path(experiment, plot):
     savepath = Path(f'./plots/{experiment}/group_plots/{plot}.png')
     return savepath
 
+
 def plot_constants_regressions_ind(experiment):
     if experiment == 'exp1':
         subplot_width = 2
         subplot_length = 2
         x_range = [2, 10]
-        fig_size = [10,10]
+        fig_size = [10, 10]
     else:
         subplot_width = 1
         subplot_length = 3
@@ -251,3 +291,19 @@ def subplot_dimensions_area_differences(experiment):
         x_range = [3, 9]
         fig_size = [15, 5]
     return subplot_width, subplot_length, x_range, fig_size
+
+
+def x_points_group_plot(experiment):
+    if experiment == 'exp1':
+        x_points = [1, 2, 3, 4]
+    else:
+        x_points = [1, 2, 3]
+    return x_points
+
+
+def x_ticks_group_plot(experiment):
+    if experiment == 'exp1':
+        x_ticks = ['day1_dominant', 'day1_non_dominant', 'day2_dominant_1', 'day2_dominant_2']
+    else:
+        x_ticks = ['line_width', 'width_line', 'width_width']
+    return x_ticks
