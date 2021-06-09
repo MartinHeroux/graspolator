@@ -1,9 +1,9 @@
 from pathlib import Path
 from collections import namedtuple
+from termcolor import colored
 
 import utils
 import data
-import plot
 import data_lovisa
 
 DATA_FOLDER_EXP1 = Path('./data/exp1')
@@ -12,42 +12,59 @@ DATA_FOLDER_EXP2 = Path('./data/exp2')
 
 def import_and_parse_data():
     # set up directory structure
-    utils.create_plot_subdirectories()
+    #utils.create_plot_subdirectories()
     # read and process data
     all_subject_data, widest_lines = data.read_exp1(DATA_FOLDER_EXP1)
     return all_subject_data
 
-def plot_by_dispatcher_key(all_subject_data, experiment, subjects):
-    dispatcher = _create_plot_dispatcher()
 
-    for key in dispatcher:
+def plot_by_dispatcher_key(plot_summary, all_subject_data, experiment, subjects):
+    print('\nSTARTING PLOTS')
+    for key in plot_summary:
+        print(key)
         if key.COMMAND == 'run':
-            print(f'\n{key.PLOT} initiated')
+            text = colored(f'{key.PLOT} initiated\n', 'green')
+            print(text)
             key.PLOT(all_subject_data, experiment, subjects)
         else:
-            print(f'\n{key.PLOT} skipped')
+            text = colored(f'{key.PLOT} skipped\n', 'red')
+            print(text)
     print('\n All done :)')
 
-def _create_plot_dispatcher():
-    plot_dispatch = namedtuple('plot_dispatch', 'PLOT COMMAND')
-    plot_summary = namedtuple('plots', 'individual_regressions regression_lines_per_condition '
-                                       'individual_areas_to_reality individual_areas_between_conditions '
-                                       'group_areas_between_conditions group_areas_difference_of_differences '
-                                       'group_areas_per_conditions group_areas_vs_r2_per_condition '
-                                       'group_r2_per_condition')
-    # change 'run' to 'skip' to alter which plots are made
-    A = plot_dispatch._make([plot.individual_regressions, 'run'])
-    B = plot_dispatch._make([plot.regression_lines_per_condition, 'run'])
-    C = plot_dispatch._make([plot.individual_areas_to_reality, 'run'])
-    D = plot_dispatch._make([plot.individual_areas_between_conditions, 'run'])
-    E = plot_dispatch._make([plot.group_areas_between_conditions, 'run'])
-    F = plot_dispatch._make([plot.group_areas_difference_of_differences, 'run'])
-    G = plot_dispatch._make([plot.group_areas_per_conditions, 'run'])
-    H = plot_dispatch._make([plot.group_areas_vs_r2_per_condition, 'run'])
-    I = plot_dispatch._make([plot.group_r2_per_condition, 'run'])
 
-    plot_summary = plot_summary._make([A, B, C, D, E, F, G, H, I])
+def create_plot_dispatcher(experiment, A, B, C, D, E, F, G, H, I, J):
+    plot_summary_exp1, plot_summary_exp2 = _return_plot_tuples()
+
+    if experiment == 'exp1':
+        plot_summary = plot_summary_exp1._make([A, B, C, D, E, F, G, H, I])
+    elif experiment == 'exp2':
+        plot_summary = plot_summary_exp2._make([A, B, C, D, E, F, G, J])
+
     return plot_summary
+
+
+def _return_plot_tuples():
+    plot_summary_exp1 = namedtuple('plots', 'A_individual_regressions '
+                                            'B_individual_areas_to_reality '
+                                            'C_individual_areas_between_conditions '
+                                            'D_group_regression_lines_per_condition '
+                                            'E_group_areas_per_conditions '
+                                            'F_group_areas_vs_r2_per_condition '
+                                            'G_group_r2_per_condition '
+                                            'H_group_areas_between_conditions '
+                                            'I_group_areas_difference_of_differences')
+
+    plot_summary_exp2 = namedtuple('plots', 'A_individual_regressions '
+                                            'B_individual_areas_to_reality '
+                                            'C_individual_areas_between_conditions '
+                                            'D_group_regression_lines_per_condition '
+                                            'E_group_areas_per_conditions '
+                                            'F_group_areas_vs_r2_per_condition '
+                                            'G_group_r2_per_condition '
+                                            'J_group_reciprocal_regression')
+
+    return plot_summary_exp1, plot_summary_exp2
+
 
 def return_data_and_subjects(experiment):
     if experiment == 'exp1':
@@ -58,8 +75,10 @@ def return_data_and_subjects(experiment):
         all_subject_data = data_lovisa.process_blocked_data()
         subjects = utils.get_directory_list(Path('./data/exp2'))
 
-    else: print('no experiment name defined')
+    else:
+        print('no experiment name defined')
 
     return all_subject_data, subjects
+
 
 all_subject_data, subjects = return_data_and_subjects('exp2')

@@ -7,9 +7,9 @@ import scipy.stats as scp
 import numpy as np
 from scipy.stats import sem, t
 from collections import namedtuple
+from termcolor import colored
 
 import plot_utils
-import utils_lovisa
 
 
 def calculate_regression(block):
@@ -69,7 +69,7 @@ def calculate_ci(data_list):
 
 
 def store_r2_means_CIs_per_condition(all_subject_data, experiment):
-    r2_lists = store_r2_lists(all_subject_data, experiment)
+    r2_lists = store_r2_tuples(all_subject_data, experiment)
     mean_list = []
     ci_list = []
     for r2_list in r2_lists:
@@ -78,15 +78,15 @@ def store_r2_means_CIs_per_condition(all_subject_data, experiment):
     return mean_list, ci_list
 
 
-def store_r2_lists(all_subject_data, experiment):
+def store_r2_tuples(all_subject_data, experiment):
     if experiment == 'exp1':
-        r2_lists = _store_r2_lists_exp1(all_subject_data)
+        r2_lists = _store_r2_tuples_exp1(all_subject_data)
     else:
-        r2_lists = _store_r2_lists_exp2(all_subject_data)
+        r2_lists = _store_r2_tuples_exp2(all_subject_data)
     return r2_lists
 
 
-def _store_r2_lists_exp1(all_subject_data):
+def _store_r2_tuples_exp1(all_subject_data):
     d1_dom_r2s, d1_non_dom_r2s, d2_dom_1_r2s, d2_dom_2_r2s = [], [], [], []
     r2_list_tuple = namedtuple('r2', 'd1_dom_r2_list d1_non_dom_r2_list d2_dom_1_r2_list d2_dom_2_r2_list')
 
@@ -99,20 +99,20 @@ def _store_r2_lists_exp1(all_subject_data):
         d2_dom_1_r2s.append(calculate_r2(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)),
         d2_dom_2_r2s.append(calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED))
 
-    r2_lists = r2_list_tuple(d1_dom_r2_list=d1_dom_r2s,
+    r2_tuples = r2_list_tuple(d1_dom_r2_list=d1_dom_r2s,
                              d1_non_dom_r2_list=d1_non_dom_r2s,
                              d2_dom_1_r2_list=d2_dom_1_r2s,
                              d2_dom_2_r2_list=d2_dom_2_r2s)
-    return r2_lists
+    return r2_tuples
 
 
-def _store_r2_lists_exp2(all_subject_data):
+def _store_r2_tuples_exp2(all_subject_data):
     line_width_r2s, width_line_r2s, width_width_r2s = [], [], []
     r2_list_tuple = namedtuple('r2s',
                                'line_width_r2_list width_line_r2_list, width_width_r2_list')
 
     for subject_data in all_subject_data:
-        data_tuples = utils_lovisa.condition_plot_inputs(subject_data)
+        data_tuples = condition_plot_inputs(subject_data)
 
         line_width, width_line, width_width = data_tuples[0], data_tuples[1], data_tuples[2]
 
@@ -120,11 +120,10 @@ def _store_r2_lists_exp2(all_subject_data):
         width_line_r2s.append(calculate_r2(width_line.ACTUAL, width_line.PERCEIVED)),
         width_width_r2s.append(calculate_r2(width_width.ACTUAL, width_width.PERCEIVED))
 
-    r2_lists = r2_list_tuple(line_width_r2_list=line_width_r2s,
+    r2_tuples = r2_list_tuple(line_width_r2_list=line_width_r2s,
                              width_line_r2_list=width_line_r2s,
                              width_width_r2_list=width_width_r2s)
-    return r2_lists
-
+    return r2_tuples
 
 def create_general_constants():
     general_constants = namedtuple('constants', 'CONDITION_NAMES_EXP1 CONDITION_NAMES_EXP2 CONDITION_PAIRS SUBJECT_IDS')
@@ -199,18 +198,6 @@ def _r_squared(subject_ID, current_subject_data):
     r_square_file.close
 
 
-def create_directory(directory):
-    if not os.path.exists(f'./{directory}'):
-        os.makedirs(f'./{directory}')
-        print(f'created directory {directory}')
-
-
-def create_sub_directory(directory, sub_diretory):
-    if not os.path.exists(f'./{directory}/{sub_diretory}'):
-        os.makedirs(f'./{directory}/{sub_diretory}')
-        print(f'created directory {directory}/{sub_diretory}')
-
-
 def get_filename_list(directory):
     filenames = []
     for root, dirs, files in os.walk(directory):
@@ -227,25 +214,11 @@ def get_directory_list(directory):
     return directories
 
 
-def create_plot_subdirectories():
-    plot_subdirectories = ['group_plots',
-                           'individual_plots',
-                           'individual_plots/subject_regression_plots',
-                           'individual_plots/area_plots',
-                           'individual_plots/area_plots/regression_vs_reality',
-                           'individual_plots/area_plots/between_condition_comparison']
-    plot_path = Path('./plots')
-    for subdirectory in plot_subdirectories:
-        path = plot_path / subdirectory
-        if not os.path.exists(path):
-            os.makedirs(path)
-
-
 def create_data_tuples(experiment, subject_data):
     if experiment == 'exp1':
         plot_inputs = plot_utils.store_index_condition_data_tuple(subject_data)
     else:
-        plot_inputs = utils_lovisa.condition_plot_inputs(subject_data)
+        plot_inputs = condition_plot_inputs(subject_data)
     return plot_inputs
 
 
@@ -264,6 +237,10 @@ def create_group_plot_save_path(experiment, plot):
     savepath = Path(f'./plots/{experiment}/group_plots/{plot}.png')
     return savepath
 
+def generic_plot_save_path(experiment, type, plot):
+    path = f'./plots/{experiment}/{type}/{plot}'
+    path_text = colored(path, 'blue')
+    return path_text
 
 def plot_constants_regressions_ind(experiment):
     if experiment == 'exp1':
@@ -307,3 +284,28 @@ def x_ticks_group_plot(experiment):
     else:
         x_ticks = ['line_width', 'width_line', 'width_width']
     return x_ticks
+
+
+def remove_missing_data(actual_list, perceived_list, subject_ID, name):
+    indices_to_remove = []
+    for trial in perceived_list:
+        if trial == "":
+            indices_to_remove.append(perceived_list.index(trial))
+    indices_to_remove.reverse()
+    for index in indices_to_remove:
+        actual_list.pop(index)
+        perceived_list.pop(index)
+        print(f'removed missing data at index {index}, {subject_ID}, condition {name}')
+    return actual_list, perceived_list
+
+
+def condition_plot_inputs(subject_data):
+    plot_inputs = namedtuple('INPUTS', 'NAME ACTUAL PERCEIVED PLOT_INDEX')
+    line_width_inputs = plot_inputs(NAME='SHow Line Pick Width', ACTUAL=subject_data.LINE_WIDTH.ACTUAL,
+                                    PERCEIVED=subject_data.LINE_WIDTH.PERCEIVED, PLOT_INDEX=1)
+    width_line_inputs = plot_inputs(NAME='Present Width Pick Line', ACTUAL=subject_data.WIDTH_LINE.ACTUAL,
+                                    PERCEIVED=subject_data.WIDTH_LINE.PERCEIVED, PLOT_INDEX=2)
+    width_width_inputs = plot_inputs(NAME='Present Width Pick Width', ACTUAL=subject_data.WIDTH_WIDTH.ACTUAL,
+                                    PERCEIVED=subject_data.WIDTH_WIDTH.PERCEIVED, PLOT_INDEX=3)
+    tuples = line_width_inputs, width_line_inputs, width_width_inputs
+    return tuples

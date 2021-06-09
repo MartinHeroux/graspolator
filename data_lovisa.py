@@ -3,7 +3,6 @@ from typing import NamedTuple
 from pathlib import Path
 
 import utils
-import utils_lovisa
 
 
 def process_blocked_data():
@@ -34,7 +33,7 @@ def _parse_show_line_pick_width(show_line_pick_width_block, subject_ID):
             perceived_width = (line.split(":")[1].split(" ")[1]).replace("\n", "").replace(" ", "")
             actual_list.append(actual_width)
             perceived_list.append(perceived_width)
-    actual_list, perceived_list = utils_lovisa.remove_missing_data(actual_list, perceived_list, subject_ID, name)
+    actual_list, perceived_list = utils.remove_missing_data(actual_list, perceived_list, subject_ID, name)
     actuals = [float(i) for i in actual_list]
     perceived_widths = [float(i) for i in perceived_list]
     line_width_tuple = Block(ACTUAL=actuals, PERCEIVED=perceived_widths, PLOT_INDEX=1)
@@ -52,7 +51,7 @@ def _parse_present_width_pick_width(present_width_pick_width_block, subject_ID):
             perceived_width = (line.split(":")[1].split(" ")[1]).replace("\n", "").replace(" ", "")
             actual_list.append(actual_width)
             perceived_list.append(perceived_width)
-    actual_list, perceived_list = utils_lovisa.remove_missing_data(actual_list, perceived_list, subject_ID, name)
+    actual_list, perceived_list = utils.remove_missing_data(actual_list, perceived_list, subject_ID, name)
     actual_widths = [float(i) for i in actual_list]
     perceived_widths = [float(i) for i in perceived_list]
     width_width_tuple = Block(ACTUAL=actual_widths, PERCEIVED=perceived_widths, PLOT_INDEX=3)
@@ -70,7 +69,7 @@ def _parse_kathy_block(kathy_experiment_block, subject_ID):
         if line.split("_")[0] == "MEASURE":
             perceived_width = (line.split(":")[1].split(" ")[1]).replace("\n", "").replace(" ", "")
             perceived_list.append(perceived_width)
-    actual_list, perceived_list = utils_lovisa.remove_missing_data(actual_list, perceived_list, subject_ID, name)
+    actual_list, perceived_list = utils.remove_missing_data(actual_list, perceived_list, subject_ID, name)
     actual_widths = [float(i) for i in actual_list]
     perceived_widths = [float(i) for i in perceived_list]
     width_line_tuple = Block(ACTUAL=actual_widths, PERCEIVED=perceived_widths, PLOT_INDEX=2)

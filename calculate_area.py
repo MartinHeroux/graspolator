@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 
 import utils
 import plot_utils
-import utils_lovisa
-from utils import calculate_regression_general, calculate_mean_ci
+from utils import calculate_regression_general
 
 
 def trapezium_area(a, b, h):
@@ -72,6 +71,7 @@ def _condition_pair_area_exp2(condition_pair_tuple, experiment):
 
     return areas
 
+
 def _reg_reality_area(intersection_x, intersection_y, y_coordinates_1, y_coordinates_2, experiment):
     group = _subject_group_reg_lines_exp2(intersection_x)
     if group == 'cross':
@@ -98,6 +98,7 @@ def _subject_group_reg_lines_exp1(x_intersect):
         group = 'no_cross'
     return group
 
+
 def _subject_group_reg_lines_exp2(x_intersect):
     if 3 <= x_intersect <= 9:
         group = 'cross'
@@ -113,7 +114,8 @@ def _reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at
     elif experiment == 'exp2':
         x1 = 3
         x2 = 9
-    else: print('experiment not defined reg line crosser area')
+    else:
+        print('experiment not defined reg line crosser area')
 
     h_left_trapezium = x_intersect - x1
     h_right_trapezium = x2 - x_intersect
@@ -136,7 +138,8 @@ def _reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b, experi
         h = 8
     elif experiment == 'exp2':
         h = 6
-    else: print("experiment not defined reg line no cross area")
+    else:
+        print("experiment not defined reg line no cross area")
 
     area_a = trapezium_area(y_at_x2_a, y_at_x10_a, h)
     area_b = trapezium_area(y_at_x2_b, y_at_x10_b, h)
@@ -160,7 +163,7 @@ def actual_vs_perceived(actual, perceived, experiment):
         area_total = _minimiser_area_calc(y_at_x2, y_at_x10, experiment)
     else:
         area_total = _maximiser_area_calc(y_at_x2, y_at_x10, experiment)
-    return area_total
+    return abs(area_total)
 
 
 def _subject_group(x_intersect, y_at_x2, experiment):
@@ -170,7 +173,8 @@ def _subject_group(x_intersect, y_at_x2, experiment):
     elif experiment == 'exp2':
         x1 = 3
         x2 = 9
-    else: print('experiment not defined - subject group function')
+    else:
+        print('experiment not defined - subject group function')
 
     if x1 <= x_intersect <= x2 and y_at_x2 >= 0:
         group = 'crosser'
@@ -190,7 +194,8 @@ def _crosser_area_calc(x_intersect, y_intersect, y_at_x2, y_at_x10, experiment):
     elif experiment == 'exp2':
         x1 = 3
         x2 = 9
-    else: print('experiment not defined crosser area calc')
+    else:
+        print('experiment not defined crosser area calc')
 
     h_left_trapezium = x_intersect - x1
     h_right_trapezium = x2 - x_intersect
@@ -250,7 +255,8 @@ def _minimiser_area_calc(y_at_x2, y_at_x10, experiment):
     elif experiment == 'exp2':
         h = 6
         whole_area = 36
-    else: print("experiment not defined minimiser area calc")
+    else:
+        print("experiment not defined minimiser area calc")
 
     area = trapezium_area(y_at_x2, y_at_x10, h)
     area_difference = (whole_area - area)
@@ -330,6 +336,7 @@ def store_r2_and_area_tuples_exp1(all_subject_data, subject_IDs):
 
     return r2_area_tuples
 
+
 def store_r2_and_area_tuples_exp2(all_subject_data, subject_IDs):
     experiment = 'exp2'
     r2s_areas = namedtuple('r2s_area',
@@ -338,21 +345,25 @@ def store_r2_and_area_tuples_exp2(all_subject_data, subject_IDs):
     r2_area_tuples = []
 
     for subject_data, subject_ID in zip(all_subject_data, subject_IDs):
-        data_tuples = utils_lovisa.condition_plot_inputs(subject_data)
+        data_tuples = utils.condition_plot_inputs(subject_data)
 
         line_width, width_line, width_width = data_tuples[0], data_tuples[1], data_tuples[2]
 
         r2s_areas_tuple = r2s_areas(subject_ID=subject_ID,
-                                    line_width_r2= utils.calculate_r2(line_width.ACTUAL, line_width.PERCEIVED),
-                                    width_line_r2= utils.calculate_r2(width_line.ACTUAL, width_line.PERCEIVED),
-                                    width_width_r2= utils.calculate_r2(width_width.ACTUAL, width_width.PERCEIVED),
-                                    line_width_area= actual_vs_perceived(line_width.ACTUAL, line_width.PERCEIVED, experiment),
-                                    width_line_area= actual_vs_perceived(width_line.ACTUAL, width_line.PERCEIVED, experiment),
-                                    width_width_area= actual_vs_perceived(width_width.ACTUAL, width_width.PERCEIVED, experiment))
+                                    line_width_r2=utils.calculate_r2(line_width.ACTUAL, line_width.PERCEIVED),
+                                    width_line_r2=utils.calculate_r2(width_line.ACTUAL, width_line.PERCEIVED),
+                                    width_width_r2=utils.calculate_r2(width_width.ACTUAL, width_width.PERCEIVED),
+                                    line_width_area=actual_vs_perceived(line_width.ACTUAL, line_width.PERCEIVED,
+                                                                        experiment),
+                                    width_line_area=actual_vs_perceived(width_line.ACTUAL, width_line.PERCEIVED,
+                                                                        experiment),
+                                    width_width_area=actual_vs_perceived(width_width.ACTUAL, width_width.PERCEIVED,
+                                                                         experiment))
 
         r2_area_tuples.append(r2s_areas_tuple)
 
     return r2_area_tuples
+
 
 def group_areas(all_subject_data, experiment):
     if experiment == 'exp1':
@@ -362,11 +373,12 @@ def group_areas(all_subject_data, experiment):
 
     return area_lists_per_condition
 
+
 def _group_areas_exp1(all_subject_data):
     experiment = 'exp1'
     d1_dom_areas, d1_non_dom_areas, d2_dom_1_areas, d2_dom_2_areas = [], [], [], []
     area_list_tuple = namedtuple('r2s_area',
-                                    'd1_dom_area_list d1_non_dom_area_list d2_dom_1_area_list d2_dom_2_area_list')
+                                 'd1_dom_area_list d1_non_dom_area_list d2_dom_1_area_list d2_dom_2_area_list')
 
     for subject_data in all_subject_data:
         d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
@@ -378,19 +390,20 @@ def _group_areas_exp1(all_subject_data):
         d2_dom_2_areas.append(actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED, experiment))
 
     area_lists_per_condition = area_list_tuple(d1_dom_area_list=d1_dom_areas,
-                                                  d1_non_dom_area_list=d1_non_dom_areas,
-                                                  d2_dom_1_area_list=d2_dom_1_areas,
-                                                  d2_dom_2_area_list=d2_dom_2_areas)
+                                               d1_non_dom_area_list=d1_non_dom_areas,
+                                               d2_dom_1_area_list=d2_dom_1_areas,
+                                               d2_dom_2_area_list=d2_dom_2_areas)
     return area_lists_per_condition
+
 
 def _group_areas_exp2(all_subject_data):
     experiment = 'exp2'
     line_width_areas, width_line_areas, width_width_areas = [], [], []
     area_list_tuple = namedtuple('r2s_area',
-                                    'line_width_area_list width_line_area_list width_width_area_list')
+                                 'line_width_area_list width_line_area_list width_width_area_list')
 
     for subject_data in all_subject_data:
-        data_tuples = utils_lovisa.condition_plot_inputs(subject_data)
+        data_tuples = utils.condition_plot_inputs(subject_data)
 
         line_width, width_line, width_width = data_tuples[0], data_tuples[1], data_tuples[2]
 
@@ -402,6 +415,7 @@ def _group_areas_exp2(all_subject_data):
                                                width_line_area_list=width_line_areas,
                                                width_width_area_list=width_width_areas)
     return area_lists_per_condition
+
 
 def difference_of_difference_areas(experiment, subject_data):
     dom_vs_non_dom_area, dom_d1_vs_d2_area, d2_dom_vs_dom_area = between_conditions(experiment,

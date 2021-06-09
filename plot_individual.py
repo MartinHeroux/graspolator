@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
-from pathlib import Path
 from random import random
 import numpy as np
 from matplotlib.lines import Line2D
 import matplotlib.patches as mpatches
+from termcolor import colored
 
 import utils
 import calculate_area
@@ -23,7 +23,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
     subplot_width, subplot_length, x_lims, fig_size = utils.plot_constants_regressions_ind(experiment)
 
     plt.figure(figsize=fig_size)
-    plt.suptitle(str(subject_ID + ' Scatterplot + Reg Line'))
+    plt.suptitle(str(subject_ID + ' Scatterplot + Regression Line'))
     for condition_tuple in data_list:
         plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
         plt.plot([plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
@@ -32,10 +32,15 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
         length_data = len(condition_tuple.PERCEIVED)
         jitter_values = [random() / 4 for _ in range(length_data)]
         x_data = np.array(condition_tuple.ACTUAL) + np.array(jitter_values)
-        plt.plot(x_data, condition_tuple.PERCEIVED, 'o', alpha=plot_constants.ALPHA)
+        plt.plot(x_data, condition_tuple.PERCEIVED, 'o', color = 'b', alpha=plot_constants.ALPHA)
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL,
                                                               condition_tuple.PERCEIVED)
+
+        legend_handles = [Line2D([0], [0], color='royalblue', lw=2,
+                                 label=f'Regression \n(y = {slope:4.2f}*x + {intercept:4.2f})'),
+                          Line2D([0], [0], color='black', linestyle='--', label='Reality (y = x)', lw=2),
+                          Line2D([0], [0], color='blue', marker = 'o', linestyle = 'none', alpha=0.3, label=f'Trial (n = {length_data})')]
 
         # Creating points to plot regression line [x1, y1][x2, y2]
         x1 = x_lims[0]
@@ -47,7 +52,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
         else:
             y_max = y2
         plt.plot([x1, x2], [y1, y2], color='b')
-        plt.text(2, 12, f'{slope:4.2f}*x + {intercept:4.2f}', fontsize=12)
+        plt.legend(handles = legend_handles, loc = 'upper left')
         plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
         plt.xlim([x1 - 1, x2 + 1])
         plt.yticks(plot_constants.PERCEIVED_WIDTH_RANGE)
@@ -58,7 +63,8 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
         plt.grid()
 
     plt.savefig(path, dpi=300, bbox_inches='tight')
-    print(f'Saving scatter plots and regressions for {subject_ID}')
+    #text = colored(f'{path}', 'blue')
+    #print(f'scatterplot and regression line saved for {subject_ID} in {text}')
     plt.close()
 
 
@@ -107,8 +113,10 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
         plt.ylabel('Perceived width (cm)')
         plt.xlabel('Actual width (cm)')
         plt.legend(handles=legend_handles, loc='upper left')
-    print(f'area between regression and reality saved for {subject_ID} in {path}')
+
     plt.savefig(path)
+    #text = colored(f'{path}', 'blue')
+    #print(f'area between regression and reality saved for {subject_ID} in {text}')
     plt.close()
 
 
@@ -160,7 +168,8 @@ def area_between_conditions_plot(subject_ID, subject_data, experiment):
             plt.yticks(range(int(y_min), int((y_max + 2))))
 
         plt.savefig(path)
-        print(f'area between condition plot saved for {subject_ID} in {path}')
+        #text = colored(f'{path}', 'blue')
+        #print(f'area between condition plot saved for {subject_ID} in {text}')
         plt.close()
 
     elif experiment == 'exp2':
@@ -222,6 +231,7 @@ def _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment,
     plt.ylim([y_min, (y_max + 2)])
     plt.yticks(range(int(y_min), int((y_max + 2))))
 
-    print(f'area between condition plot saved for {subject_ID} in {path}')
     plt.savefig(path)
+    #text = colored(f'{path}', 'blue')
+    #print(f'area between condition plot saved for {subject_ID} in {text}')
     plt.close()

@@ -5,6 +5,7 @@ import random as rd
 import numpy as np
 from matplotlib.lines import Line2D
 from matplotlib import cm
+from termcolor import colored
 
 import utils
 import calculate_area
@@ -50,7 +51,7 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
             x_points.append(x2)
             line_colour = plot_utils.subject_line_colour(intersect_x, y1, experiment)
             plt.plot([x1, x2], [y1, y2], color=line_colour, linewidth=0.5)
-            print(f'Reg line plotted subject {subject_ID}')
+
 
         y_min, y_max = min(y_points) - 1, max(y_points) + 1
         x_min, x_max = min(x_points) - 1, max(x_points) + 1
@@ -68,14 +69,15 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
             plt.grid()
 
     plt.savefig(path, dpi=300)
-    print(f'Group regression plots saved in {path}')
+    text = colored(f'{path}', 'blue')
+    print(f'Group regression plots saved in {text}')
     plt.close()
 
 
-def consistency_between_conditions(experiment, all_subject_data):
-    path = Path('./plots/group_plots/')
+def consistency_between_conditions(all_subject_data, experiment):
+    plot = 'consistency_between_conditions'
+    path = utils.create_group_plot_save_path(experiment, plot)
     color_map = cm.get_cmap('copper', 12)
-    # TODO decide on method of colouring lines in figure
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('Area Difference Between Conditions'))
@@ -93,21 +95,22 @@ def consistency_between_conditions(experiment, all_subject_data):
         else:
             x_points_jitter = np.array(x_points_base) - np.array(jitter_values)
         colour_index = rd.uniform(0, 1)
-        dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(experiment,
-                                                                                                      subject_data),
+        dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(experiment, subject_data)
         y_points = [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
         y_points_list.append(y_points)
         plt.plot(x_points_jitter, y_points, color=color_map(colour_index), marker='o', alpha=0.4)
 
     y_max, y_min = utils.max_min(y_points_list)
     plt.ylim([y_min, (y_max + 1)])
-    plt.savefig('{}/group_consistency_plot.png'.format(path))
-    print(f'Group consistency plots saved in {path}')
+    plt.savefig(path)
+    text = colored(path, 'blue')
+    print(f'Group consistency plots saved in {text}\n')
     plt.close()
 
 
-def difference_of_differences(all_subject_data):
-    path = Path('./plots/group_plots/difference_of_differences_plot')
+def kathy_difference_of_differences(all_subject_data, experiment):
+    plot = 'difference_of_differences'
+    path = utils.create_group_plot_save_path(experiment, plot)
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('Difference of Differences'))
@@ -117,7 +120,6 @@ def difference_of_differences(all_subject_data):
     x_points_base = [1, 2, 3]
     plt.xticks(x_points_base,
                labels=['Between Hands - Within Day', 'Between Hands - Between Days', 'Within Day - Between Days'])
-    # TODO discuss how best to label the differences on x axis
     plt.yticks(range(-10, 10))
     key_text = str('Between Hands = difference between hands in two test sessions the same day \n'
                    'Within Day = difference between right hand in two test sessions on different days \n'
@@ -130,7 +132,7 @@ def difference_of_differences(all_subject_data):
     hands_vs_day_list, hands_vs_days_list, day_vs_days_list = [], [], []
 
     for subject_data in all_subject_data:
-        hands_vs_day, hands_vs_days, day_vs_days = calculate_area.difference_of_difference_areas(subject_data)
+        hands_vs_day, hands_vs_days, day_vs_days = calculate_area.difference_of_difference_areas(experiment, subject_data)
 
         hands_vs_day_list.append(hands_vs_day)
         hands_vs_days_list.append(hands_vs_days)
@@ -155,7 +157,8 @@ def difference_of_differences(all_subject_data):
     plt.text(0.08, 0.01, key_text, fontsize=10, bbox=dict(facecolor='none', edgecolor='red'),
              transform=plt.gcf().transFigure)
     plt.savefig(path, bbox_inches='tight')
-    print(f'Difference of difference plot saved in {path}')
+    text = colored(path, 'blue')
+    print(f'Difference of difference plot saved in {text}\n')
     plt.close()
 
 
@@ -201,7 +204,8 @@ def area_per_condition_plot(all_subject_data, experiment):
     plt.legend(handles=legend_elements, loc='best')
     plt.grid()
     plt.savefig(path)
-    print(f'Area per condition plots saved in {path}')
+    text = colored(f'{path}', 'blue')
+    print(f'Area per condition plots saved in {text}\n')
     plt.close()
 
 
@@ -210,7 +214,7 @@ def area_vs_r2_plot(all_subject_data, experiment):
     path = utils.create_group_plot_save_path(experiment, plot)
 
     area_lists = calculate_area.group_areas(all_subject_data, experiment)
-    r2_lists = utils.store_r2_lists(all_subject_data, experiment)
+    r2_lists = utils.store_r2_tuples(all_subject_data, experiment)
     x_labels = utils.x_ticks_group_plot(experiment)
     subplot_indices = utils.x_points_group_plot(experiment)
 
@@ -233,13 +237,14 @@ def area_vs_r2_plot(all_subject_data, experiment):
         plt.xlim(min(condition_area_data)-1, max(condition_area_data)+1)
         plt.ylim(min(condition_r2_data)-0.01, max(condition_r2_data)+0.01)
         plt.grid()
-        plt.legend(handles = legend_handles)
+        plt.legend(handles = legend_handles, loc = 'upper left')
         plt.title(condition_name, loc='right')
         plt.xlabel('Area (cm^2)')
         plt.ylabel('R^2 Value')
         plt.tight_layout()
     plt.savefig(path, dpi=300)
-    print(f'Area vs r2 plots saved in {path}')
+    text = colored(f'{path}', 'blue')
+    print(f'Area vs r2 plots saved in {text}\n')
     plt.close()
 
 
@@ -284,5 +289,46 @@ def r2_per_condition_plot(all_subject_data, experiment):
     plt.legend(handles=legend_elements, loc='lower right')
     plt.grid()
     plt.savefig(path)
-    print(f'R^2 per condition plot saved in {path}')
+    text = colored(f'{path}', 'blue')
+    print(f'R^2 per condition plot saved in {text}\n')
+    plt.close()
+
+def lovisa_between_condition_regression(all_subject_data, experiment):
+    plot = 'between_condition_regression'
+    path = utils.create_group_plot_save_path(experiment, plot)
+
+    r2_tuple = utils.store_r2_tuples(all_subject_data, experiment)
+    area_tuple = calculate_area.group_areas(all_subject_data, experiment)
+
+    subplot_indices = [1, 2]
+    line_width_data = [r2_tuple.line_width_r2_list, area_tuple.line_width_area_list]
+    width_line_data = [r2_tuple.width_line_r2_list, area_tuple.width_line_area_list]
+    plot_names = ['placeholder', 'R^2', 'Area between regression line and reality']
+
+    plt.figure(figsize=(12, 7))
+    plt.suptitle('Reciprocal Condition Regressions')
+
+    for subplot_index, line_width, width_line in zip(subplot_indices, line_width_data, width_line_data):
+        intercept, slope = utils.calculate_regression_general(line_width, width_line)
+        plt.subplot(subplot_indices[0], subplot_indices[-1], subplot_index)
+        x_vals = np.array([min(line_width), max(line_width)])
+        y_vals = intercept + slope * x_vals
+        plt.plot(x_vals, y_vals, color='b')
+        plt.scatter(line_width, width_line, marker='o', color='royalblue', alpha=0.5)
+        legend_handles = [Line2D([0], [0], color='b', lw=2,
+                                 label=f'Regression\n(y = {slope:6.4f}*x + {intercept:4.2f})'),
+                          Line2D([0], [0], marker='o', label='Individual subject (n = 30)', mec='royalblue',
+                                 markerfacecolor='royalblue', markersize=8, linestyle='None')]
+
+        #plt.xlim((min(line_width) - (min(line_width)/10)), (max(line_width) + (max(line_width)/10)))
+        #plt.ylim((min(width_line) - (min(width_line)/10)), (min(width_line) + (min(width_line)/10)))
+        plt.grid()
+        plt.legend(handles=legend_handles, loc='best')
+        plt.title(f'{plot_names[subplot_index]} Regression', loc='right')
+        plt.xlabel(f'Show line pick width {plot_names[subplot_index]}')
+        plt.ylabel(f'Present width pick line {plot_names[subplot_index]}')
+        plt.tight_layout()
+    plt.savefig(path, dpi=300)
+    text = colored(f'{path}', 'blue')
+    print(f'reciprocal condition regression saved in {text}\n')
     plt.close()
