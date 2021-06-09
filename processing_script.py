@@ -16,8 +16,7 @@ experiment = 'exp2'
 all_subject_data, subjects = process.return_data_and_subjects(experiment)
 
 
-# make plot dispatcher for experiment
-
+# make plot dispatcher keys
 # TODO change 'run' to 'skip' to alter which plots are made
 A = plot_dispatch._make([plot.individual_regressions, 'run'])
 B = plot_dispatch._make([plot.individual_areas_to_reality, 'run'])
@@ -33,6 +32,6 @@ I = plot_dispatch._make([plot.group_areas_difference_of_differences, 'run'])
 J = plot_dispatch._make([plot.lovia_reciprocal_condition_regression, 'run'])
 
 
-# plot according to dispatch command and experiment
+# plot according to dispatch keys and experiment
 plot_summary = process.create_plot_dispatcher(experiment, A, B, C, D, E, F, G, H, I, J)
 process.plot_by_dispatcher_key(plot_summary, all_subject_data, experiment, subjects)
