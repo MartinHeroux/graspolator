@@ -4,7 +4,7 @@ from termcolor import colored
 
 import utils
 import data
-import data_lovisa
+import data_exp2
 
 DATA_FOLDER_EXP1 = Path('./data/exp1')
 DATA_FOLDER_EXP2 = Path('./data/exp2')
@@ -72,7 +72,7 @@ def return_data_and_subjects(experiment):
         subjects = utils.get_directory_list(Path('./data/exp1'))
 
     elif experiment == 'exp2':
-        all_subject_data = data_lovisa.process_blocked_data()
+        all_subject_data = data_exp2.process_blocked_data()
         subjects = utils.get_directory_list(Path('./data/exp2'))
 
     else:

@@ -9,7 +9,7 @@ plot_dispatch = namedtuple('plot_dispatch', 'PLOT COMMAND')
 
 # TODO change string below to match experiment
 #  either 'exp1' or 'exp2' (Kathy and Lovisa respectively)
-experiment = 'exp2'
+experiment = 'exp1'
 
 
 # import data and subject list for experiment
@@ -18,9 +18,9 @@ all_subject_data, subjects = process.return_data_and_subjects(experiment)
 
 # make plot dispatcher keys
 # TODO change 'run' to 'skip' to alter which plots are made
-A = plot_dispatch._make([plot.individual_regressions, 'run'])
-B = plot_dispatch._make([plot.individual_areas_to_reality, 'run'])
-C = plot_dispatch._make([plot.individual_areas_between_conditions, 'run'])
+A = plot_dispatch._make([plot.individual_regressions, 'skip'])
+B = plot_dispatch._make([plot.individual_areas_to_reality, 'skip'])
+C = plot_dispatch._make([plot.individual_areas_between_conditions, 'skip'])
 D = plot_dispatch._make([plot.group_regression_lines_per_condition, 'run'])
 E = plot_dispatch._make([plot.group_areas_per_conditions, 'run'])
 F = plot_dispatch._make([plot.group_areas_vs_r2_per_condition, 'run'])

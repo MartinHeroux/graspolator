@@ -295,6 +295,7 @@ def remove_missing_data(actual_list, perceived_list, subject_ID, name):
     for index in indices_to_remove:
         actual_list.pop(index)
         perceived_list.pop(index)
+        # TODO figure out why below statement prints even when Exp1 is running
         print(f'removed missing data at index {index}, {subject_ID}, condition {name}')
     return actual_list, perceived_list
 

@@ -23,9 +23,10 @@ def individual_regressions(all_subject_data, experiment, subjects):
     print(f'All individual regression plots saved in {path}\n')
 
 
-# done
+# TODO figure out why gridlines aren't printing in plot
 def group_regression_lines_per_condition(all_subject_data, experiment, subjects):
     plot_group.subject_reg_lines_by_category(experiment, subjects, all_subject_data)
+
 
 # done
 def individual_areas_to_reality(all_subject_data, experiment, subjects):
@@ -35,6 +36,7 @@ def individual_areas_to_reality(all_subject_data, experiment, subjects):
     path = utils.generic_plot_save_path(experiment, 'individual_plots', 'area_between_reg_and_reality')
     print(f'All individual areas between regression line and reality saved in {path}\n')
 
+
 # done
 def individual_areas_between_conditions(all_subject_data, experiment, subjects):
     print('Note - this takes a while')
@@ -42,6 +44,7 @@ def individual_areas_between_conditions(all_subject_data, experiment, subjects):
         plot_individual.area_between_conditions_plot(subject_ID, subject_data, experiment)
     path = utils.generic_plot_save_path(experiment, 'individual_plots', 'area_between_conditions')
     print(f'All individual areas between conditions saved in {path}\n')
+
 
 def group_areas_between_conditions(all_subject_data, experiment, subjects):
     plot_group.consistency_between_conditions(all_subject_data, experiment)
@@ -64,6 +67,7 @@ def group_areas_vs_r2_per_condition(all_subject_data, experiment, subjects):
 # done
 def group_r2_per_condition(all_subject_data, experiment, subjects):
     plot_group.r2_per_condition_plot(all_subject_data, experiment)
+
 
 # done
 def lovia_reciprocal_condition_regression(all_subject_data, experiment, subjects):

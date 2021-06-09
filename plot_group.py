@@ -163,7 +163,7 @@ def kathy_difference_of_differences(all_subject_data, experiment):
 
 
 def area_per_condition_plot(all_subject_data, experiment):
-    plot = 'area_difference_between_conditions'
+    plot = 'areas_by_condition'
     path = utils.create_group_plot_save_path(experiment, plot)
 
     plt.figure(figsize=(10, 10))
