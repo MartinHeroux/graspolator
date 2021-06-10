@@ -333,3 +333,45 @@ def lovisa_between_condition_regression(all_subject_data, experiment):
     text = colored(f'{path}', 'blue')
     print(f'reciprocal condition regression saved in {text}\n')
     plt.close()
+
+def slope_comparison(all_subject_data, experiment):
+    plot = 'slope_comparison'
+    path = utils.create_group_plot_save_path(experiment, plot)
+
+    slopes_line_width = []
+    slopes_width_line = []
+
+    for subject_data in all_subject_data:
+        intercept_line_width, slope_line_width = utils.calculate_regression_general(subject_data.LINE_WIDTH.ACTUAL, subject_data.LINE_WIDTH.PERCEIVED)
+        intercept_line_line, slope_width_line = utils.calculate_regression_general(subject_data.WIDTH_LINE.ACTUAL, subject_data.WIDTH_LINE.PERCEIVED)
+
+        slopes_line_width.append(intercept_line_width)
+        slopes_width_line.append(intercept_line_line)
+
+    plt.figure(figsize=(5,5))
+    plt.suptitle('Slope Comparison')
+
+    intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
+    utils.regression_summary(slopes_line_width, slopes_width_line)
+
+    x_vals = np.array([min(slopes_line_width)-0.5, max(slopes_line_width)+0.5])
+    y_vals = intercept + slope * x_vals
+
+    plt.plot(x_vals, y_vals, color='b')
+    plt.scatter(slopes_line_width, slopes_width_line, marker='o', color='royalblue', alpha=0.5)
+    legend_handles = [Line2D([0], [0], color='b', lw=2,
+                             label=f'Regression Line\n(y = {slope:4.2f}*x + {intercept:4.2f})'),
+                      Line2D([0], [0], marker='o', label='Subject (n = 30)', mec='royalblue',
+                             markerfacecolor='royalblue', markersize=8, linestyle='None')]
+
+    plt.grid()
+    plt.legend(handles=legend_handles, loc='best')
+    plt.xlabel(f'Slope: show line pick width')
+    plt.ylabel(f'Slope: present width pick line')
+    plt.xlim((min(slopes_line_width) - 0.5), (max(slopes_line_width) + 0.5))
+    plt.ylim((min(slopes_width_line) - 0.5), (max(slopes_width_line) + 0.5))
+    plt.tight_layout()
+    plt.savefig(path, dpi=300)
+    text = colored(f'{path}', 'blue')
+    print(f'slope comparison saved in {text}\n')
+    plt.close()

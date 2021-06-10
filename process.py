@@ -32,13 +32,13 @@ def plot_by_dispatcher_key(plot_summary, all_subject_data, experiment, subjects)
     print('\n All done :)')
 
 
-def create_plot_dispatcher(experiment, A, B, C, D, E, F, G, H, I, J):
+def create_plot_dispatcher(experiment, A, B, C, D, E, F, G, H, I, J, K):
     plot_summary_exp1, plot_summary_exp2 = _return_plot_tuples()
 
     if experiment == 'exp1':
         plot_summary = plot_summary_exp1._make([A, B, C, D, E, F, G, H, I])
     elif experiment == 'exp2':
-        plot_summary = plot_summary_exp2._make([A, B, C, D, E, F, G, J])
+        plot_summary = plot_summary_exp2._make([A, B, C, D, E, F, G, J, K])
 
     return plot_summary
 
@@ -61,7 +61,8 @@ def _return_plot_tuples():
                                             'E_group_areas_per_conditions '
                                             'F_group_areas_vs_r2_per_condition '
                                             'G_group_r2_per_condition '
-                                            'J_group_reciprocal_regression')
+                                            'J_group_reciprocal_regression '
+                                            'K_slope_comparison')
 
     return plot_summary_exp1, plot_summary_exp2
 

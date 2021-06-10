@@ -10,7 +10,7 @@ plot_dispatch = namedtuple('plot_dispatch', 'PLOT COMMAND')
 # TODO change string below to match experiment
 #  either 'exp1' or 'exp2' (Kathy and Lovisa respectively)
 #experiments = ['exp1', 'exp2']
-experiments = ['exp1']
+experiments = ['exp2']
 
 
 for experiment in experiments:
@@ -31,8 +31,9 @@ for experiment in experiments:
     I = plot_dispatch._make([plot.group_areas_difference_of_differences, 'skip'])
     # Exp2 specific plots
     J = plot_dispatch._make([plot.lovia_reciprocal_condition_regression, 'skip'])
+    K = plot_dispatch._make([plot.slope_comparison, 'run'])
 
 
     # plot according to dispatch keys and experiment
-    plot_summary = process.create_plot_dispatcher(experiment, A, B, C, D, E, F, G, H, I, J)
+    plot_summary = process.create_plot_dispatcher(experiment, A, B, C, D, E, F, G, H, I, J, K)
     process.plot_by_dispatcher_key(plot_summary, all_subject_data, experiment, subjects)

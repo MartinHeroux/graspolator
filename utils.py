@@ -27,6 +27,11 @@ def calculate_regression_general(x, y):
     intercept, slope = model.params
     return intercept, slope
 
+def regression_summary(x, y):
+    x = sm.add_constant(x)
+    model = sm.OLS(y, x).fit()
+    print(model.summary())
+
 
 def read_yaml_corrections_file(fix_yaml):
     if not fix_yaml.is_file():
@@ -302,7 +307,7 @@ def remove_missing_data(actual_list, perceived_list, subject_ID, name):
 
 def condition_plot_inputs(subject_data):
     plot_inputs = namedtuple('INPUTS', 'NAME ACTUAL PERCEIVED PLOT_INDEX')
-    line_width_inputs = plot_inputs(NAME='SHow Line Pick Width', ACTUAL=subject_data.LINE_WIDTH.ACTUAL,
+    line_width_inputs = plot_inputs(NAME='Show Line Pick Width', ACTUAL=subject_data.LINE_WIDTH.ACTUAL,
                                     PERCEIVED=subject_data.LINE_WIDTH.PERCEIVED, PLOT_INDEX=1)
     width_line_inputs = plot_inputs(NAME='Present Width Pick Line', ACTUAL=subject_data.WIDTH_LINE.ACTUAL,
                                     PERCEIVED=subject_data.WIDTH_LINE.PERCEIVED, PLOT_INDEX=2)

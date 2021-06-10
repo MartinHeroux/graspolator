@@ -34,3 +34,30 @@ def compute_area_calc_inputs(data_pair):
     x_intersect, y_intersect = point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b)
 
     return x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b
+
+
+def create_directory(directory):
+    if not os.path.exists(f'./{directory}'):
+        os.makedirs(f'./{directory}')
+        print(f'created directory {directory}')
+
+
+def create_sub_directory(directory, sub_diretory):
+    if not os.path.exists(f'./{directory}/{sub_diretory}'):
+        os.makedirs(f'./{directory}/{sub_diretory}')
+        print(f'created directory {directory}/{sub_diretory}')
+
+
+
+def create_plot_subdirectories():
+    plot_subdirectories = ['group_plots',
+                           'individual_plots',
+                           'individual_plots/subject_regression_plots',
+                           'individual_plots/area_plots',
+                           'individual_plots/area_plots/regression_vs_reality',
+                           'individual_plots/area_plots/between_condition_comparison']
+    plot_path = Path('./plots')
+    for subdirectory in plot_subdirectories:
+        path = plot_path / subdirectory
+        if not os.path.exists(path):
+            os.makedirs(path)

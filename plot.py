@@ -71,3 +71,7 @@ def group_r2_per_condition(all_subject_data, experiment, subjects):
 # done
 def lovia_reciprocal_condition_regression(all_subject_data, experiment, subjects):
     plot_group.lovisa_between_condition_regression(all_subject_data, experiment)
+
+
+def slope_comparison(all_subject_data, experiment, subjects):
+    plot_group.slope_comparison(all_subject_data, experiment)
