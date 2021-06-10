@@ -23,7 +23,6 @@ def individual_regressions(all_subject_data, experiment, subjects):
     print(f'All individual regression plots saved in {path}\n')
 
 
-# TODO figure out why gridlines aren't printing in plot
 def group_regression_lines_per_condition(all_subject_data, experiment, subjects):
     plot_group.subject_reg_lines_by_category(experiment, subjects, all_subject_data)
 

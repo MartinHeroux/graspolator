@@ -40,6 +40,7 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
         for condition_tuple in data_list:
             plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
+            plt.grid(True)
             plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
             intersect_x, intersect_y = calculate_area.point_of_intersection_with_reality(intercept, slope)
@@ -66,7 +67,7 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
             plt.xlabel('Actual width (cm)')
             plt.legend(handles=legend_handles, loc='upper left')
             plt.plot([2, 10], [2, 10], 'k--', linewidth=1.5)
-            plt.grid()
+
 
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')

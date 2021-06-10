@@ -3,7 +3,7 @@ from collections import namedtuple
 from termcolor import colored
 
 import utils
-import data
+import data_exp1
 import data_exp2
 
 DATA_FOLDER_EXP1 = Path('./data/exp1')
@@ -14,7 +14,7 @@ def import_and_parse_data():
     # set up directory structure
     #utils.create_plot_subdirectories()
     # read and process data
-    all_subject_data, widest_lines = data.read_exp1(DATA_FOLDER_EXP1)
+    all_subject_data, widest_lines = data_exp1.read_exp1(DATA_FOLDER_EXP1)
     return all_subject_data
 
 
@@ -79,6 +79,3 @@ def return_data_and_subjects(experiment):
         print('no experiment name defined')
 
     return all_subject_data, subjects
-
-
-all_subject_data, subjects = return_data_and_subjects('exp2')
