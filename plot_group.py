@@ -39,7 +39,7 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
         for condition_tuple in data_list:
-            plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
+            plt.subplot(subplot_length, subplot_width, condition_tuple.PLOT_INDEX)
             plt.grid(True)
             plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
@@ -115,16 +115,16 @@ def kathy_difference_of_differences(all_subject_data, experiment):
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('Difference of Differences'))
-    plt.ylabel('Difference Between Areas (cm^2)')
-    plt.xlabel('Difference Pair')
+    plt.ylabel('Area Difference (cm^2)')
+    plt.xlabel('Condition Pair')
     plt.grid()
     x_points_base = [1, 2, 3]
     plt.xticks(x_points_base,
-               labels=['Between Hands - Within Day', 'Between Hands - Between Days', 'Within Day - Between Days'])
+               labels=['d1d - d1nd', 'd1d - d2d_a', 'd2d_a - d2d_b'])
     plt.yticks(range(-10, 10))
-    key_text = str('Between Hands = difference between hands in two test sessions the same day \n'
-                   'Within Day = difference between right hand in two test sessions on different days \n'
-                   'Between Days = difference between the right hand in two test sessions the same day')
+    key_text = str('d1d - d1nd = difference between dominant and non dominant hand on the same day \n '
+                   'd1d - d2d_a = difference between two dominant hand test sessions on different days \n'
+                   'd2d_a - d2d_b = difference between two dominant hand test sessions the same day ')
     legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
                        Line2D([0], [0], marker='^', label='Mean Area Difference', mec='r',
                               markerfacecolor='r', markersize=8, linestyle='None'),
@@ -343,18 +343,20 @@ def slope_comparison(all_subject_data, experiment):
 
     for subject_data in all_subject_data:
         intercept_line_width, slope_line_width = utils.calculate_regression_general(subject_data.LINE_WIDTH.ACTUAL, subject_data.LINE_WIDTH.PERCEIVED)
-        intercept_line_line, slope_width_line = utils.calculate_regression_general(subject_data.WIDTH_LINE.ACTUAL, subject_data.WIDTH_LINE.PERCEIVED)
+        intercept_width_line, slope_width_line = utils.calculate_regression_general(subject_data.WIDTH_LINE.ACTUAL, subject_data.WIDTH_LINE.PERCEIVED)
 
-        slopes_line_width.append(intercept_line_width)
-        slopes_width_line.append(intercept_line_line)
+        slopes_line_width.append(slope_line_width)
+        slopes_width_line.append(slope_width_line)
 
+    print(f'Line width list: {slopes_line_width}')
+    print(f'Width line list: {slopes_width_line}')
     plt.figure(figsize=(5,5))
     plt.suptitle('Slope Comparison')
 
     intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
     utils.regression_summary(slopes_line_width, slopes_width_line)
 
-    x_vals = np.array([min(slopes_line_width)-0.5, max(slopes_line_width)+0.5])
+    x_vals = np.array([min(slopes_line_width)-0.25, max(slopes_line_width)+0.25])
     y_vals = intercept + slope * x_vals
 
     plt.plot(x_vals, y_vals, color='b')
@@ -368,8 +370,8 @@ def slope_comparison(all_subject_data, experiment):
     plt.legend(handles=legend_handles, loc='best')
     plt.xlabel(f'Slope: show line pick width')
     plt.ylabel(f'Slope: present width pick line')
-    plt.xlim((min(slopes_line_width) - 0.5), (max(slopes_line_width) + 0.5))
-    plt.ylim((min(slopes_width_line) - 0.5), (max(slopes_width_line) + 0.5))
+    plt.xlim((min(slopes_line_width) - 0.25), (max(slopes_line_width) + 0.25))
+    plt.ylim((min(slopes_width_line) - 0.25), (max(slopes_width_line) + 0.25))
     plt.tight_layout()
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')
