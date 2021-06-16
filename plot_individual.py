@@ -78,7 +78,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Area Plots (reality vs. regression lines)'))
     for condition_tuple in data_list:
-        plt.subplot(subplot_length, subplot_width, condition_tuple.PLOT_INDEX)
+        plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
         plt.plot([plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  [plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  'k--')

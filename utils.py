@@ -249,8 +249,8 @@ def generic_plot_save_path(experiment, type, plot):
 
 def plot_constants_regressions_ind(experiment):
     if experiment == 'exp1':
-        subplot_width = 1
-        subplot_length = 4
+        subplot_width = 4
+        subplot_length = 1
         x_range = [2, 10]
         fig_size = [7, 20]
     else:

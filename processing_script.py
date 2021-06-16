@@ -10,7 +10,7 @@ plot_dispatch = namedtuple('plot_dispatch', 'PLOT COMMAND')
 # TODO change string below to match experiment
 #  either 'exp1' or 'exp2' (Kathy and Lovisa respectively)
 #experiments = ['exp1', 'exp2']
-experiments = ['exp1']
+experiments = ['exp1', 'exp2']
 experiment = 'exp2'
 
 for experiment in experiments:
@@ -22,13 +22,13 @@ for experiment in experiments:
     A = plot_dispatch._make([plot.individual_regressions, 'skip'])
     B = plot_dispatch._make([plot.individual_areas_to_reality, 'skip'])
     C = plot_dispatch._make([plot.individual_areas_between_conditions, 'skip'])
-    D = plot_dispatch._make([plot.group_regression_lines_per_condition, 'skip'])
+    D = plot_dispatch._make([plot.group_regression_lines_per_condition, 'run'])
     E = plot_dispatch._make([plot.group_areas_per_conditions, 'skip'])
     F = plot_dispatch._make([plot.group_areas_vs_r2_per_condition, 'skip'])
     G = plot_dispatch._make([plot.group_r2_per_condition, 'skip'])
     # Exp1 specific plots
     H = plot_dispatch._make([plot.group_areas_between_conditions, 'skip'])
-    I = plot_dispatch._make([plot.group_areas_difference_of_differences, 'run'])
+    I = plot_dispatch._make([plot.group_areas_difference_of_differences, 'skip'])
     # Exp2 specific plots
     J = plot_dispatch._make([plot.lovia_reciprocal_condition_regression, 'skip'])
     K = plot_dispatch._make([plot.slope_comparison, 'skip'])

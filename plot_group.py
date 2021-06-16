@@ -26,20 +26,22 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
 
     if experiment == 'exp1':
         subplot_indices = [1, 2, 3, 4]
-        subplot_width = 1
-        subplot_length = 4
+        subplot_width = 2
+        subplot_length = 2
+        figsize = (10, 10)
     else:
         subplot_indices = [1, 2, 3]
         subplot_width = 1
         subplot_length = 3
+        figsize = (15, 5)
 
-    plt.figure(figsize=(15, 5))
+    plt.figure(figsize= figsize)
     plt.suptitle(str('Participant Regression Lines'))
 
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
         for condition_tuple in data_list:
-            plt.subplot(subplot_length, subplot_width, condition_tuple.PLOT_INDEX)
+            plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
             plt.grid(True)
             plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
