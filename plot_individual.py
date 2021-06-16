@@ -25,22 +25,23 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Scatterplot + Regression Line'))
     for condition_tuple in data_list:
-        plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
+        plt.subplot(subplot_length, subplot_width, condition_tuple.PLOT_INDEX)
         plt.plot([plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  [plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  'k--')
         length_data = len(condition_tuple.PERCEIVED)
         jitter_values = [random() / 4 for _ in range(length_data)]
         x_data = np.array(condition_tuple.ACTUAL) + np.array(jitter_values)
-        plt.plot(x_data, condition_tuple.PERCEIVED, 'o', color = 'b', alpha=plot_constants.ALPHA)
+        color = plot_utils.color_manip(condition_tuple.PLOT_INDEX)
+        plt.plot(x_data, condition_tuple.PERCEIVED, 'o', color = color, alpha=plot_constants.ALPHA)
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL,
                                                               condition_tuple.PERCEIVED)
 
-        legend_handles = [Line2D([0], [0], color='royalblue', lw=2,
+        legend_handles = [Line2D([0], [0], color=color, lw=2,
                                  label=f'Regression \n(y = {slope:4.2f}*x + {intercept:4.2f})'),
                           Line2D([0], [0], color='black', linestyle='--', label='Reality (y = x)', lw=2),
-                          Line2D([0], [0], color='blue', marker = 'o', linestyle = 'none', alpha=0.3, label=f'Trial (n = {length_data})')]
+                          Line2D([0], [0], color=color, marker = 'o', linestyle = 'none', alpha=0.3, label=f'Trial (n = {length_data})')]
 
         # Creating points to plot regression line [x1, y1][x2, y2]
         x1 = x_lims[0]
@@ -51,7 +52,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
             y_max = 15
         else:
             y_max = y2
-        plt.plot([x1, x2], [y1, y2], color='b')
+        plt.plot([x1, x2], [y1, y2], color=color)
         plt.legend(handles = legend_handles, loc = 'upper left')
         plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
         plt.xlim([x1 - 1, x2 + 1])
@@ -77,7 +78,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Area Plots (reality vs. regression lines)'))
     for condition_tuple in data_list:
-        plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
+        plt.subplot(subplot_length, subplot_width, condition_tuple.PLOT_INDEX)
         plt.plot([plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  [plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
                  'k--')
@@ -91,18 +92,19 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
             y_max = y2
 
         area = calculate_area.actual_vs_perceived(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, experiment)
+        color = plot_utils.color_manip(condition_tuple.PLOT_INDEX)
 
         x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
-        plt.plot([x1, x2], [y1, y2], color='royalblue')
+        plt.plot([x1, x2], [y1, y2], color=color)
         plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality > y_points_reg),
-                         color='C0', alpha=0.3, interpolate=True)
+                         color=color, alpha=0.3, interpolate=True)
         plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality < y_points_reg),
-                         color='C0', alpha=0.3, interpolate=True)
+                         color=color, alpha=0.3, interpolate=True)
 
         legend_handles = [Line2D([0], [0], color='royalblue', lw=2,
                                  label=f'Regression Line\n(y = {slope:4.2f}*x + {intercept:4.2f})'),
                           Line2D([0], [0], color='black', linestyle='--', label='Reality Line (y = x)', lw=2),
-                          mpatches.Patch(color='royalblue', alpha=0.3, label=f'Area = {area:4.2f}')]
+                          mpatches.Patch(color=color, alpha=0.3, label=f'Area = {area:4.2f}')]
 
         plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
         plt.xlim([x1 - 1, x2 + 1])
@@ -189,11 +191,11 @@ def _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment,
     area_difference = abs(area_line_first - area_width_first)
     text = f'Absolute Area Difference = {area_difference:4.2f}'
 
-    legend_handles = [Line2D([0], [0], color='royalblue', lw=2, label='Show Line Pick Width'),
-                      Line2D([0], [0], color='orange', label='Present Width Pick Line', lw=2),
+    legend_handles = [Line2D([0], [0], color='green', lw=2, label='Show Line Pick Width'),
+                      Line2D([0], [0], color='firebrick', label='Present Width Pick Line', lw=2),
                       Line2D([0], [0], color='black', linestyle='--', label='Reality Line (y = x)', lw=2),
-                      mpatches.Patch(color='royalblue', alpha=0.3, label=f'Area = {area_line_first:4.2f}'),
-                      mpatches.Patch(color='orange', alpha=0.3, label=f'Area = {area_width_first:4.2f}'),
+                      mpatches.Patch(color='green', alpha=0.3, label=f'Area = {area_line_first:4.2f}'),
+                      mpatches.Patch(color='firebrick', alpha=0.3, label=f'Area = {area_width_first:4.2f}'),
                       mpatches.Patch(color='none', label=text)]
 
     plt.subplot(subplot_width, subplot_length, data_pair_tuples.subplot_index)
@@ -204,8 +206,8 @@ def _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment,
     y_points.append(y1_y2_b)
     y_points.append(y1_y2_a)
 
-    plt.plot(x1_x2_a, y1_y2_a, color=data_pair_tuples.colour_1, label=data_pair_tuples.label_1)
-    plt.plot(x1_x2_b, y1_y2_b, color=data_pair_tuples.colour_2, label=data_pair_tuples.label_2)
+    plt.plot(x1_x2_a, y1_y2_a, color='green', label=data_pair_tuples.label_1)
+    plt.plot(x1_x2_b, y1_y2_b, color='firebrick', label=data_pair_tuples.label_2)
     plt.plot(x1_x2_reality, y1_y2_reality, color='black', linestyle='--', label='Reality line')
 
     x_colour_points = np.array(x_lims)
@@ -214,9 +216,9 @@ def _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment,
     y_points_reality = np.array(y1_y2_reality)
 
     plt.fill_between(x_colour_points, y_points_a, y_points_reality,
-                     color='royalblue', alpha=0.3, interpolate=True)
+                     color='green', alpha=0.3, interpolate=True)
     plt.fill_between(x_colour_points, y_points_b, y_points_reality,
-                     color='orange', alpha=0.3, interpolate=True)
+                     color='firebrick', alpha=0.3, interpolate=True)
 
     plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
     plt.xlim([x_lims[0] - 1, x_lims[1] + 1])

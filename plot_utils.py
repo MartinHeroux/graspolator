@@ -104,3 +104,12 @@ def subject_line_colour(intersection_x_value, y_when_x_equals_2, experiment):
         line_colour = 'green'
     return line_colour
 
+
+def color_manip(plot_index):
+    if plot_index == 1:
+        colour = 'firebrick'
+    elif plot_index == 2:
+        colour = 'firebrick'
+    else:
+        colour = 'firebrick'
+    return colour
