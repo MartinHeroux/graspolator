@@ -242,6 +242,13 @@ def create_group_plot_save_path(experiment, plot):
     savepath = Path(f'./plots/{experiment}/group_plots/{plot}.png')
     return savepath
 
+def create_article_plot_save_path(plot):
+    path = Path(f'./plots/article_plots/')
+    if not os.path.exists(path):
+        os.makedirs(path)
+    savepath = Path(f'./plots/article_plots/{plot}.png')
+    return savepath
+
 def generic_plot_save_path(experiment, type, plot):
     path = f'./plots/{experiment}/{type}/{plot}'
     path_text = colored(path, 'blue')
