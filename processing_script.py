@@ -1,5 +1,6 @@
 from collections import namedtuple
 
+import plot_journal
 import process
 import plot
 
@@ -11,7 +12,6 @@ plot_dispatch = namedtuple('plot_dispatch', 'PLOT COMMAND')
 #  either 'exp1' or 'exp2' (Kathy and Lovisa respectively)
 #experiments = ['exp1', 'exp2']
 experiments = ['exp1', 'exp2']
-experiment = 'exp2'
 
 for experiment in experiments:
     # import data and subject list for experiment
@@ -37,3 +37,7 @@ for experiment in experiments:
     # plot according to dispatch keys and experiment
     plot_summary = process.create_plot_dispatcher(experiment, A, B, C, D, E, F, G, H, I, J, K)
     process.plot_by_dispatcher_key(plot_summary, all_subject_data, experiment, subjects)
+
+for experiment in experiments:
+    all_subject_data, subjects = process.return_data_and_subjects(experiment)
+    plot_journal.example_subjects_group_reg_summary(all_subject_data, subjects, experiment)

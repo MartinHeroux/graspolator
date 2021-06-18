@@ -113,3 +113,77 @@ def color_manip(plot_index):
     else:
         colour = 'firebrick'
     return colour
+
+
+def store_example_subject_plot_info(all_subject_data, subjects, experiment):
+    example_data_tuple = namedtuple('EXAMPLE', 'condition_data indices')
+    example_data_tuples = _extract_example_subject_data(all_subject_data, subjects, experiment)
+    example_data_tuples.example_2
+    example_1_condition_data = _return_condition_data_list(experiment, example_data_tuples.example_1)
+    example_2_condition_data = _return_condition_data_list(experiment, example_data_tuples.example_2)
+
+    example_1_indices = example_data_tuples.example_1.indices
+    example_2_indices = example_data_tuples.example_2.indices
+
+    example_1_tuple = example_data_tuple(condition_data=example_1_condition_data, indices=example_1_indices)
+    example_2_tuple = example_data_tuple(condition_data=example_2_condition_data, indices=example_2_indices)
+
+    tuple_list = [example_1_tuple, example_2_tuple]
+    return tuple_list
+
+
+def _extract_example_subject_data(all_subject_data, subjects, experiment):
+    example_subject_tuple = namedtuple('examples', 'name data indices')
+    example_subjects = namedtuple('examples', 'example_1, example_2')
+
+    if experiment == 'exp1':
+        for subject_data, subject in zip(all_subject_data, subjects):
+            if subject == 'SUB05R':
+                exp1_max_name = subject
+                exp1_max_data = subject_data
+            if subject == 'SUB01L':
+                exp1_cross_name = subject
+                exp1_cross_data = subject_data
+        exp1_max = example_subject_tuple(name=exp1_max_name, data=exp1_max_data, indices=[1, 4, 7, 10])
+        exp1_cross = example_subject_tuple(name=exp1_cross_name, data=exp1_cross_data, indices=[2, 5, 8, 11])
+
+        examples = example_subjects(example_1=exp1_max, example_2=exp1_cross)
+
+    else:
+        for subject_data, subject in zip(all_subject_data, subjects):
+            if subject == 'sub04':
+                exp2_min_name = subject
+                exp2_min_data = subject_data
+            if subject == 'sub23':
+                exp2_cross_name = subject
+                exp2_cross_data = subject_data
+
+        exp2_min = example_subject_tuple(name=exp2_min_name, data=exp2_min_data, indices=[1, 4, 7])
+        exp2_cross = example_subject_tuple(name=exp2_cross_name, data=exp2_cross_data, indices=[2, 5, 8])
+
+        examples = example_subjects(example_1=exp2_min, example_2=exp2_cross)
+
+    return examples
+
+
+def _return_condition_data_list(experiment, tuple):
+    if experiment == 'exp1':
+        # condition_data = namedtuple('condition', 'd1_dom d1_non_dom d2_dom_1 d2_dom_2')
+        d1_dom = tuple.data.day1_dominant
+        d1_non_dom = tuple.data.day1_non_dominant
+        d2_dom_1 = tuple.data.day2_dominant_1
+        d2_dom_2 = tuple.data.day2_dominant_2
+
+        # condition_data_tuple = condition_data(d1_dom=d1_dom, d1_non_dom=d1_non_dom, d2_dom_1=d2_dom_1, d2_dom_2=d2_dom_2)
+        condition_data = d1_dom, d1_non_dom, d2_dom_1, d2_dom_2
+
+    else:
+        # condition_data = namedtuple('condition', 'line_width width_line width_width')
+        line_width = tuple.data.LINE_WIDTH
+        width_line = tuple.data.WIDTH_LINE
+        width_width = tuple.data.WIDTH_WIDTH
+
+        # condition_data_tuple = condition_data(line_width=line_width, width_line=width_line, width_width=width_width)
+        condition_data = line_width, width_line, width_width
+
+    return condition_data
