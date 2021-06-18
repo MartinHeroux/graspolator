@@ -7,7 +7,6 @@ from random import random
 import utils
 import plot_utils
 import calculate_area
-import figure_utils
 
 constants = utils.create_general_constants()
 plot_constants = plot_utils.create_plot_constants()
