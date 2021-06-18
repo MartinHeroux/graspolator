@@ -132,11 +132,11 @@ def _store_r2_tuples_exp2(all_subject_data):
 
 def create_general_constants():
     general_constants = namedtuple('constants', 'CONDITION_NAMES_EXP1 CONDITION_NAMES_EXP2 CONDITION_PAIRS SUBJECT_IDS')
-    return general_constants(CONDITION_NAMES_EXP1=['day1_dominant',
-                                                   'day1_non_dominant',
-                                                   'day2_dominant_1',
-                                                   'day2_dominant_2'],
-                             CONDITION_NAMES_EXP2=['line_width', 'width_line', 'width_width'],
+    return general_constants(CONDITION_NAMES_EXP1=['D1 dominant',
+                                                   'D1 non-dominant',
+                                                   'D2 dominant 1',
+                                                   'D2 dominant 2'],
+                             CONDITION_NAMES_EXP2=['Line to width', 'Width to line', 'Width to width'],
                              CONDITION_PAIRS=['between_hands',
                                               'between_days',
                                               'within_day'],
