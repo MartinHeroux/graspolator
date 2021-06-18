@@ -80,32 +80,85 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
 def consistency_between_conditions(all_subject_data, experiment):
     plot = 'consistency_between_conditions'
     path = utils.create_group_plot_save_path(experiment, plot)
-    color_map = cm.get_cmap('copper', 12)
+    #color_map = cm.get_cmap('nipy_spectral', 12)
 
     plt.figure(figsize=(7, 10))
-    plt.suptitle(str('Area Difference Between Conditions'))
-    plt.ylabel('Area Difference Between Regression Lines (cm^2)')
-    plt.xlabel('Condition Comparison')
-    plt.grid()
+    #plt.suptitle(str('Area Difference Between Conditions'), fontfamily='arial')
+    plt.ylabel('Area Difference (cm^2)', fontfamily='arial')
+    #plt.xlabel('Condition Comparison', fontfamily='arial')
+    plt.grid(axis = 'y')
     y_points_list = []
+    between_hands_areas, across_days_areas, within_day_areas = [], [], []
+
     x_points_base = [1, 2, 3]
-    plt.xticks(x_points_base, labels=['D1 dom - D1 non dom', 'D1 dom - D2 dom', 'D2 dom (a) - D2 dom (b)'])
+    x_points_left = [0.95, 1.95, 2.95]
+    x_points_right = [1.05, 2.05, 3.05]
+
+    plt.xticks(x_points_base, labels=['dominant - non dominant', 'dominant - dominant', 'dominant - dominant'], fontfamily='arial')
+
+    legend_elements = [Line2D([0], [0], marker = '^', color='grey', lw=2, label='subject datapoints', linestyle='None'),
+                       Line2D([0], [0], marker='^', label='mean', mec='r',
+                              markerfacecolor='r', markersize=8, linestyle='None'),
+                       Line2D([0], [0], color='black', label='95% confidence interval', lw=2)]
 
     for line_number, subject_data in enumerate(all_subject_data, start=1):
         jitter_values = [random() / 40 for _ in range(len(x_points_base))]
         if line_number < 15:
-            x_points_jitter = np.array(x_points_base) + np.array(jitter_values)
+            x_points_jitter = np.array(x_points_right) + np.array(jitter_values)
         else:
-            x_points_jitter = np.array(x_points_base) - np.array(jitter_values)
-        colour_index = rd.uniform(0, 1)
-        dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area = calculate_area.between_conditions(experiment, subject_data)
+            x_points_jitter = np.array(x_points_right) - np.array(jitter_values)
+        #colour_index = rd.uniform(0, 1)
+
+        d1_dom_area = calculate_area.actual_vs_perceived(subject_data.day1_dominant.ACTUAL,
+                                                         subject_data.day1_dominant.PERCEIVED,
+                                                         experiment)
+        d1_non_dom_area = calculate_area.actual_vs_perceived(subject_data.day1_non_dominant.ACTUAL,
+                                                         subject_data.day1_non_dominant.PERCEIVED,
+                                                         experiment)
+        d2_dom_1_area = calculate_area.actual_vs_perceived(subject_data.day2_dominant_1.ACTUAL,
+                                                         subject_data.day2_dominant_1.PERCEIVED,
+                                                         experiment)
+        d2_dom_2_area = calculate_area.actual_vs_perceived(subject_data.day2_dominant_2.ACTUAL,
+                                                         subject_data.day2_dominant_2.PERCEIVED,
+                                                         experiment)
+
+        dom_vs_non_dom_area = d1_dom_area - d1_non_dom_area
+        between_hands_areas.append(dom_vs_non_dom_area)
+
+        dom_d1_vs_d2_area = d1_dom_area - d2_dom_1_area
+        across_days_areas.append(dom_d1_vs_d2_area)
+
+        dom_d2_vs_d2_area = d2_dom_1_area - d2_dom_2_area
+        within_day_areas.append(dom_d2_vs_d2_area)
+
         y_points = [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
         y_points_list.append(y_points)
-        plt.plot(x_points_jitter, y_points, color=color_map(colour_index), marker='o', alpha=0.4)
+        plt.plot(x_points_jitter, y_points, color='black', marker='^', alpha=0.4, markersize = 4, linestyle='')
+        plt.legend(handles=legend_elements, prop={'family': 'Arial'})
+
+    area_diff_list = [between_hands_areas, across_days_areas, within_day_areas]
+
+    for x_point, area_list in zip(x_points_left, area_diff_list):
+        mean, ci = utils.calculate_mean_ci(area_list)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
     y_max, y_min = utils.max_min(y_points_list)
     plt.ylim([y_min, (y_max + 1)])
-    plt.savefig(path)
+    plt.yticks([-10, -7.5, -5, -2.5, 0, 2.5, 5, 7.5, 10], fontfamily='arial')
+
+    plt.text(0.1, 0.065, 'day 1    day 2', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.45, 0.065, 'day 1    day 2', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.78, 0.065, 'day 2    day 2', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
+
+    ax = plt.gca()
+    ax.annotate('', xy=(-0.1, -0.035), xycoords='axes fraction', xytext=(0.25, -0.035),
+                arrowprops=dict(arrowstyle='-', color='black'))
+    ax.annotate('', xy=(0.35, -0.035), xycoords='axes fraction', xytext=(0.65, -0.035),
+                arrowprops=dict(arrowstyle='-', color='black'))
+    ax.annotate('', xy=(0.77, -0.035), xycoords='axes fraction', xytext=(1.07, -0.035),
+                arrowprops=dict(arrowstyle='-', color='black'))
+
+    plt.savefig(path, dpi= 300)
     text = colored(path, 'blue')
     print(f'Group consistency plots saved in {text}\n')
     plt.close()
