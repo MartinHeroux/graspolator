@@ -160,5 +160,4 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     print(f'Saving {plot}')
     plt.close()
 
-
-
+#def r2_area_plots(all_subject_data, subjects, experiment):
