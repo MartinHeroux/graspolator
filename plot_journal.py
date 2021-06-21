@@ -35,13 +35,13 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
         example_subjects = ['SUB05R', 'SUB01L']
         text_x = -3.5
     else:
-        condition_names = ['line to width', 'width to line', 'width to width']
+        condition_names = ['line to width', 'width to line', 'width to width', 'dummy_data']
         x_lims = [3, 9]
-        subplot_left_col = [1, 4, 7]
-        subplot_bottom_row = [7, 8, 9]
+        subplot_left_col = [1, 4, 7, 10]
+        subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9]
         colors = ['darkblue', 'darkorange']
-        example_subjects = ['sub04', 'sub23']
+        example_subjects = ['SUB04', 'SUB23']
         text_x = -1.5
 
     plt.figure(figsize=(6, 10))
@@ -148,6 +148,16 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 ax.spines['bottom'].set_visible(True)
                 plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
                 plt.xlabel('reference width')
+
+    # plot dummy data + axis labels for cropping
+    if experiment == 'exp2':
+        plt.subplot(subplot_rows, subplot_cols, 12)
+        plt.plot([4,6], [6,8])
+        plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
+        plt.xlim([2, 10])
+        plt.xlabel('reference width')
+        plt.gca().tick_params(axis='both', which='both', bottom=True, top=False, left=False, right=False, labelbottom=True,
+                       labeltop=False, labelleft=False, labelright=False)
 
     plt.tight_layout(h_pad=0.6, w_pad=0.9)
     plt.savefig(path, dpi=300)

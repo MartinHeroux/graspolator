@@ -158,8 +158,8 @@ def _extract_example_subject_data(all_subject_data, subjects, experiment):
                 exp2_cross_name = subject
                 exp2_cross_data = subject_data
 
-        exp2_min = example_subject_tuple(name=exp2_min_name, data=exp2_min_data, indices=[1, 4, 7])
-        exp2_cross = example_subject_tuple(name=exp2_cross_name, data=exp2_cross_data, indices=[2, 5, 8])
+        exp2_min = example_subject_tuple(name=exp2_min_name, data=exp2_min_data, indices=[1, 4, 7, 10])
+        exp2_cross = example_subject_tuple(name=exp2_cross_name, data=exp2_cross_data, indices=[2, 5, 8, 11])
 
         examples = example_subjects(example_1=exp2_min, example_2=exp2_cross)
 
@@ -178,12 +178,13 @@ def _return_condition_data_list(experiment, tuple):
         condition_data = d1_dom, d1_non_dom, d2_dom_1, d2_dom_2
 
     else:
-        # condition_data = namedtuple('condition', 'line_width width_line width_width')
+        dummy_data = namedtuple('condition', 'ACTUAL PERCEIVED')
         line_width = tuple.data.LINE_WIDTH
         width_line = tuple.data.WIDTH_LINE
         width_width = tuple.data.WIDTH_WIDTH
+        empty_data = dummy_data(ACTUAL=[1, 2, 3], PERCEIVED=[1, 2, 3])
 
         # condition_data_tuple = condition_data(line_width=line_width, width_line=width_line, width_width=width_width)
-        condition_data = line_width, width_line, width_width
+        condition_data = line_width, width_line, width_width, empty_data
 
     return condition_data
