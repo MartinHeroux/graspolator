@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 from random import random
+from pathlib import Path
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
 import utils
@@ -51,16 +52,16 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                                                                         example_subject_tuple.indices, condition_names):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
             if condition_plot_index == 1:
-                plt.title(example_subjects[0], loc='center', size=12, fontfamily='arial')
+                plt.title(example_subjects[0], loc='center', size=8, fontfamily='arial')
             if condition_plot_index == 2:
-                plt.title(example_subjects[1], loc='center', size=12, fontfamily='arial')
+                plt.title(example_subjects[1], loc='center', size=8, fontfamily='arial')
             plt.plot(x_lims, x_lims, 'k--')
 
             length_data = len(condition_data.PERCEIVED)
             jitter_values = [random() / 4 for _ in range(length_data)]
             x_data = np.array(condition_data.ACTUAL) + np.array(jitter_values)
             plt.plot(x_data, condition_data.PERCEIVED, 'o', color=color,
-                     alpha=plot_constants.ALPHA, markersize=3)
+                     alpha=0.3, markersize=1, mec=None)
 
             intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL,
                                                                   condition_data.PERCEIVED)
@@ -70,7 +71,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             y1 = slope * x1 + intercept
             y2 = slope * x2 + intercept
 
-            plt.plot([x1, x2], [y1, y2], color=color)
+            plt.plot([x1, x2], [y1, y2], color=color, linewidth=1)
             plt.grid(axis='both')
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
@@ -85,26 +86,26 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
             plt.ylim([0, 15])
             plt.xlim([x1 - 1, x2 + 1])
-            plt.yticks(list(range(0, 15, 2)), fontfamily='arial')
-            plt.xticks(list(range(2, 11)))
+            plt.yticks(list(range(0, 16, 3)), fontfamily='arial', fontsize=8)
+            plt.xticks(list(range(2, 11, 2)))
 
             ax = plt.gca()
-            ax.yaxis.set_major_locator(MultipleLocator(2))
-            ax.yaxis.set_major_formatter('{x:.0f}')
-            ax.yaxis.set_minor_locator(MultipleLocator(1))
-            ax.yaxis.grid(True, which='minor')
+            #ax.yaxis.set_major_locator(MultipleLocator(3))
+            #ax.yaxis.set_major_formatter('{x:.0f}')
+            #ax.yaxis.set_minor_locator(MultipleLocator(1))
+            #ax.yaxis.grid(True, which='minor')
             ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False, labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
             if condition_plot_index in subplot_left_col:
                 ax.tick_params(axis='y', which='both', left=True, labelleft=True)
                 ax.spines['left'].set_visible(True)
-                ax.set_ylabel('perceived width')
-                ax.text(text_x, 4.5, condition_name, rotation=90)
+                ax.set_ylabel('width', fontsize=8)
+                #ax.text(text_x, 4.5, condition_name, rotation=90, fontsize=8)
 
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
                 ax.spines['bottom'].set_visible(True)
-                plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
+                plt.xticks((list(range(2, 11, 2))), fontfamily='arial', fontsize=8)
                 plt.xlabel('reference width')
 
     # plot the group regression lines in the rightmost subplots
@@ -115,18 +116,18 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.grid(True)
             plt.plot(x_lims, x_lims, 'k--')
             if condition_plot_index == 3:
-                plt.title('Regression lines\nAll subjects', loc='center', size=12, fontfamily='arial')
+                plt.title('Regression lines\nAll subjects', loc='center', size=8, fontfamily='arial')
 
             x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
                                                                experiment)
 
             if subject_ID == example_subjects[0]:
                 line_color = colors[0]
-                line_width = 1.5
+                line_width = 1
                 order = 10
             elif subject_ID == example_subjects[1]:
                 line_color = colors[1]
-                line_width = 1.5
+                line_width = 1
                 order = 10
             else:
                 line_color = 'darkgrey'
@@ -134,9 +135,9 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 order = 5
 
             plt.plot([x1, x2], [y1, y2], color=line_color, linewidth=line_width, zorder = order)
-            plt.yticks(list(range(0, 15)), fontfamily='arial')
+            plt.yticks(list(range(0, 16, 3)), fontfamily='arial', fontsize=8)
             plt.ylim([0, 15])
-            plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
+            plt.xticks(list(range(2, 11, 2)), fontfamily='arial', fontsize=8)
             plt.xlim([x1 - 1, x2 + 1])
 
             ax = plt.gca()
@@ -146,21 +147,23 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
                 ax.spines['bottom'].set_visible(True)
-                plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
-                plt.xlabel('reference width')
+                plt.xticks(list(range(2, 11, 2)), fontfamily='arial')
+                plt.xlabel('width', fontsize=8)
 
     # plot dummy data + axis labels for cropping
     if experiment == 'exp2':
         plt.subplot(subplot_rows, subplot_cols, 12)
         plt.plot([4,6], [6,8])
-        plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
+        plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial', fontsize=8)
         plt.xlim([2, 10])
-        plt.xlabel('reference width')
+        plt.xlabel('width', fontsize=8)
         plt.gca().tick_params(axis='both', which='both', bottom=True, top=False, left=False, right=False, labelbottom=True,
                        labeltop=False, labelleft=False, labelright=False)
 
-    plt.tight_layout(h_pad=0.6, w_pad=0.9)
+    plt.tight_layout(h_pad=0.4, w_pad=0.9)
     plt.savefig(path, dpi=300)
+    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    plt.savefig(path_svg)
     print(f'Saving {plot}')
     plt.close()
 
