@@ -141,9 +141,12 @@ def consistency_between_conditions(all_subject_data, experiment):
     plt.text(0.71, 0.05, 'same day', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
 
     plt.plot([1, 3], [0, 0], color='black', linewidth=1)
-    plt.xlim([1.2, 2.02])
+    plt.xlim([1.19, 2.02])
 
-    #ax = plt.gca()
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['right'].set_visible(False)
+    plt.gca().spines['bottom'].set_visible(False)
+    plt.gca().tick_params(axis='x', which='both', bottom=False)
     #ax.annotate('', xy=(-0.1, -0.035), xycoords='axes fraction', xytext=(0.25, -0.035),
                 #arrowprops=dict(arrowstyle='-', color='black'))
     #ax.annotate('', xy=(0.35, -0.035), xycoords='axes fraction', xytext=(0.65, -0.035),
