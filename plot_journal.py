@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 from random import random
+from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
 import utils
 import plot_utils
@@ -20,41 +21,40 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
     tuple_list = plot_utils.store_example_subject_plot_info(all_subject_data, subjects, experiment)
 
+    subplot_rows = 4
+    subplot_cols = 3
+
     # set up experiment specific parameters
     if experiment == 'exp1':
-        condition_names = constants.CONDITION_NAMES_EXP1
-        subplot_rows = 4
-        subplot_cols = 3
+        condition_names = ['dominant', 'non-dominant', 'dominant', 'dominant']
         x_lims = [2, 10]
         subplot_left_col = [1, 4, 7, 10]
         subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9, 12]
         colors = ['royalblue', 'seagreen']
         example_subjects = ['SUB05R', 'SUB01L']
+        text_x = -3.5
     else:
-        condition_names = constants.CONDITION_NAMES_EXP2
-        subplot_rows = 3
-        subplot_cols = 3
+        condition_names = ['line to width', 'width to line', 'width to width']
         x_lims = [3, 9]
         subplot_left_col = [1, 4, 7]
         subplot_bottom_row = [7, 8, 9]
         group_plot_indices = [3, 6, 9]
         colors = ['darkblue', 'darkorange']
         example_subjects = ['sub04', 'sub23']
+        text_x = -1.5
 
-    plt.figure(figsize=(10, 15))
+    plt.figure(figsize=(6, 10))
     # plot example subjects in left and centre subplot cols
-    for col, (example_subject_tuple, color) in enumerate(zip(tuple_list, colors), start = 1):
+    for column, (example_subject_tuple, color) in enumerate(zip(tuple_list, colors), start = 1):
         for condition_data, condition_plot_index, condition_name in zip(example_subject_tuple.condition_data,
                                                                         example_subject_tuple.indices, condition_names):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
             if condition_plot_index == 1:
-                plt.title(example_subjects[0], loc='right', size=10, fontfamily='arial')
+                plt.title(example_subjects[0], loc='center', size=12, fontfamily='arial')
             if condition_plot_index == 2:
-                plt.title(example_subjects[1], loc='right', size=10, fontfamily='arial')
-            plt.plot([plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
-                     [plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
-                     'k--')
+                plt.title(example_subjects[1], loc='center', size=12, fontfamily='arial')
+            plt.plot(x_lims, x_lims, 'k--')
 
             length_data = len(condition_data.PERCEIVED)
             jitter_values = [random() / 4 for _ in range(length_data)]
@@ -69,65 +69,64 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             x2 = x_lims[1]
             y1 = slope * x1 + intercept
             y2 = slope * x2 + intercept
-            if y2 < 15:
-                y_max = 15
-            else:
-                y_max = y2
+
             plt.plot([x1, x2], [y1, y2], color=color)
             plt.grid(axis='both')
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
-            legend_handles = [mpatches.Patch(color='darkgrey', alpha=0.3, label=f'Area = {area:4.2f}')]
+            legend_handles = [mpatches.Patch(color='grey', alpha=0.3, label=f'{area:4.2f}$cm^2$')]
             plt.legend(handles=legend_handles, loc='upper left')
 
             x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
             plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality > y_points_reg),
-                             color='darkgrey', alpha=0.3, interpolate=True)
+                             color='grey', alpha=0.3, interpolate=True)
             plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality < y_points_reg),
-                             color='darkgrey', alpha=0.3, interpolate=True)
+                             color='grey', alpha=0.3, interpolate=True)
 
-            plt.yticks(list(range(0, int(y_max + 1))), fontfamily='arial')
-            plt.ylim([0, 14])
-            plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
+            plt.ylim([0, 15])
             plt.xlim([x1 - 1, x2 + 1])
+            plt.yticks(list(range(0, 15, 2)), fontfamily='arial')
+            plt.xticks(list(range(2, 11)))
 
-            # remove ticks from subplots where unneeded
-            if condition_plot_index not in subplot_left_col:
-                ax = plt.gca()
-                ax.set_yticklabels([])
-                #ax.yaxis.set_ticks([])
-
-            if condition_plot_index not in subplot_bottom_row:
-                ax = plt.gca()
-                ax.set_xticklabels([])
-                #ax.xaxis.set_ticks([])
+            ax = plt.gca()
+            ax.yaxis.set_major_locator(MultipleLocator(2))
+            ax.yaxis.set_major_formatter('{x:.0f}')
+            ax.yaxis.set_minor_locator(MultipleLocator(1))
+            ax.yaxis.grid(True, which='minor')
+            ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False, labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
             if condition_plot_index in subplot_left_col:
-                ax = plt.gca()
-                ax.set_ylabel(condition_name)
+                ax.tick_params(axis='y', which='both', left=True, labelleft=True)
+                ax.spines['left'].set_visible(True)
+                ax.set_ylabel('perceived width')
+                ax.text(text_x, 4.5, condition_name, rotation=90)
+
+            if condition_plot_index in subplot_bottom_row:
+                ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
+                ax.spines['bottom'].set_visible(True)
+                plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
+                plt.xlabel('reference width')
 
     # plot the group regression lines in the rightmost subplots
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
-        for condition_tuple, subplot_index in zip(data_list, group_plot_indices):
-            plt.subplot(subplot_rows, subplot_cols, subplot_index)
+        for condition_tuple, condition_plot_index in zip(data_list, group_plot_indices):
+            plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
             plt.grid(True)
-            plt.plot([plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
-                     [plot_constants.REALITY_LINE_MIN, plot_constants.REALITY_LINE_MAX],
-                     'k--')
-            if subplot_index == 3:
-                plt.title('All subject regression lines', loc='right', size=10, fontfamily='arial')
+            plt.plot(x_lims, x_lims, 'k--')
+            if condition_plot_index == 3:
+                plt.title('Regression lines\nAll subjects', loc='center', size=12, fontfamily='arial')
 
             x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
                                                                experiment)
 
             if subject_ID == example_subjects[0]:
                 line_color = colors[0]
-                line_width = 1
+                line_width = 1.5
                 order = 10
             elif subject_ID == example_subjects[1]:
                 line_color = colors[1]
-                line_width = 1
+                line_width = 1.5
                 order = 10
             else:
                 line_color = 'darkgrey'
@@ -135,27 +134,22 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 order = 5
 
             plt.plot([x1, x2], [y1, y2], color=line_color, linewidth=line_width, zorder = order)
-            plt.yticks(list(range(0, 14)), fontfamily='arial')
-            plt.ylim([0, 14])
+            plt.yticks(list(range(0, 15)), fontfamily='arial')
+            plt.ylim([0, 15])
             plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
             plt.xlim([x1 - 1, x2 + 1])
 
             ax = plt.gca()
-            # draw separating lines on the figure by using the 'draw arrow to text' functionality without text being printed
-            # line is drawn between xy and xytext with the numbers representing a fraction of the axes
-            ax.annotate('', xy=(-0.1, -0.2), xycoords='axes fraction', xytext=(-0.1, 1.2), arrowprops=dict(arrowstyle='-', color='black'))
+            ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
+                           labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
-            # remove ticks from subplots where unneeded
-            if subplot_index not in subplot_left_col:
-                ax = plt.gca()
-                ax.set_yticklabels([])
-                # TODO figure out how to remove ticks without also removing grid lines (below line removes but messes up the grid)
-                #ax.yaxis.set_ticks([])
+            if condition_plot_index in subplot_bottom_row:
+                ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
+                ax.spines['bottom'].set_visible(True)
+                plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial')
+                plt.xlabel('reference width')
 
-            if subplot_index not in subplot_bottom_row:
-                ax = plt.gca()
-                ax.set_xticklabels([])
-                #ax.xaxis.set_ticks([])
+    plt.tight_layout(h_pad=0.6, w_pad=0.9)
     plt.savefig(path, dpi=300)
     print(f'Saving {plot}')
     plt.close()

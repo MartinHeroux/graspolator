@@ -12,7 +12,7 @@ plot_dispatch = namedtuple('plot_dispatch', 'PLOT COMMAND')
 #  either 'exp1' or 'exp2' (Kathy and Lovisa respectively)
 #experiments = ['exp1', 'exp2']
 experiments = ['exp1', 'exp2']
-experiment = 'exp1'
+experiment = 'exp2'
 for experiment in experiments:
     # import data and subject list for experiment
     all_subject_data, subjects = process.return_data_and_subjects(experiment)
