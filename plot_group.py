@@ -81,7 +81,7 @@ def consistency_between_conditions(all_subject_data, experiment):
     plot = 'consistency_between_conditions'
     path = utils.create_group_plot_save_path(experiment, plot)
 
-    plt.figure(figsize=(4, 6))
+    plt.figure(figsize=(8/2.4, 8/2.4))
     plt.ylabel('Area difference $(cm^2)$', fontfamily='arial', fontsize=10)
     plt.grid(axis = 'y')
     y_points_list = []
@@ -130,15 +130,15 @@ def consistency_between_conditions(all_subject_data, experiment):
 
     for x_point, area_list in zip(x_points_left, area_diff_list):
         mean, ci = utils.calculate_mean_ci(area_list)
-        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black', markersize=10)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black', markersize=7)
 
     y_max, y_min = utils.max_min(y_points_list)
     plt.ylim([y_min-1, (abs(y_min) + 1)])
     plt.yticks(list(range(-12, 14, 2)), fontfamily='arial')
 
-    plt.text(0.15, 0.05, 'same day', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.4, 0.05, '1 week apart', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.71, 0.05, 'same day', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.15, 0.01, 'same day', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.4, 0.01, '1 week apart', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.71, 0.01, 'same day', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
 
     plt.plot([1, 3], [0, 0], color='black', linewidth=1)
     plt.xlim([1.19, 2.02])

@@ -44,7 +44,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
         example_subjects = ['SUB04', 'SUB23']
         text_x = -1.5
 
-    plt.figure(figsize=(6, 10))
+    plt.figure(figsize=(8.1/2.4, 12/2.4))
     # plot example subjects in left and centre subplot cols
     for column, (example_subject_tuple, color) in enumerate(zip(tuple_list, colors), start = 1):
         for condition_data, condition_plot_index, condition_name in zip(example_subject_tuple.condition_data,
@@ -74,8 +74,8 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.grid(axis='both')
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
-            legend_handles = [mpatches.Patch(color='grey', alpha=0.3, label=f'{area:4.2f}$cm^2$')]
-            plt.legend(handles=legend_handles, loc='upper left')
+            legend_handles = [mpatches.Patch(color='grey', alpha=0.3, label=f'{area:4.2f}cm$^2$')]
+            #plt.legend(handles=legend_handles, loc='upper left')
 
             x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
             plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality > y_points_reg),
