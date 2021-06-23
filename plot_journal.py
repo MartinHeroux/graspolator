@@ -352,32 +352,40 @@ def area_vs_r2_plot(all_subject_data, experiment):
     area_lists = calculate_area.group_areas(all_subject_data, experiment)
     r2_lists = utils.store_r2_tuples(all_subject_data, experiment)
     x_labels = utils.x_ticks_group_plot(experiment)
-    subplot_indices = utils.x_points_group_plot(experiment)
 
+    if experiment == 'exp1':
+        subplot_indices = [1, 2, 3, 4]
+    else:
+        subplot_indices = [1, 2, 3]
 
-    plt.figure(figsize=(20, 10))
-    plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
+    plt.figure(figsize=(3.3, 6.5))
     for subplot_index, condition_r2_data, condition_area_data, condition_name in zip(subplot_indices, r2_lists, area_lists, x_labels):
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
-        plt.subplot(subplot_indices[0], subplot_indices[-1], subplot_index)
-        x_vals = np.array([min(condition_area_data), max(condition_area_data)])
+        plt.subplot(subplot_indices[-1], subplot_indices[0], subplot_index)
+        x_vals = np.array([0, 25])
         y_vals = intercept + slope * x_vals
-        plt.plot(x_vals, y_vals, color = 'b')
-        plt.scatter(condition_area_data, condition_r2_data, marker='o', color='royalblue', alpha=0.5)
+        plt.plot(x_vals, y_vals, color = 'black')
+        plt.scatter(condition_area_data, condition_r2_data, marker='o', s = 4, c='grey', linewidths=0)
 
-        legend_handles = [Line2D([0], [0], color='b', lw=2,
-                                 label=f'Regression Line\n(y = {slope:6.4f}*x + {intercept:4.2f})'),
-                          Line2D([0], [0], marker='o', label='Individual subject (n = 30)', mec='royalblue',
-                                 markerfacecolor='royalblue', markersize=8, linestyle='None')]
-
-        plt.xlim(min(condition_area_data)-1, max(condition_area_data)+1)
-        plt.ylim(min(condition_r2_data)-0.01, max(condition_r2_data)+0.01)
+        plt.xlim(0, 25)
+        plt.yticks([0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1], fontsize=8, fontfamily='arial')
+        plt.xticks(fontsize=8, fontfamily='arial')
+        plt.ylim(0.60, 1)
+        plt.ylabel(condition_name, fontsize=8, fontfamily='arial')
         plt.grid()
-        plt.legend(handles = legend_handles, loc = 'upper left')
-        plt.title(condition_name, loc='right')
-        plt.xlabel('Area (cm^2)')
-        plt.ylabel('R^2 Value')
+        plt.text(2, 0.8, f'{slope:6.4f}')
+        plt.gca().tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
+                       labelbottom=False, labeltop=False, labelleft=True, labelright=False)
+        plt.gca().spines['right'].set_visible(False)
+        plt.gca().spines['top'].set_visible(False)
+        plt.gca().spines['bottom'].set_visible(False)
+        if subplot_index == 4 and experiment == 'exp1' or subplot_index == 3 and experiment == 'exp2':
+            plt.xlabel('Area (cm^2)', size = 8, fontfamily='arial')
+            plt.gca().tick_params(axis='both', which='both', bottom=True, labelbottom=True)
+            plt.gca().spines['bottom'].set_visible(True)
         plt.tight_layout()
+
+    plt.tight_layout(h_pad=0.6)
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')
     print(f'Area vs r2 plots saved in {text}\n')
