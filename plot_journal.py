@@ -13,7 +13,7 @@ import calculate_area
 constants = utils.create_general_constants()
 plot_constants = plot_utils.create_plot_constants()
 
-
+### addit comment
 ## panel figure of individual subjects and group reg lines
 
 def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
@@ -167,4 +167,94 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     print(f'Saving {plot}')
     plt.close()
 
-#def r2_area_plots(all_subject_data, subjects, experiment):
+def r2_area_plots(all_subject_data, subjects, experiment):
+    plot = f'area_r2_group_plot_{experiment}'
+    path = utils.create_article_plot_save_path(plot)
+
+    x_points = utils.x_points_group_plot(experiment)
+    x_labels = utils.x_ticks_group_plot(experiment)
+    params = plot_utils.r2_area_constants()
+
+    if experiment == 'exp1':
+        colors = params.exp_1_colors
+        example_subjects = params.exp_1_subjects
+    else:
+        colors = params.exp_2_colors
+        example_subjects = params.exp_2_subjects
+
+    r2_means, r2_cis = utils.store_r2_means_CIs_per_condition(all_subject_data, experiment)
+    area_means, area_cis = calculate_area.store_area_means_CIs_per_condition(all_subject_data, experiment)
+
+    means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
+
+    plt.figure(figsize=(3.3, 4.3))
+    for subject, subject_data in zip(subjects, all_subject_data):
+        data_pair_tuples = utils.create_data_tuples(experiment, subject_data)
+        y_points_r2 = []
+        y_points_area = []
+
+        if subject == example_subjects[0]:
+            line_color = colors[0]
+            line_width = 1.5
+            order = 10
+        elif subject == example_subjects[1]:
+            line_color = colors[1]
+            line_width = 1.5
+            order = 10
+        else:
+            line_color = 'darkgrey'
+            line_width = 1
+            order = 5
+
+        for tuple in data_pair_tuples:
+            y_points_r2.append(utils.calculate_r2(tuple.ACTUAL, tuple.PERCEIVED))
+            y_points_area.append(calculate_area.actual_vs_perceived(tuple.ACTUAL, tuple.PERCEIVED, experiment))
+
+        y_point_lists = [y_points_r2, y_points_area]
+
+        for subplot, y_points, y_label, y_tick, y_lim in zip(params.subplot_indices, y_point_lists, params.y_labels, params.y_ticks, params.y_lims):
+            plt.subplot(2, 1, subplot)
+            plt.plot(x_points, y_points, color=line_color, alpha=0.7, linewidth=line_width, zorder=order)
+            plt.ylabel(y_label, fontfamily=params.font, fontsize=8)
+            plt.yticks(y_tick, fontfamily=params.font, fontsize=8)
+            plt.ylim(y_lim)
+            plt.gca().spines['right'].set_visible(False)
+            plt.gca().spines['top'].set_visible(False)
+            plt.gca().spines['bottom'].set_visible(False)
+            if subplot == 2:
+                plt.xticks(x_points, labels=x_labels, fontfamily=params.font, fontsize=8)
+            if experiment == 'exp1' and subplot == 1:
+                plt.plot([1, 4], [params.r2_mean, params.r2_mean], linewidth=0.5, color='black', linestyle='--', alpha = 0.3, zorder = 10)
+                plt.fill_between(np.array([1, 4]), np.array([params.r2_ci_lower, params.r2_ci_lower]),
+                                 np.array([params.r2_ci_upper, params.r2_ci_upper]), alpha=0.4, facecolor='peachpuff')
+            if experiment == 'exp1' and subplot == 2:
+                plt.plot([1, 4], [params.area_mean, params.area_mean], linewidth=0.5, color='black', linestyle='--', alpha=0.3, zorder = 10)
+                plt.fill_between(np.array([1, 4]), np.array([params.area_ci_lower, params.area_ci_lower]),
+                                 np.array([params.area_ci_upper, params.area_ci_upper]), alpha=0.4, facecolor='peachpuff')
+
+    for mean_list, ci_list, subplot in zip(means_lists, ci_lists, params.subplot_indices):
+        plt.subplot(2, 1, subplot)
+        plt.grid(axis='y')
+        plt.gca().tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
+                              labelbottom=False, labeltop=False, labelleft=True, labelright=False)
+        if subplot == 2:
+            plt.gca().tick_params(axis='both', which='both', labelbottom=True)
+        for mean, ci, x_point in zip(mean_list, ci_list, x_points):
+            plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
+                         markersize=4, zorder=10)
+        if subplot == 2 and experiment == 'exp1':
+            ax = plt.gca()
+            plt.text(0.28, 0.035, 'Day 1', fontsize=8, fontfamily=params.font, transform=plt.gcf().transFigure)
+            plt.text(0.73, 0.035, 'Day 2', fontsize=8, fontfamily=params.font, transform=plt.gcf().transFigure)
+            ax.annotate('', xy=(0, -0.12), xycoords='axes fraction', xytext=(0.45, -0.12),
+                        arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
+            ax.annotate('', xy=(0.6, -0.12), xycoords='axes fraction', xytext=(0.99, -0.12),
+                        arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
+        elif subplot == 1:
+            plt.gca().xaxis.set_major_locator(MultipleLocator(1))
+            plt.gca().xaxis.set_major_formatter('{x:.0f}')
+    plt.tight_layout(h_pad=0.6, w_pad=0.9)
+    plt.savefig(path, dpi=300)
+    print(f'R2 and area per condition plots saved')
+    plt.close()
+
