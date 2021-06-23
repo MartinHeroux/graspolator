@@ -188,3 +188,16 @@ def _return_condition_data_list(experiment, tuple):
         condition_data = line_width, width_line, width_width, empty_data
 
     return condition_data
+
+def r2_area_constants():
+    constants = namedtuple('constants', 'y_labels y_ticks y_lims subplot_indices r2_mean r2_ci_lower r2_ci_upper '
+                                        'area_mean area_ci_lower area_ci_upper exp_1_colors exp_2_colors '
+                                        'exp_1_subjects exp_2_subjects font')
+
+    r2_area_constants = constants(y_labels=['R$^2$', 'Area (cm$^2$)'], y_ticks=[[0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1], [0, 5, 10, 15, 20, 25]],
+                                  y_lims=[[0.59, 1.01], [-0.1, 25]], subplot_indices=[1, 2], r2_mean=0.946, r2_ci_lower=0.9306, r2_ci_upper=0.9613,
+                                  area_mean=1.320, area_ci_lower=0.9660, area_ci_upper=1.674, exp_1_colors=['royalblue', 'seagreen'],
+                                  exp_2_colors=['darkblue', 'darkorange'], exp_1_subjects=['SUB05R', 'SUB01L'], exp_2_subjects=['sub04', 'sub23'],
+                                  font='arial')
+
+    return r2_area_constants
