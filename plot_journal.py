@@ -373,7 +373,7 @@ def area_vs_r2_plot(all_subject_data, experiment):
         plt.ylim(0.60, 1)
         plt.ylabel(condition_name, fontsize=8, fontfamily='arial')
         plt.grid()
-        plt.text(2, 0.8, f'{slope:6.4f}')
+        plt.text(17, 0.65, f'{slope:6.4f}')
         plt.gca().tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                        labelbottom=False, labeltop=False, labelleft=True, labelright=False)
         plt.gca().spines['right'].set_visible(False)
@@ -389,4 +389,43 @@ def area_vs_r2_plot(all_subject_data, experiment):
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')
     print(f'Area vs r2 plots saved in {text}\n')
+    plt.close()
+
+def slope_comparison(all_subject_data, experiment):
+    plot = f'slope_correlation_{experiment}'
+    path = utils.create_article_plot_save_path(plot)
+
+    slopes_line_width = []
+    slopes_width_line = []
+
+    for subject_data in all_subject_data:
+        intercept_line_width, slope_line_width = utils.calculate_regression_general(subject_data.LINE_WIDTH.ACTUAL, subject_data.LINE_WIDTH.PERCEIVED)
+        intercept_width_line, slope_width_line = utils.calculate_regression_general(subject_data.WIDTH_LINE.ACTUAL, subject_data.WIDTH_LINE.PERCEIVED)
+
+        slopes_line_width.append(slope_line_width)
+        slopes_width_line.append(slope_width_line)
+
+    print(f'Line width list: {slopes_line_width}')
+    print(f'Width line list: {slopes_width_line}')
+    plt.figure(figsize=(5,5))
+    plt.grid()
+
+    intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
+    utils.regression_summary(slopes_line_width, slopes_width_line)
+
+    x_vals = np.array([min(slopes_line_width)-0.25, max(slopes_line_width)+0.25])
+    y_vals = intercept + slope * x_vals
+
+    plt.plot(x_vals, y_vals, color='black')
+    plt.scatter(slopes_line_width, slopes_width_line, marker='o', color='black', alpha=0.5, zorder=10, linewidths=0)
+    plt.text(1.2, 2.0, f'm: {slope:4.2f}')
+
+    plt.xlabel(f'Slope\n Line to width regression')
+    plt.ylabel(f'Slope\n Width to line regression')
+    plt.xlim((min(slopes_line_width) - 0.25), (max(slopes_line_width) + 0.25))
+    plt.ylim((min(slopes_width_line) - 0.25), (max(slopes_width_line) + 0.25))
+    plt.tight_layout()
+    plt.savefig(path, dpi=300)
+    text = colored(f'{path}', 'blue')
+    print(f'slope comparison saved in {text}\n')
     plt.close()
