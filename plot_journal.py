@@ -5,6 +5,7 @@ from random import random
 from pathlib import Path
 from matplotlib.ticker import MultipleLocator
 from termcolor import colored
+from matplotlib.lines import Line2D
 
 import utils
 import plot_utils
@@ -12,6 +13,7 @@ import calculate_area
 
 constants = utils.create_general_constants()
 plot_constants = plot_utils.create_plot_constants()
+
 
 ## panel figure of individual subjects and group reg lines
 
@@ -44,9 +46,9 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
         example_subjects = ['SUB04', 'SUB23']
         text_x = -1.5
 
-    plt.figure(figsize=(8.1/2.4, 12/2.4))
+    plt.figure(figsize=(8.1 / 2.4, 12 / 2.4))
     # plot example subjects in left and centre subplot cols
-    for column, (example_subject_tuple, color) in enumerate(zip(tuple_list, colors), start = 1):
+    for column, (example_subject_tuple, color) in enumerate(zip(tuple_list, colors), start=1):
         for condition_data, condition_plot_index, condition_name in zip(example_subject_tuple.condition_data,
                                                                         example_subject_tuple.indices, condition_names):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
@@ -75,7 +77,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
             legend_handles = [mpatches.Patch(color='grey', alpha=0.3, label=f'{area:4.2f}cm$^2$')]
-            #plt.legend(handles=legend_handles, loc='upper left')
+            # plt.legend(handles=legend_handles, loc='upper left')
 
             x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
             plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality > y_points_reg),
@@ -89,17 +91,18 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.xticks(list(range(2, 11, 2)))
 
             ax = plt.gca()
-            #ax.yaxis.set_major_locator(MultipleLocator(3))
-            #ax.yaxis.set_major_formatter('{x:.0f}')
-            #ax.yaxis.set_minor_locator(MultipleLocator(1))
-            #ax.yaxis.grid(True, which='minor')
-            ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False, labelbottom=False, labeltop=False, labelleft=False, labelright=False)
+            # ax.yaxis.set_major_locator(MultipleLocator(3))
+            # ax.yaxis.set_major_formatter('{x:.0f}')
+            # ax.yaxis.set_minor_locator(MultipleLocator(1))
+            # ax.yaxis.grid(True, which='minor')
+            ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
+                           labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
             if condition_plot_index in subplot_left_col:
                 ax.tick_params(axis='y', which='both', left=True, labelleft=True)
                 ax.spines['left'].set_visible(True)
                 ax.set_ylabel('width', fontsize=8)
-                #ax.text(text_x, 4.5, condition_name, rotation=90, fontsize=8)
+                # ax.text(text_x, 4.5, condition_name, rotation=90, fontsize=8)
 
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
@@ -133,7 +136,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 line_width = 0.5
                 order = 5
 
-            plt.plot([x1, x2], [y1, y2], color=line_color, linewidth=line_width, zorder = order)
+            plt.plot([x1, x2], [y1, y2], color=line_color, linewidth=line_width, zorder=order)
             plt.yticks(list(range(0, 16, 3)), fontfamily='arial', fontsize=8)
             plt.ylim([0, 15])
             plt.xticks(list(range(2, 11, 2)), fontfamily='arial', fontsize=8)
@@ -152,12 +155,13 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     # plot dummy data + axis labels for cropping
     if experiment == 'exp2':
         plt.subplot(subplot_rows, subplot_cols, 12)
-        plt.plot([4,6], [6,8])
+        plt.plot([4, 6], [6, 8])
         plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))), fontfamily='arial', fontsize=8)
         plt.xlim([2, 10])
         plt.xlabel('width', fontsize=8)
-        plt.gca().tick_params(axis='both', which='both', bottom=True, top=False, left=False, right=False, labelbottom=True,
-                       labeltop=False, labelleft=False, labelright=False)
+        plt.gca().tick_params(axis='both', which='both', bottom=True, top=False, left=False, right=False,
+                              labelbottom=True,
+                              labeltop=False, labelleft=False, labelright=False)
 
     plt.tight_layout(h_pad=0.4, w_pad=0.9)
     plt.savefig(path, dpi=300)
@@ -166,13 +170,14 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     print(f'Saving {plot}')
     plt.close()
 
-def consistency_between_conditions(all_subject_data, experiment):
-    plot = 'consistency_between_conditions'
-    path = utils.create_group_plot_save_path(experiment, plot)
 
-    plt.figure(figsize=(8/2.4, 8/2.4))
+def consistency_between_conditions(all_subject_data, experiment):
+    plot = f'consistency_between_conditions_{experiment}'
+    path = utils.create_article_plot_save_path(plot)
+
+    plt.figure(figsize=(8 / 2.4, 8 / 2.4))
     plt.ylabel('Area difference $(cm^2)$', fontfamily='arial', fontsize=10)
-    plt.grid(axis = 'y')
+    plt.grid(axis='y')
     y_points_list = []
     between_hands_areas, across_days_areas, within_day_areas = [], [], []
 
@@ -193,14 +198,14 @@ def consistency_between_conditions(all_subject_data, experiment):
                                                          subject_data.day1_dominant.PERCEIVED,
                                                          experiment)
         d1_non_dom_area = calculate_area.actual_vs_perceived(subject_data.day1_non_dominant.ACTUAL,
-                                                         subject_data.day1_non_dominant.PERCEIVED,
-                                                         experiment)
+                                                             subject_data.day1_non_dominant.PERCEIVED,
+                                                             experiment)
         d2_dom_1_area = calculate_area.actual_vs_perceived(subject_data.day2_dominant_1.ACTUAL,
-                                                         subject_data.day2_dominant_1.PERCEIVED,
-                                                         experiment)
+                                                           subject_data.day2_dominant_1.PERCEIVED,
+                                                           experiment)
         d2_dom_2_area = calculate_area.actual_vs_perceived(subject_data.day2_dominant_2.ACTUAL,
-                                                         subject_data.day2_dominant_2.PERCEIVED,
-                                                         experiment)
+                                                           subject_data.day2_dominant_2.PERCEIVED,
+                                                           experiment)
 
         dom_vs_non_dom_area = d1_dom_area - d1_non_dom_area
         between_hands_areas.append(dom_vs_non_dom_area)
@@ -213,16 +218,17 @@ def consistency_between_conditions(all_subject_data, experiment):
 
         y_points = [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
         y_points_list.append(y_points)
-        plt.plot(x_points_jitter, y_points, mfc='black', marker='^', alpha=0.4, markersize = 4, linestyle='', mec='none')
+        plt.plot(x_points_jitter, y_points, mfc='black', marker='^', alpha=0.4, markersize=4, linestyle='', mec='none')
 
     area_diff_list = [between_hands_areas, across_days_areas, within_day_areas]
 
     for x_point, area_list in zip(x_points_left, area_diff_list):
         mean, ci = utils.calculate_mean_ci(area_list)
-        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black', markersize=7)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
+                     markersize=7)
 
     y_max, y_min = utils.max_min(y_points_list)
-    plt.ylim([y_min-1, (abs(y_min) + 1)])
+    plt.ylim([y_min - 1, (abs(y_min) + 1)])
     plt.yticks(list(range(-12, 14, 2)), fontfamily='arial')
 
     plt.text(0.15, 0.01, 'same day', fontsize=10, fontfamily='arial', transform=plt.gcf().transFigure)
@@ -236,17 +242,12 @@ def consistency_between_conditions(all_subject_data, experiment):
     plt.gca().spines['right'].set_visible(False)
     plt.gca().spines['bottom'].set_visible(False)
     plt.gca().tick_params(axis='x', which='both', bottom=False)
-    #ax.annotate('', xy=(-0.1, -0.035), xycoords='axes fraction', xytext=(0.25, -0.035),
-                #arrowprops=dict(arrowstyle='-', color='black'))
-    #ax.annotate('', xy=(0.35, -0.035), xycoords='axes fraction', xytext=(0.65, -0.035),
-                #arrowprops=dict(arrowstyle='-', color='black'))
-    #ax.annotate('', xy=(0.77, -0.035), xycoords='axes fraction', xytext=(1.07, -0.035),
-                #arrowprops=dict(arrowstyle='-', color='black'))
 
-    plt.savefig(path, dpi= 300, bbox_inches='tight')
+    plt.savefig(path, dpi=300, bbox_inches='tight')
     text = colored(path, 'blue')
     print(f'Group consistency plots saved in {text}\n')
     plt.close()
+
 
 def r2_area_plots(all_subject_data, subjects, experiment):
     plot = f'area_r2_group_plot_{experiment}'
@@ -293,7 +294,8 @@ def r2_area_plots(all_subject_data, subjects, experiment):
 
         y_point_lists = [y_points_r2, y_points_area]
 
-        for subplot, y_points, y_label, y_tick, y_lim in zip(params.subplot_indices, y_point_lists, params.y_labels, params.y_ticks, params.y_lims):
+        for subplot, y_points, y_label, y_tick, y_lim in zip(params.subplot_indices, y_point_lists, params.y_labels,
+                                                             params.y_ticks, params.y_lims):
             plt.subplot(2, 1, subplot)
             plt.plot(x_points, y_points, color=line_color, alpha=0.7, linewidth=line_width, zorder=order)
             plt.ylabel(y_label, fontfamily=params.font, fontsize=8)
@@ -305,13 +307,16 @@ def r2_area_plots(all_subject_data, subjects, experiment):
             if subplot == 2:
                 plt.xticks(x_points, labels=x_labels, fontfamily=params.font, fontsize=8)
             if experiment == 'exp1' and subplot == 1:
-                plt.plot([1, 4], [params.r2_mean, params.r2_mean], linewidth=0.5, color='black', linestyle='--', alpha = 0.3, zorder = 10)
+                plt.plot([1, 4], [params.r2_mean, params.r2_mean], linewidth=0.5, color='black', linestyle='--',
+                         alpha=0.3, zorder=10)
                 plt.fill_between(np.array([1, 4]), np.array([params.r2_ci_lower, params.r2_ci_lower]),
                                  np.array([params.r2_ci_upper, params.r2_ci_upper]), alpha=0.4, facecolor='peachpuff')
             if experiment == 'exp1' and subplot == 2:
-                plt.plot([1, 4], [params.area_mean, params.area_mean], linewidth=0.5, color='black', linestyle='--', alpha=0.3, zorder = 10)
+                plt.plot([1, 4], [params.area_mean, params.area_mean], linewidth=0.5, color='black', linestyle='--',
+                         alpha=0.3, zorder=10)
                 plt.fill_between(np.array([1, 4]), np.array([params.area_ci_lower, params.area_ci_lower]),
-                                 np.array([params.area_ci_upper, params.area_ci_upper]), alpha=0.4, facecolor='peachpuff')
+                                 np.array([params.area_ci_upper, params.area_ci_upper]), alpha=0.4,
+                                 facecolor='peachpuff')
 
     for mean_list, ci_list, subplot in zip(means_lists, ci_lists, params.subplot_indices):
         plt.subplot(2, 1, subplot)
@@ -339,3 +344,41 @@ def r2_area_plots(all_subject_data, subjects, experiment):
     print(f'R2 and area per condition plots saved')
     plt.close()
 
+
+def area_vs_r2_plot(all_subject_data, experiment):
+    plot = f'measure_correlation_{experiment}'
+    path = utils.create_article_plot_save_path(plot)
+
+    area_lists = calculate_area.group_areas(all_subject_data, experiment)
+    r2_lists = utils.store_r2_tuples(all_subject_data, experiment)
+    x_labels = utils.x_ticks_group_plot(experiment)
+    subplot_indices = utils.x_points_group_plot(experiment)
+
+
+    plt.figure(figsize=(20, 10))
+    plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
+    for subplot_index, condition_r2_data, condition_area_data, condition_name in zip(subplot_indices, r2_lists, area_lists, x_labels):
+        intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
+        plt.subplot(subplot_indices[0], subplot_indices[-1], subplot_index)
+        x_vals = np.array([min(condition_area_data), max(condition_area_data)])
+        y_vals = intercept + slope * x_vals
+        plt.plot(x_vals, y_vals, color = 'b')
+        plt.scatter(condition_area_data, condition_r2_data, marker='o', color='royalblue', alpha=0.5)
+
+        legend_handles = [Line2D([0], [0], color='b', lw=2,
+                                 label=f'Regression Line\n(y = {slope:6.4f}*x + {intercept:4.2f})'),
+                          Line2D([0], [0], marker='o', label='Individual subject (n = 30)', mec='royalblue',
+                                 markerfacecolor='royalblue', markersize=8, linestyle='None')]
+
+        plt.xlim(min(condition_area_data)-1, max(condition_area_data)+1)
+        plt.ylim(min(condition_r2_data)-0.01, max(condition_r2_data)+0.01)
+        plt.grid()
+        plt.legend(handles = legend_handles, loc = 'upper left')
+        plt.title(condition_name, loc='right')
+        plt.xlabel('Area (cm^2)')
+        plt.ylabel('R^2 Value')
+        plt.tight_layout()
+    plt.savefig(path, dpi=300)
+    text = colored(f'{path}', 'blue')
+    print(f'Area vs r2 plots saved in {text}\n')
+    plt.close()
