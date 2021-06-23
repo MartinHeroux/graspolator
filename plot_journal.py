@@ -165,9 +165,10 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
     plt.tight_layout(h_pad=0.4, w_pad=0.9)
     plt.savefig(path, dpi=300)
-    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
-    plt.savefig(path_svg)
-    print(f'Saving {plot}')
+    #path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    #plt.savefig(path_svg)
+    text = colored(path, 'blue')
+    print(f'{experiment} example subjects and group regressions saved in in {text}\n')
     plt.close()
 
 
@@ -341,7 +342,8 @@ def r2_area_plots(all_subject_data, subjects, experiment):
             plt.gca().xaxis.set_major_formatter('{x:.0f}')
     plt.tight_layout(h_pad=0.6, w_pad=0.9)
     plt.savefig(path, dpi=300)
-    print(f'R2 and area per condition plots saved')
+    text = colored(f'{path}', 'blue')
+    print(f'R2 and area per condition plots saved in {text}\n')
     plt.close()
 
 
@@ -388,7 +390,7 @@ def area_vs_r2_plot(all_subject_data, experiment):
     plt.tight_layout(h_pad=0.6)
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')
-    print(f'Area vs r2 plots saved in {text}\n')
+    print(f'{experiment} area vs r2 plots saved in {text}\n')
     plt.close()
 
 def slope_comparison(all_subject_data, experiment):
@@ -405,13 +407,11 @@ def slope_comparison(all_subject_data, experiment):
         slopes_line_width.append(slope_line_width)
         slopes_width_line.append(slope_width_line)
 
-    print(f'Line width list: {slopes_line_width}')
-    print(f'Width line list: {slopes_width_line}')
     plt.figure(figsize=(5,5))
     plt.grid()
 
     intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
-    utils.regression_summary(slopes_line_width, slopes_width_line)
+    #utils.regression_summary(slopes_line_width, slopes_width_line)
 
     x_vals = np.array([min(slopes_line_width)-0.25, max(slopes_line_width)+0.25])
     y_vals = intercept + slope * x_vals
