@@ -182,7 +182,7 @@ def _return_condition_data_list(experiment, tuple):
         line_width = tuple.data.LINE_WIDTH
         width_line = tuple.data.WIDTH_LINE
         width_width = tuple.data.WIDTH_WIDTH
-        empty_data = dummy_data(ACTUAL=[1, 2, 3], PERCEIVED=[1, 2, 3])
+        empty_data = dummy_data(ACTUAL=[3, 6, 9], PERCEIVED=[3, 6, 9])
 
         # condition_data_tuple = condition_data(line_width=line_width, width_line=width_line, width_width=width_width)
         condition_data = line_width, width_line, width_width, empty_data
