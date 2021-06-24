@@ -292,9 +292,9 @@ def x_points_group_plot(experiment):
 
 def x_ticks_group_plot(experiment):
     if experiment == 'exp1':
-        x_ticks = ['dominant', 'non dominant', 'dominant', 'dominant']
+        x_ticks = ['dominant', 'non-dominant', 'dominant', 'dominant']
     else:
-        x_ticks = ['line to width', 'width to line', 'width to width']
+        x_ticks = ['line-to-width', 'width-to-line', 'width-to-width']
     return x_ticks
 
 
