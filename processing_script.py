@@ -19,7 +19,7 @@ for experiment in experiments:
 
     # make plot dispatcher keys
     # TODO change 'skip' to 'skip' to alter which plots are made
-    A = plot_dispatch._make([plot.individual_regressions, 'skip'])
+    A = plot_dispatch._make([plot.individual_regressions, 'run'])
     B = plot_dispatch._make([plot.individual_areas_to_reality, 'skip'])
     C = plot_dispatch._make([plot.individual_areas_between_conditions, 'skip'])
     D = plot_dispatch._make([plot.group_regression_lines_per_condition, 'run'])

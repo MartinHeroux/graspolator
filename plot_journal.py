@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.collections import PatchCollection
 import matplotlib.patches as mpatches
 import numpy as np
 from random import random
@@ -36,8 +37,8 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
         subplot_left_col = [1, 4, 7, 10]
         subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9, 12]
-        colors = ['cornflowerblue', 'darkblue']
-        example_subjects = ['SUB05R', 'SUB01L']
+        colors = ['royalblue', 'darkblue']
+        example_subjects = ['SUB03L', 'SUB11R']
         x_ticks = list(range(2, 11, 2))
     else:
         condition_names = ['line to width', 'width to line', 'width to width', 'dummy_data']
@@ -45,7 +46,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
         subplot_left_col = [1, 4, 7, 10]
         subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9]
-        colors = ['firebrick', 'salmon']
+        colors = ['darkred', 'red']
         example_subjects = ['sub04', 'sub23']
         x_ticks = list(range(3, 10, 1))
 
@@ -63,7 +64,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
             length_data = len(condition_data.PERCEIVED)
             jitter_values = [random() / 4 for _ in range(length_data)]
-            x_data = np.array(condition_data.ACTUAL) + np.array(jitter_values)
+            x_data = (np.array(condition_data.ACTUAL) - 0.1) + np.array(jitter_values)
             plt.plot(x_data, condition_data.PERCEIVED, 'o', color=color,
                      alpha=0.5, markersize=3, markeredgecolor=None, markeredgewidth=0)
 
@@ -109,9 +110,9 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 ax.tick_params(axis='y', which='both', left=True, labelleft=True)
                 ax.spines['left'].set_visible(True)
                 if condition_plot_index == 4 and experiment == 'exp2':
-                    ax.set_ylabel('Perceived Width', fontsize=8)
+                    ax.set_ylabel('Perceived width (cm)', fontsize=8)
                 elif condition_plot_index == 7 and experiment == 'exp1':
-                    ax.set_ylabel('                                              Perceived Width', fontsize=8)
+                    ax.set_ylabel('                                              Perceived width (cm)', fontsize=8)
                 # ax.text(text_x, 4.5, condition_name, rotation=90, fontsize=8)
 
             if condition_plot_index in subplot_bottom_row:
@@ -119,7 +120,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 ax.spines['bottom'].set_visible(True)
                 plt.xticks(x_ticks, fontfamily='arial', fontsize=8)
                 if condition_plot_index == 11:
-                    plt.xlabel('Stimulus width')
+                    plt.xlabel('Stimulus width (cm)')
 
     # plot the group regression lines in the rightmost subplots
     for subject_ID, subject_data in zip(subjects, all_subject_data):
@@ -147,7 +148,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 line_width = 0.5
                 order = 5
 
-            plt.plot([x1, x2], [y1, y2], color=line_color, linewidth=line_width, zorder=order)
+            plt.plot([x1, x2], [y1, y2], color=line_color, linewidth=line_width, zorder=order, alpha=0.7)
             plt.yticks(list(range(0, 16, 3)), fontfamily='arial', fontsize=8)
             plt.ylim([0, 15])
             plt.xticks(x_ticks, fontfamily='arial', fontsize=8)
@@ -328,15 +329,22 @@ def r2_area_plots(all_subject_data, subjects, experiment):
             if subplot == 2:
                 plt.xticks(x_points, labels=x_labels, fontfamily=params.font, fontsize=8)
             if experiment == 'exp1' and subplot == 2:
+                grey_box = mpatches.Rectangle([1, params.r2_mean - params.r2_ci_lower], 3,
+                                   params.r2_mean + params.r2_ci_upper,
+                                   color='grey', fill=True)
+                collection = PatchCollection([grey_box], alpha=0.3)
+                plt.gca().add_collection(collection)
+
                 #plt.plot([1, 4], [params.r2_mean, params.r2_mean], linewidth=0.5, color='black', linestyle='--',
                          #alpha=0.3, zorder=10)
-                plt.fill_between(np.array([1, 4]), np.array([params.r2_ci_lower, params.r2_ci_lower]),
-                                 np.array([params.r2_ci_upper, params.r2_ci_upper]), alpha=0.3, color='salmon')
+                #plt.fill_between(np.array([1, 4]), np.array([params.r2_ci_lower, params.r2_ci_lower]),
+                #                 np.array([params.r2_ci_upper, params.r2_ci_upper]), alpha=0.3, color='grey')
+
             if experiment == 'exp1' and subplot == 1:
                 #plt.plot([1, 4], [params.area_mean, params.area_mean], linewidth=0.5, color='black', linestyle='--',
                          #alpha=0.3, zorder=10)
                 plt.fill_between(np.array([1, 4]), np.array([params.area_ci_lower, params.area_ci_lower]),
-                                 np.array([params.area_ci_upper, params.area_ci_upper]), alpha=0.3, color='salmon')
+                                 np.array([params.area_ci_upper, params.area_ci_upper]),  color='grey', alpha=0.3)
 
     for mean_list, ci_list, subplot in zip(means_lists, ci_lists, params.subplot_indices):
         plt.subplot(2, 1, subplot)

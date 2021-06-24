@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import statsmodels.api as sm
 import yaml
-from PyPDF2 import PdfFileMerger
+#from PyPDF2 import PdfFileMerger
 import scipy.stats as scp
 import numpy as np
 from scipy.stats import sem, t

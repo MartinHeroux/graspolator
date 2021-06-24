@@ -118,7 +118,6 @@ def color_manip(plot_index):
 def store_example_subject_plot_info(all_subject_data, subjects, experiment):
     example_data_tuple = namedtuple('EXAMPLE', 'condition_data indices')
     example_data_tuples = _extract_example_subject_data(all_subject_data, subjects, experiment)
-    example_data_tuples.example_2
     example_1_condition_data = _return_condition_data_list(experiment, example_data_tuples.example_1)
     example_2_condition_data = _return_condition_data_list(experiment, example_data_tuples.example_2)
 
@@ -138,10 +137,10 @@ def _extract_example_subject_data(all_subject_data, subjects, experiment):
 
     if experiment == 'exp1':
         for subject_data, subject in zip(all_subject_data, subjects):
-            if subject == 'SUB05R':
+            if subject == 'SUB03L':
                 exp1_max_name = subject
                 exp1_max_data = subject_data
-            if subject == 'SUB01L':
+            if subject == 'SUB11R':
                 exp1_cross_name = subject
                 exp1_cross_data = subject_data
         exp1_max = example_subject_tuple(name=exp1_max_name, data=exp1_max_data, indices=[1, 4, 7, 10])
