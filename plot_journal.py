@@ -21,40 +21,48 @@ plot_constants = plot_utils.create_plot_constants()
 def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     if experiment == 'exp1':
         plot = f'figure_1_{experiment}'
+        subject_1_ID = 'SUB03L'
+        subject_2_ID = 'SUB11R'
+        data_list = plot_utils.store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID)
+
     else:
         plot = f'figure_5_{experiment}'
-    path = utils.create_article_plot_save_path(plot)
+        subject_1_ID = 'sub02'
+        subject_2_ID = 'sub29'
+        data_list = plot_utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
 
-    tuple_list = plot_utils.store_example_subject_plot_info(all_subject_data, subjects, experiment)
+    path = utils.create_article_plot_save_path(plot)
 
     subplot_rows = 4
     subplot_cols = 3
+    plot_indices_list = [[1, 4, 7, 10], [2, 5, 8, 11]]
 
     # set up experiment specific parameters
     if experiment == 'exp1':
         condition_names = ['dominant', 'non-dominant', 'dominant', 'dominant']
-        x_lims = [2, 10]
+        x_lims = [1, 11]
+        x_data_lims = [2, 10]
         subplot_left_col = [1, 4, 7, 10]
         subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9, 12]
         colors = ['royalblue', 'darkblue']
-        example_subjects = ['SUB03L', 'SUB11R']
+        example_subjects = [subject_1_ID, subject_2_ID]
         x_ticks = list(range(2, 11, 2))
     else:
         condition_names = ['line to width', 'width to line', 'width to width', 'dummy_data']
-        x_lims = [3, 9]
+        x_lims = [1, 11]
+        x_data_lims = [3, 9]
         subplot_left_col = [1, 4, 7, 10]
         subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9]
         colors = ['darkred', 'red']
-        example_subjects = ['sub04', 'sub23']
-        x_ticks = list(range(3, 10, 1))
+        example_subjects = [subject_1_ID, subject_2_ID]
+        x_ticks = list(range(2, 11, 2))
 
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
     # plot example subjects in left and centre subplot cols
-    for column, (example_subject_tuple, color) in enumerate(zip(tuple_list, colors), start=1):
-        for condition_data, condition_plot_index, condition_name in zip(example_subject_tuple.condition_data,
-                                                                        example_subject_tuple.indices, condition_names):
+    for column, (example_subject_data, color, plot_indices) in enumerate(zip(data_list, colors, plot_indices_list), start=1):
+        for condition_data, condition_plot_index, condition_name in zip(example_subject_data, plot_indices, condition_names):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
             if condition_plot_index == 1:
                 plt.title(example_subjects[0], loc='center', size=8, fontfamily='arial')
@@ -71,8 +79,8 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL,
                                                                   condition_data.PERCEIVED)
 
-            x1 = x_lims[0]
-            x2 = x_lims[1]
+            x1 = x_data_lims[0]
+            x2 = x_data_lims[1]
             y1 = slope * x1 + intercept
             y2 = slope * x2 + intercept
 
@@ -89,9 +97,9 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality < y_points_reg),
                              color='grey', alpha=0.3, interpolate=True)
 
-            plt.ylim([0, 15])
-            plt.xlim([x1 - 1, x2 + 1])
-            plt.yticks(list(range(0, 16, 3)), fontfamily='arial', fontsize=8)
+            plt.ylim([0, 16])
+            plt.xlim([x_lims[0], x_lims[1]])
+            plt.yticks(list(range(0, 16, 2)), fontfamily='arial', fontsize=8)
             plt.xticks(x_ticks)
 
             ax = plt.gca()
@@ -149,10 +157,10 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 order = 5
 
             plt.plot([x1, x2], [y1, y2], color=line_color, linewidth=line_width, zorder=order, alpha=0.7)
-            plt.yticks(list(range(0, 16, 3)), fontfamily='arial', fontsize=8)
+            plt.yticks(list(range(0, 16, 2)), fontfamily='arial', fontsize=8)
             plt.ylim([0, 15])
             plt.xticks(x_ticks, fontfamily='arial', fontsize=8)
-            plt.xlim([x1 - 1, x2 + 1])
+            plt.xlim([x_lims[0], x_lims[1]])
 
             plt.gca().spines['bottom'].set_visible(False)
             plt.gca().spines['top'].set_visible(False)
@@ -173,7 +181,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
         plt.subplot(subplot_rows, subplot_cols, 12)
         plt.plot([4, 6], [6, 8])
         plt.xticks(x_ticks, fontfamily='arial', fontsize=8)
-        plt.xlim([2, 10])
+        plt.xlim([x_lims[0], x_lims[1]])
         plt.gca().tick_params(axis='both', which='both', bottom=True, top=False, left=False, right=False,
                               labelbottom=True,
                               labeltop=False, labelleft=False, labelright=False)
@@ -200,13 +208,13 @@ def consistency_between_conditions(all_subject_data, experiment):
     between_hands_areas, across_days_areas, within_day_areas = [], [], []
 
     x_points_base = [1.3, 1.6, 1.9]
-    x_points_left = [1.255, 1.555, 1.855]
-    x_points_right = [1.355, 1.655, 1.955]
+    x_points_left = [1.27, 1.57, 1.87]
+    x_points_right = [1.33, 1.63, 1.93]
 
     plt.xticks(x_points_base, labels=['Across hands', 'Within hands', 'Within hands'], fontfamily='arial', fontsize=8)
 
     for line_number, subject_data in enumerate(all_subject_data, start=1):
-        jitter_values = [random() / 40 for _ in range(len(x_points_base))]
+        jitter_values = [random() / 60 for _ in range(len(x_points_base))]
         if line_number < 15:
             x_points_jitter = np.array(x_points_right) + np.array(jitter_values)
         else:
@@ -246,10 +254,10 @@ def consistency_between_conditions(all_subject_data, experiment):
                      markersize=5)
 
     plt.ylim([-13, 12])
-    plt.yticks(list(range(-12, 12, 2)), fontfamily='arial', fontsize = 8)
+    plt.yticks(list(range(-12, 12, 3)), fontfamily='arial', fontsize = 8)
 
     plt.text(0.15, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.4, 0.01, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.41, 0.01, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.text(0.71, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
 
     plt.plot([1, 3], [0, 0], color='black', linewidth=0.5)
@@ -268,8 +276,10 @@ def consistency_between_conditions(all_subject_data, experiment):
 def r2_area_plots(all_subject_data, subjects, experiment):
     if experiment == 'exp1':
         plot = f'figure_2_{experiment}'
+        y_lims = [(0.7, 1), (0, 23)]
     else:
         plot = f'figure_6_{experiment}'
+        y_lims = [(0.6, 1), (0, 20)]
     path = utils.create_article_plot_save_path(plot)
 
     x_points = utils.x_points_group_plot(experiment)
@@ -314,7 +324,7 @@ def r2_area_plots(all_subject_data, subjects, experiment):
         y_point_lists = [y_points_r2, y_points_area]
 
         for subplot, y_points, y_label, y_tick, y_lim in zip(params.subplot_indices, y_point_lists, params.y_labels,
-                                                             params.y_ticks, params.y_lims):
+                                                      params.y_ticks, y_lims):
             plt.subplot(2, 1, subplot)
             plt.plot(x_points, y_points, color=line_color, alpha=0.7, linewidth=line_width, zorder=order)
             plt.ylabel(y_label, fontfamily=params.font, fontsize=8)
@@ -328,23 +338,7 @@ def r2_area_plots(all_subject_data, subjects, experiment):
             plt.gca().spines['bottom'].set_visible(False)
             if subplot == 2:
                 plt.xticks(x_points, labels=x_labels, fontfamily=params.font, fontsize=8)
-            if experiment == 'exp1' and subplot == 2:
-                grey_box = mpatches.Rectangle([1, params.r2_mean - params.r2_ci_lower], 3,
-                                   params.r2_mean + params.r2_ci_upper,
-                                   color='grey', fill=True)
-                collection = PatchCollection([grey_box], alpha=0.3)
-                plt.gca().add_collection(collection)
 
-                #plt.plot([1, 4], [params.r2_mean, params.r2_mean], linewidth=0.5, color='black', linestyle='--',
-                         #alpha=0.3, zorder=10)
-                #plt.fill_between(np.array([1, 4]), np.array([params.r2_ci_lower, params.r2_ci_lower]),
-                #                 np.array([params.r2_ci_upper, params.r2_ci_upper]), alpha=0.3, color='grey')
-
-            if experiment == 'exp1' and subplot == 1:
-                #plt.plot([1, 4], [params.area_mean, params.area_mean], linewidth=0.5, color='black', linestyle='--',
-                         #alpha=0.3, zorder=10)
-                plt.fill_between(np.array([1, 4]), np.array([params.area_ci_lower, params.area_ci_lower]),
-                                 np.array([params.area_ci_upper, params.area_ci_upper]),  color='grey', alpha=0.3)
 
     for mean_list, ci_list, subplot in zip(means_lists, ci_lists, params.subplot_indices):
         plt.subplot(2, 1, subplot)
@@ -365,9 +359,26 @@ def r2_area_plots(all_subject_data, subjects, experiment):
                         arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
             ax.annotate('', xy=(0.6, -0.12), xycoords='axes fraction', xytext=(0.99, -0.12),
                         arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
+            ax.add_patch(mpatches.Rectangle(xy=(1, params.r2_ci_lower),  # point of origin.
+                                                   width=3,
+                                                   height=(params.r2_ci_upper - params.r2_ci_lower),
+                                                   linewidth=0,
+                                                   color='lightgray',
+                                                   fill=True,
+                                                   alpha=0.7))
         elif subplot == 1:
             plt.gca().xaxis.set_major_locator(MultipleLocator(1))
             plt.gca().xaxis.set_major_formatter('{x:.0f}')
+
+        if experiment == 'exp1' and subplot == 1:
+            plt.gca().add_patch(mpatches.Rectangle(xy=(1, params.area_ci_lower),  # point of origin.
+                                                   width=3,
+                                                   height=(params.area_ci_upper - params.area_ci_lower),
+                                                   linewidth=0,
+                                                   color='lightgray',
+                                                   fill=True,
+                                                   alpha=0.7))
+
     plt.tight_layout(h_pad=0.6, w_pad=0.9)
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')
@@ -388,22 +399,21 @@ def area_vs_r2_plot(all_subject_data, experiment):
     else:
         subplot_indices = [1, 2, 3]
 
-    plt.figure(figsize=(3.3, 6.5))
+    plt.figure(figsize=(3.3, 7))
     for subplot_index, condition_r2_data, condition_area_data, condition_name in zip(subplot_indices, r2_lists,
                                                                                      area_lists, x_labels):
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
         plt.subplot(subplot_indices[-1], subplot_indices[0], subplot_index)
         x_vals = np.array([0, max(condition_area_data)])
         y_vals = intercept + slope * x_vals
-        plt.plot(x_vals, y_vals, color='black', zorder = 11)
-        plt.scatter(condition_area_data, condition_r2_data, marker='o', s=5, c='darkgrey', alpha = 0.7, linewidths=0, zorder = 10)
+        plt.plot(x_vals, y_vals, color='black', linewidth = 1, zorder = 11)
+        plt.scatter(condition_area_data, condition_r2_data, marker='o', s=5, c='darkgrey', linewidths=0, zorder = 10)
 
-        plt.xlim(0, 25)
-        plt.yticks([0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1], fontsize=8, fontfamily='arial')
+        plt.xlim(0, 20)
+        plt.yticks([0.6, 0.7, 0.8, 0.9, 1], fontsize=8, fontfamily='arial')
         plt.xticks(fontsize=8, fontfamily='arial')
         plt.ylim(0.60, 1)
-        if subplot_index == 2:
-            plt.ylabel('R$^2$', fontsize=8, fontfamily='arial')
+        plt.ylabel('R$^2$', fontsize=8, fontfamily='arial')
         plt.grid(linewidth = 0.5, color='lightgrey')
         plt.gca().tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                               labelbottom=False, labeltop=False, labelleft=True, labelright=False)
@@ -418,7 +428,7 @@ def area_vs_r2_plot(all_subject_data, experiment):
         utils.regression_summary(condition_area_data, condition_r2_data)
         plt.tight_layout()
 
-    plt.tight_layout(h_pad=0.6)
+    plt.tight_layout(h_pad=0.9)
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')
     print(f'{experiment} area vs r2 plots saved in {text}\n')
@@ -441,7 +451,7 @@ def slope_comparison(all_subject_data, experiment):
         slopes_line_width.append(slope_line_width)
         slopes_width_line.append(slope_width_line)
 
-    plt.figure(figsize=(5, 5))
+    plt.figure(figsize=(3.3, (7/3)))
     plt.grid()
 
     intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
@@ -452,14 +462,16 @@ def slope_comparison(all_subject_data, experiment):
     x_vals = np.array([min(slopes_line_width) - 0.25, max(slopes_line_width) + 0.25])
     y_vals = intercept + slope * x_vals
 
-    plt.plot(x_vals, y_vals, color='black')
-    plt.scatter(slopes_line_width, slopes_width_line, marker='o', color='black', alpha=0.8, zorder=10, linewidths=0)
+    plt.plot(x_vals, y_vals, color='black', linewidth=1)
+    plt.scatter(slopes_line_width, slopes_width_line, marker='o', s= 3, color='black', alpha=0.8, zorder=10, linewidths=0)
 
-    plt.xlabel(f'Line-to-width regression slope')
-    plt.ylabel(f'Width-to-line regression slope')
+    plt.xlabel(f'Line-to-width slope', fontsize=8)
+    plt.ylabel(f'Width-to-line slope', fontsize=8)
+    plt.xticks(fontsize=8, fontfamily='arial')
+    plt.yticks(fontsize=8, fontfamily='arial')
     plt.gca().spines['top'].set_visible(False)
     plt.gca().spines['right'].set_visible(False)
-    plt.xlim(0.4, 1.45)
+    plt.xlim(0.4, 1.4)
     plt.ylim(0.25, 2.0)
     plt.tight_layout()
     plt.savefig(path, dpi=300)
