@@ -115,78 +115,48 @@ def color_manip(plot_index):
     return colour
 
 
-def store_example_subject_plot_info(all_subject_data, subjects, experiment):
-    example_data_tuple = namedtuple('EXAMPLE', 'condition_data indices')
-    example_data_tuples = _extract_example_subject_data(all_subject_data, subjects, experiment)
-    example_1_condition_data = _return_condition_data_list(experiment, example_data_tuples.example_1)
-    example_2_condition_data = _return_condition_data_list(experiment, example_data_tuples.example_2)
+def store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID):
+    experiment = 'exp1'
+    for subject_data, subject_name in zip(all_subject_data, subjects):
+        if subject_name == subject_1_ID:
+            condition_data_list_1 = extract_condition_data(subject_data, experiment)
+        if subject_name == subject_2_ID:
+            condition_data_list_2 = extract_condition_data(subject_data, experiment)
 
-    example_1_indices = example_data_tuples.example_1.indices
-    example_2_indices = example_data_tuples.example_2.indices
-
-    example_1_tuple = example_data_tuple(condition_data=example_1_condition_data, indices=example_1_indices)
-    example_2_tuple = example_data_tuple(condition_data=example_2_condition_data, indices=example_2_indices)
-
-    tuple_list = [example_1_tuple, example_2_tuple]
-    return tuple_list
+    return [condition_data_list_1, condition_data_list_2]
 
 
-def _extract_example_subject_data(all_subject_data, subjects, experiment):
-    example_subject_tuple = namedtuple('examples', 'name data indices')
-    example_subjects = namedtuple('examples', 'example_1, example_2')
+def store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID):
+    experiment = 'exp2'
+    for subject_data, subject_name in zip(all_subject_data, subjects):
+        if subject_name == subject_1_ID:
+            condition_data_list_1 = extract_condition_data(subject_data, experiment)
+        if subject_name == subject_2_ID:
+            condition_data_list_2 = extract_condition_data(subject_data, experiment)
 
+    return [condition_data_list_1, condition_data_list_2]
+
+
+def extract_condition_data(subject_data, experiment):
+    dummy_data = namedtuple('condition', 'ACTUAL PERCEIVED')
     if experiment == 'exp1':
-        for subject_data, subject in zip(all_subject_data, subjects):
-            if subject == 'SUB03L':
-                exp1_max_name = subject
-                exp1_max_data = subject_data
-            if subject == 'SUB11R':
-                exp1_cross_name = subject
-                exp1_cross_data = subject_data
-        exp1_max = example_subject_tuple(name=exp1_max_name, data=exp1_max_data, indices=[1, 4, 7, 10])
-        exp1_cross = example_subject_tuple(name=exp1_cross_name, data=exp1_cross_data, indices=[2, 5, 8, 11])
+        D1_DOM = subject_data.day1_dominant
+        D1_NON_DOM = subject_data.day1_non_dominant
+        D2_DOM_1 = subject_data.day2_dominant_1
+        D2_DOM_2 = subject_data.day2_dominant_2
 
-        examples = example_subjects(example_1=exp1_max, example_2=exp1_cross)
+        condition_data_list = [D1_DOM, D1_NON_DOM, D2_DOM_1, D2_DOM_2]
 
     else:
-        for subject_data, subject in zip(all_subject_data, subjects):
-            if subject == 'sub04':
-                exp2_min_name = subject
-                exp2_min_data = subject_data
-            if subject == 'sub23':
-                exp2_cross_name = subject
-                exp2_cross_data = subject_data
+        LINE_WIDTH = subject_data.LINE_WIDTH
+        WIDTH_LINE = subject_data.WIDTH_LINE
+        WIDTH_WIDTH = subject_data.WIDTH_WIDTH
+        DUMMY_DATA = dummy_data(ACTUAL=[3, 6, 9], PERCEIVED=[3, 6, 9])
 
-        exp2_min = example_subject_tuple(name=exp2_min_name, data=exp2_min_data, indices=[1, 4, 7, 10])
-        exp2_cross = example_subject_tuple(name=exp2_cross_name, data=exp2_cross_data, indices=[2, 5, 8, 11])
+        condition_data_list = [LINE_WIDTH, WIDTH_LINE, WIDTH_WIDTH, DUMMY_DATA]
 
-        examples = example_subjects(example_1=exp2_min, example_2=exp2_cross)
+    return condition_data_list
 
-    return examples
-
-
-def _return_condition_data_list(experiment, tuple):
-    if experiment == 'exp1':
-        # condition_data = namedtuple('condition', 'd1_dom d1_non_dom d2_dom_1 d2_dom_2')
-        d1_dom = tuple.data.day1_dominant
-        d1_non_dom = tuple.data.day1_non_dominant
-        d2_dom_1 = tuple.data.day2_dominant_1
-        d2_dom_2 = tuple.data.day2_dominant_2
-
-        # condition_data_tuple = condition_data(d1_dom=d1_dom, d1_non_dom=d1_non_dom, d2_dom_1=d2_dom_1, d2_dom_2=d2_dom_2)
-        condition_data = d1_dom, d1_non_dom, d2_dom_1, d2_dom_2
-
-    else:
-        dummy_data = namedtuple('condition', 'ACTUAL PERCEIVED')
-        line_width = tuple.data.LINE_WIDTH
-        width_line = tuple.data.WIDTH_LINE
-        width_width = tuple.data.WIDTH_WIDTH
-        empty_data = dummy_data(ACTUAL=[3, 6, 9], PERCEIVED=[3, 6, 9])
-
-        # condition_data_tuple = condition_data(line_width=line_width, width_line=width_line, width_width=width_width)
-        condition_data = line_width, width_line, width_width, empty_data
-
-    return condition_data
 
 def r2_area_constants():
     constants = namedtuple('constants', 'y_labels y_ticks y_lims subplot_indices r2_mean r2_ci_lower r2_ci_upper '

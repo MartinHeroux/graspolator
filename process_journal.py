@@ -2,7 +2,7 @@ import plot_journal
 import process
 
 
-experiments = ['exp1', 'exp2']
+experiments = ['exp1']
 
 
 for experiment in experiments:
