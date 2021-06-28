@@ -2,9 +2,7 @@ from pathlib import Path
 from collections import namedtuple
 from termcolor import colored
 
-import utils
 import process_data_exp1
-import process_data_exp2
 
 DATA_FOLDER_EXP1 = Path('../data/exp1')
 DATA_FOLDER_EXP2 = Path('../data/exp2')
@@ -67,16 +65,3 @@ def _return_plot_tuples():
     return plot_summary_exp1, plot_summary_exp2
 
 
-def return_data_and_subjects(experiment):
-    if experiment == 'exp1':
-        all_subject_data = import_and_parse_data()
-        subjects = utils.get_directory_list(Path('../data/exp1'))
-
-    elif experiment == 'exp2':
-        all_subject_data = process_data_exp2.process_blocked_data()
-        subjects = utils.get_directory_list(Path('../data/exp2'))
-
-    else:
-        print('no experiment name defined')
-
-    return all_subject_data, subjects

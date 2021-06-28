@@ -1,4 +1,9 @@
+from pathlib import Path
+
 import matplotlib as mpl
+
+from utils import get_filename_list
+
 mpl.get_configdir()
 import matplotlib.pyplot as plt
 
@@ -61,3 +66,13 @@ def create_plot_subdirectories():
         path = plot_path / subdirectory
         if not os.path.exists(path):
             os.makedirs(path)
+
+
+def merge_pdfs(source_directory):
+    filenames = get_filename_list(source_directory)
+    merger = PdfFileMerger()
+    for filename in filenames:
+        pdf_path = str(Path('./randomised_plots_no_ID/', filename))
+        merger.append(pdf_path)
+    merger.write("concatenated.pdf")
+    merger.close()

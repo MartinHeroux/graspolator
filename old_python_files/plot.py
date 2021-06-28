@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import old_python_files.old_functions
 import utils
 from old_python_files import plot_group, plot_individual
 
@@ -10,7 +11,7 @@ def blinded_scatterplots(all_subject_data):
     for plot, (subject_ID, current_subject_data) in enumerate(zip(CONSTANTS.SUBJECT_IDS, all_subject_data), start=1):
         utils.create_subject_folder(subject_ID)
         plot_group.random_plot(plot, subject_ID, current_subject_data)
-    utils.merge_pdfs(Path('./randomised_plots_no_ID'))
+    old_python_files.old_functions.merge_pdfs(Path('./randomised_plots_no_ID'))
 
 
 # done

@@ -1,11 +1,11 @@
 import plot_journal
-from old_python_files import process
+import utils
 
 experiments = ['exp1', 'exp2']
 
 
 for experiment in experiments:
-    all_subject_data, subjects = process.return_data_and_subjects(experiment)
+    all_subject_data, subjects = utils.return_data_and_subjects(experiment)
 
     plot_journal.example_subjects_group_reg_summary(all_subject_data, subjects, experiment)
     plot_journal.r2_area_plots(all_subject_data, subjects, experiment)

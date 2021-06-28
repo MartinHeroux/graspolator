@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 import statsmodels.api as sm
 import yaml
-#from PyPDF2 import PdfFileMerger
 import scipy.stats as scp
 import numpy as np
 from scipy.stats import sem, t
@@ -10,6 +9,8 @@ from collections import namedtuple
 from termcolor import colored
 
 import plot_utils
+import process_data_exp2
+from old_python_files.process import import_and_parse_data
 
 
 def calculate_regression(block):
@@ -38,16 +39,6 @@ def read_yaml_corrections_file(fix_yaml):
         return
     with open(fix_yaml) as config_file:
         return yaml.load(config_file, Loader=yaml.FullLoader)
-
-
-def merge_pdfs(source_directory):
-    filenames = get_filename_list(source_directory)
-    merger = PdfFileMerger()
-    for filename in filenames:
-        pdf_path = str(Path('./randomised_plots_no_ID/', filename))
-        merger.append(pdf_path)
-    merger.write("concatenated.pdf")
-    merger.close()
 
 
 def calculate_r2(actual, perceived):
@@ -322,3 +313,18 @@ def condition_plot_inputs(subject_data):
                                     PERCEIVED=subject_data.WIDTH_WIDTH.PERCEIVED, PLOT_INDEX=3)
     tuples = line_width_inputs, width_line_inputs, width_width_inputs
     return tuples
+
+
+def return_data_and_subjects(experiment):
+    if experiment == 'exp1':
+        all_subject_data = import_and_parse_data()
+        subjects = get_directory_list(Path('../data/exp1'))
+
+    elif experiment == 'exp2':
+        all_subject_data = process_data_exp2.process_blocked_data()
+        subjects = get_directory_list(Path('../data/exp2'))
+
+    else:
+        print('no experiment name defined')
+
+    return all_subject_data, subjects
