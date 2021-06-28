@@ -1,8 +1,7 @@
 from pathlib import Path
 
 import utils
-import plot_individual
-import plot_group
+from old_python_files import plot_group, plot_individual
 
 CONSTANTS = utils.create_general_constants()
 

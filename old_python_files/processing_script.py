@@ -1,9 +1,7 @@
 from collections import namedtuple
 
 import plot_journal
-import process
-import plot
-
+from old_python_files import process, plot
 
 plot_dispatch = namedtuple('plot_dispatch', 'PLOT COMMAND')
 

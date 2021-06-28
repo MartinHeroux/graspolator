@@ -1,6 +1,5 @@
 import plot_journal
-import process
-
+from old_python_files import process
 
 experiments = ['exp1', 'exp2']
 

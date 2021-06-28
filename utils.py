@@ -190,10 +190,10 @@ def calculate_and_save_r_squared_to_txt(all_subject_data):
 
 def _r_squared(subject_ID, current_subject_data):
     condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
-    r_square_file = open("r_squared_values.txt", "a")
+    r_square_file = open("old_python_files/r_squared_values.txt", "a")
     r_square_file.write(f'subject: {subject_ID} \n')
     for condition_name, condition_data in zip(condition_names, current_subject_data):
-        r_square_file = open("r_squared_values.txt", "a")
+        r_square_file = open("old_python_files/r_squared_values.txt", "a")
         actual_widths = condition_data.actual_widths
         perceived_widths = condition_data.perceived_widths
         r_score, p_value = scp.pearsonr(actual_widths, perceived_widths)
@@ -292,9 +292,9 @@ def x_points_group_plot(experiment):
 
 def x_ticks_group_plot(experiment):
     if experiment == 'exp1':
-        x_ticks = ['dominant', 'non-dominant', 'dominant', 'dominant']
+        x_ticks = ['Dominant', 'Non-dominant', 'Dominant', 'Dominant']
     else:
-        x_ticks = ['line-to-width', 'width-to-line', 'width-to-width']
+        x_ticks = ['Line-to-width', 'Width-to-line', 'Width-to-width']
     return x_ticks
 
 
