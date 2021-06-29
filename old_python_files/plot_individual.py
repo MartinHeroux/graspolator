@@ -10,7 +10,7 @@ import calculate_area
 import plot_utils
 
 general_constants = utils.create_general_constants()
-plot_constants = plot_utils.create_plot_constants()
+plot_constants = utils.create_plot_constants()
 SMALLEST_WIDTH = 2
 LARGEST_WIDTH = 10
 YLIM = [0, 15]
@@ -32,7 +32,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
         length_data = len(condition_tuple.PERCEIVED)
         jitter_values = [random() / 4 for _ in range(length_data)]
         x_data = np.array(condition_tuple.ACTUAL) + np.array(jitter_values)
-        color = plot_utils.color_manip(condition_tuple.PLOT_INDEX)
+        color = utils.color_manip(condition_tuple.PLOT_INDEX)
         plt.plot(x_data, condition_tuple.PERCEIVED, 'o', color = color, alpha=plot_constants.ALPHA)
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL,
@@ -92,7 +92,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
             y_max = y2
 
         area = calculate_area.actual_vs_perceived(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, experiment)
-        color = plot_utils.color_manip(condition_tuple.PLOT_INDEX)
+        color = utils.color_manip(condition_tuple.PLOT_INDEX)
 
         x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
         plt.plot([x1, x2], [y1, y2], color=color)
@@ -126,7 +126,7 @@ def area_between_conditions_plot(subject_ID, subject_data, experiment):
     plot = 'area_difference_between_conditions'
     path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
 
-    data_pair_tuples = plot_utils.condition_pair_tuple(experiment, subject_data)
+    data_pair_tuples = utils.condition_pair_tuple(experiment, subject_data)
     data_pair_areas = calculate_area.between_conditions(experiment, subject_data)
 
     subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions_area_differences(experiment)

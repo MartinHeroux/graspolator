@@ -12,7 +12,7 @@ import calculate_area
 import plot_utils
 
 constants = utils.create_general_constants()
-plot_constants = plot_utils.create_plot_constants()
+plot_constants = utils.create_plot_constants()
 
 
 def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
@@ -52,7 +52,7 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
             y_points.append(y2)
             x_points.append(x1)
             x_points.append(x2)
-            line_colour = plot_utils.subject_line_colour(intersect_x, y1, experiment)
+            line_colour = utils.subject_line_colour(intersect_x, y1, experiment)
             plt.plot([x1, x2], [y1, y2], color=line_colour, linewidth=0.5)
 
 

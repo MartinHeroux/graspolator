@@ -11,7 +11,7 @@ import plot_utils
 import calculate_area
 
 constants = utils.create_general_constants()
-plot_constants = plot_utils.create_plot_constants()
+plot_constants = utils.create_plot_constants()
 
 
 ## panel figure of individual subjects and group reg lines

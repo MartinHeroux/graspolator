@@ -1,6 +1,7 @@
 from collections import namedtuple
 
-import plot_journal
+import data
+import figures
 import utils
 from old_python_files import process, plot
 
@@ -14,7 +15,7 @@ experiments = ['exp1', 'exp2']
 experiment = 'exp2'
 for experiment in experiments:
     # import data and subject list for experiment
-    all_subject_data, subjects = utils.return_data_and_subjects(experiment)
+    all_subject_data, subjects = data.get_data_and_subjects(experiment)
 
     # make plot dispatcher keys
     # TODO change 'skip' to 'skip' to alter which plots are made
@@ -38,5 +39,5 @@ for experiment in experiments:
     process.plot_by_dispatcher_key(plot_summary, all_subject_data, experiment, subjects)
 
 for experiment in experiments:
-    all_subject_data, subjects = utils.return_data_and_subjects(experiment)
-    plot_journal.example_subjects_group_reg_summary(all_subject_data, subjects, experiment)
+    all_subject_data, subjects = data.get_data_and_subjects(experiment)
+    figures.example_subjects_group_reg_summary(all_subject_data, subjects, experiment)

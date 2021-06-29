@@ -3,7 +3,6 @@ from collections import namedtuple
 import matplotlib.pyplot as plt
 
 import utils
-import plot_utils
 from utils import calculate_regression_general
 
 
@@ -19,7 +18,7 @@ def triangle_area(b, h):
 
 
 def between_conditions(experiment, subject_data):
-    tuple_list = plot_utils.condition_pair_tuple(experiment, subject_data)
+    tuple_list = utils.condition_pair_tuple(experiment, subject_data)
 
     if experiment == 'exp1':
 
@@ -314,7 +313,7 @@ def store_r2_and_area_tuples_exp1(all_subject_data, subject_IDs):
     r2_area_tuples = []
 
     for subject_data, subject_ID in zip(all_subject_data, subject_IDs):
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = utils.store_index_condition_data_tuple(
             subject_data)
 
         r2s_areas_tuple = r2s_areas(subject_ID=subject_ID,
@@ -381,7 +380,7 @@ def _group_areas_exp1(all_subject_data):
                                  'd1_dom_area_list d1_non_dom_area_list d2_dom_1_area_list d2_dom_2_area_list')
 
     for subject_data in all_subject_data:
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = plot_utils.store_index_condition_data_tuple(
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = utils.store_index_condition_data_tuple(
             subject_data)
 
         d1_dom_areas.append(actual_vs_perceived(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED, experiment)),

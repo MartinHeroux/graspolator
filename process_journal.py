@@ -1,18 +1,21 @@
-import plot_journal
-import utils
+from pathlib import Path
+
+import data
+import figures
 
 experiments = ['exp1', 'exp2']
+data_folders = [Path('./data/exp1'), Path('./data/exp2')]
+
+for experiment, data_folder in zip(experiments, data_folders):
+    all_subject_data, subject_IDs = data.get_data_and_subjects(experiment, data_folder)
+    # text files of numerical results generated simultaneous with figures
+    figures.generate(all_subject_data, subject_IDs, experiment)
 
 
-for experiment in experiments:
-    all_subject_data, subjects = utils.return_data_and_subjects(experiment)
 
-    plot_journal.example_subjects_group_reg_summary(all_subject_data, subjects, experiment)
-    plot_journal.r2_area_plots(all_subject_data, subjects, experiment)
 
-    if experiment == 'exp1':
-        plot_journal.consistency_between_conditions(all_subject_data, experiment)
 
-    if experiment == 'exp2':
-        plot_journal.slope_comparison(all_subject_data, experiment)
-        plot_journal.area_vs_r2_plot(all_subject_data, experiment)
+
+
+
+#def axis_fix(axes, x_ticks, y_ticks, x_labels, y_labels, etc):
