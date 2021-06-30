@@ -8,6 +8,7 @@ from matplotlib import patches as mpatches
 from scipy.stats import sem, t
 from collections import namedtuple
 from termcolor import colored
+import math
 
 
 def calculate_regression(block):
@@ -42,6 +43,31 @@ def calculate_r2(actual, perceived):
     r_score, p_value = scp.pearsonr(actual, perceived)
     r_squared = r_score ** 2
     return r_squared
+
+def pearson_r_ci(x, y):
+    # TODO check
+    if len(x) != len(y):
+        print('Lists of uneven length in pearson calc')
+
+    r_value, p_value = scp.pearsonr(x, y)
+
+    alpha = 0.05 / 2  # Two-tail test
+
+    z_critical = scp.norm.ppf(1 - alpha) # z score for 95% CI
+    z_sample = 0.5 * np.log((1 + r_value) / (1 - r_value)) # z score of r value
+
+    n = len(a)
+    std_err = 1 / np.sqrt(n - 3)
+
+    z_ci_lower = z_sample - z_critical * std_err
+    z_ci_upper = z_sample + z_critical * std_err
+
+    r_ci_lower = (math.exp(2*z_ci_lower) - 1) / (math.exp(2*z_ci_lower) + 1)
+    r_ci_upper = (math.exp(2 * z_ci_upper) + 1) / (math.exp(2 * z_ci_upper) - 1)
+
+    ci = str(f'[{r_ci_lower} - {r_ci_upper}')
+
+    return r_value, ci
 
 
 def calculate_mean_ci(data_list):

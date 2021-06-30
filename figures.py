@@ -175,7 +175,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.xlim([x_lims[0], x_lims[1]])
 
             # plot condition labels
-            plt.text(11.5, 14, label, fontsize=14, fontfamily='arial')
+            plt.text(11.5, 14, label, fontsize=12, fontfamily='arial')
 
             plt.gca().grid(True, linewidth=0.5, color='lightgrey')
 
@@ -365,9 +365,9 @@ def r2_area_plots(all_subject_data, subjects, experiment):
             plt.gca().spines['bottom'].set_visible(False)
             if subplot == 2:
                 plt.xticks(x_points, labels=x_labels, fontfamily=params.font, fontsize=8)
-                plt.text(text_x, text_y_plot_2, text, fontsize=12, fontfamily='arial')
+                plt.text(text_x, text_y_plot_2, text, fontsize=11, fontfamily='arial')
             else:
-                plt.text(text_x, text_y_plot_1, text, fontsize=12, fontfamily='arial')
+                plt.text(text_x, text_y_plot_1, text, fontsize=11, fontfamily='arial')
 
     for mean_list, ci_list, subplot in zip(means_lists, ci_lists, params.subplot_indices):
         plt.subplot(2, 1, subplot)
@@ -434,6 +434,8 @@ def area_vs_r2_plot(all_subject_data, experiment):
     for subplot_index, condition_r2_data, condition_area_data, condition_name, text in zip(subplot_indices, r2_lists,
                                                                                      area_lists, x_labels, text_labels):
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
+        r, ci = utils.pearson_r_ci(condition_area_data, condition_r2_data)
+        r_ci_text = str(f'{condition_name}: r = {r} {ci} ')
         plt.subplot(subplot_indices[-1], subplot_indices[0], subplot_index)
         x_vals = np.array([0, max(condition_area_data)])
         y_vals = intercept + slope * x_vals

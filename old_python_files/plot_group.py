@@ -191,6 +191,7 @@ def area_vs_r2_plot(all_subject_data, experiment):
     plt.figure(figsize=(20, 10))
     plt.suptitle('Area Between Reg Line + Reality Line vs. R^2 Value')
     for subplot_index, condition_r2_data, condition_area_data, condition_name in zip(subplot_indices, r2_lists, area_lists, x_labels):
+
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
         plt.subplot(subplot_indices[0], subplot_indices[-1], subplot_index)
         x_vals = np.array([min(condition_area_data), max(condition_area_data)])

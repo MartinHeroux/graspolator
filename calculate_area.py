@@ -1,6 +1,4 @@
-import numpy as np
 from collections import namedtuple
-import matplotlib.pyplot as plt
 
 import utils
 from utils import calculate_regression_general
@@ -295,73 +293,6 @@ def point_of_intersection_with_reality(intercept, slope):
     x_intersect = (b2 - b1) / (m1 - m2)
     y_intersect = (x_intersect * slope) + intercept
     return x_intersect, y_intersect
-
-
-def abline(slope, intercept):
-    """Plot a line from slope and intercept"""
-    axes = plt.gca()
-    x_vals = np.array(axes.get_xlim())
-    y_vals = intercept + slope * x_vals
-    plt.plot(x_vals, y_vals, 'k--')
-
-
-def store_r2_and_area_tuples_exp1(all_subject_data, subject_IDs):
-    experiment = 'exp1'
-    r2s_areas = namedtuple('r2s_area',
-                           'subject_ID d1_dom_r2 d1_non_dom_r2 d2_dom_1_r2 d2_dom_2_r2 d1_dom_area d1_non_dom_area '
-                           'd2_dom_1_area d2_dom_2_area')
-    r2_area_tuples = []
-
-    for subject_data, subject_ID in zip(all_subject_data, subject_IDs):
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = utils.store_index_condition_data_tuple(
-            subject_data)
-
-        r2s_areas_tuple = r2s_areas(subject_ID=subject_ID,
-                                    d1_dom_r2=utils.calculate_r2(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED),
-                                    d1_non_dom_r2=utils.calculate_r2(d1_non_dom_tuple.ACTUAL,
-                                                                     d1_non_dom_tuple.PERCEIVED),
-                                    d2_dom_1_r2=utils.calculate_r2(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED),
-                                    d2_dom_2_r2=utils.calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED),
-                                    d1_dom_area=actual_vs_perceived(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED,
-                                                                    experiment),
-                                    d1_non_dom_area=actual_vs_perceived(d1_non_dom_tuple.ACTUAL,
-                                                                        d1_non_dom_tuple.PERCEIVED, experiment),
-                                    d2_dom_1_area=actual_vs_perceived(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED,
-                                                                      experiment),
-                                    d2_dom_2_area=actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED,
-                                                                      experiment))
-
-        r2_area_tuples.append(r2s_areas_tuple)
-
-    return r2_area_tuples
-
-
-def store_r2_and_area_tuples_exp2(all_subject_data, subject_IDs):
-    experiment = 'exp2'
-    r2s_areas = namedtuple('r2s_area',
-                           'subject_ID line_width_r2 width_line_r2 width_width_r2 line_width_area width_line_area '
-                           'width_width_area')
-    r2_area_tuples = []
-
-    for subject_data, subject_ID in zip(all_subject_data, subject_IDs):
-        data_tuples = utils.condition_plot_inputs(subject_data)
-
-        line_width, width_line, width_width = data_tuples[0], data_tuples[1], data_tuples[2]
-
-        r2s_areas_tuple = r2s_areas(subject_ID=subject_ID,
-                                    line_width_r2=utils.calculate_r2(line_width.ACTUAL, line_width.PERCEIVED),
-                                    width_line_r2=utils.calculate_r2(width_line.ACTUAL, width_line.PERCEIVED),
-                                    width_width_r2=utils.calculate_r2(width_width.ACTUAL, width_width.PERCEIVED),
-                                    line_width_area=actual_vs_perceived(line_width.ACTUAL, line_width.PERCEIVED,
-                                                                        experiment),
-                                    width_line_area=actual_vs_perceived(width_line.ACTUAL, width_line.PERCEIVED,
-                                                                        experiment),
-                                    width_width_area=actual_vs_perceived(width_width.ACTUAL, width_width.PERCEIVED,
-                                                                         experiment))
-
-        r2_area_tuples.append(r2s_areas_tuple)
-
-    return r2_area_tuples
 
 
 def group_areas(all_subject_data, experiment):
