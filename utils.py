@@ -29,7 +29,12 @@ def calculate_regression_general(x, y):
 def regression_summary(x, y):
     x = sm.add_constant(x)
     model = sm.OLS(y, x).fit()
-    print(model.summary())
+
+    t_vals = model.tvalues
+    t_test = model.t_test([1, 0])
+    f_test = model.f_test(np.identity(2))
+
+    return t_vals, t_test, f_test
 
 
 def read_yaml_corrections_file(fix_yaml):
@@ -45,7 +50,6 @@ def calculate_r2(actual, perceived):
     return r_squared
 
 def pearson_r_ci(x, y):
-    # TODO check
     if len(x) != len(y):
         print('Lists of uneven length in pearson calc')
 
@@ -62,10 +66,10 @@ def pearson_r_ci(x, y):
     z_ci_lower = z_sample - z_critical * std_err
     z_ci_upper = z_sample + z_critical * std_err
 
-    r_ci_lower = (math.exp(2*z_ci_lower) - 1) / (math.exp(2*z_ci_lower) + 1)
-    r_ci_upper = (math.exp(2 * z_ci_upper) + 1) / (math.exp(2 * z_ci_upper) - 1)
+    r_ci_lower = (math.exp(2*z_ci_lower) - 1) / (math.exp(2*z_ci_lower) + 1) # convert back to r
+    r_ci_upper = (math.exp(2 * z_ci_upper) - 1) / (math.exp(2 * z_ci_upper) + 1) # convert back to r
 
-    ci = str(f'[{r_ci_lower} - {r_ci_upper}')
+    ci = str(f'[{r_ci_lower:4.2f} - {r_ci_upper:4.2f}]')
 
     return r_value, ci
 
