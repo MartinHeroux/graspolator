@@ -29,17 +29,23 @@ def generate(all_subject_data, subjects, experiment):
 ## panel figure of individual subjects and group reg lines
 
 def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
+
+    results = open(f'results_{experiment}.txt', 'a')
+
     if experiment == 'exp1':
         plot = f'figure_5_{experiment}'
         subject_1_ID = 'SUB03L'
         subject_2_ID = 'SUB11R'
         data_list = utils.store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID)
+        results.write('\nFigure 5: Example subjects and group regression summary\n')
 
     else:
         plot = f'figure_1_{experiment}'
         subject_1_ID = 'sub02'
         subject_2_ID = 'sub29'
         data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
+        results.write('\nFigure 1: Example subjects and group regression summary\n')
+
 
     path = utils.create_article_plot_save_path(plot)
 
@@ -74,9 +80,14 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
     # plot example subjects in left and centre subplot cols
-    for column, (example_subject_data, color, plot_indices) in enumerate(zip(data_list, colors, plot_indices_list),
-                                                                         start=1):
-        for condition_data, condition_plot_index, condition_name in zip(example_subject_data, plot_indices,
+    for column, (example_subject_data, color, plot_indices, example_subject) in enumerate(zip(data_list, colors,
+                                                                                              plot_indices_list,
+                                                                                              example_subjects), start=1):
+
+        results.write(f'{example_subject}\n')
+
+        for condition_data, condition_plot_index, condition_name in zip(example_subject_data,
+                                                                        plot_indices,
                                                                         condition_names):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
             if condition_plot_index == 1:
@@ -102,6 +113,8 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.plot([x1, x2], [y1, y2], color=color, linewidth=1)
             plt.grid(axis='both', linewidth=0.5, color='lightgrey')
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
+
+            results.write(f'{condition_name}:   intercept = {intercept:4.2f}   slope = {slope:4.2f}     area = {area:4.2f}cm^2\n')
 
             legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f}cm$^2$')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
@@ -210,12 +223,16 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
     text = colored(path, 'blue')
     print(f'{experiment} example subjects and group regressions saved in in {text}\n')
+    results.close()
     plt.close()
 
 
 def consistency_between_conditions(all_subject_data, experiment):
     plot = f'figure_7_{experiment}'
     path = utils.create_article_plot_save_path(plot)
+    results = open(f'results_{experiment}.txt', 'a')
+
+    results.write('\nFigure 7: Consistency between conditions\n')
 
     plt.figure(figsize=(8 / 2.4, 8 / 2.4))
     plt.ylabel('Area difference (cm$^2$)', fontfamily='arial', fontsize=8)
@@ -226,8 +243,9 @@ def consistency_between_conditions(all_subject_data, experiment):
     x_points_base = [1.3, 1.6, 1.9]
     x_points_left = [1.27, 1.57, 1.87]
     x_points_right = [1.33, 1.63, 1.93]
+    x_labels = ['Across hands', 'Within hands', 'Within hands']
 
-    plt.xticks(x_points_base, labels=['Across hands', 'Within hands', 'Within hands'], fontfamily='arial', fontsize=8)
+    plt.xticks(x_points_base, labels=x_labels, fontfamily='arial', fontsize=8)
 
     for line_number, subject_data in enumerate(all_subject_data, start=1):
         jitter_values = [random() / 60 for _ in range(len(x_points_base))]
@@ -264,10 +282,13 @@ def consistency_between_conditions(all_subject_data, experiment):
 
     area_diff_list = [between_hands_areas, across_days_areas, within_day_areas]
 
-    for x_point, area_list in zip(x_points_left, area_diff_list):
+    for x_point, area_list, label in zip(x_points_left, area_diff_list, x_labels):
         mean, ci = utils.calculate_mean_ci(area_list)
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
                      markersize=3.5, elinewidth=1)
+        ci_lower = mean - ci
+        ci_upper = mean + ci
+        results.write(f'{label}:    mean: {mean:4.2f}    ci: [{ci_lower:4.2f} - {ci_upper:4.2f}]\n')
 
     plt.ylim([-13, 13])
     plt.yticks(list(range(-12, 13, 3)), fontfamily='arial', fontsize=8)
@@ -286,6 +307,7 @@ def consistency_between_conditions(all_subject_data, experiment):
     plt.savefig(path, dpi=300, bbox_inches='tight')
     text = colored(path, 'blue')
     print(f'Group consistency plots saved in {text}\n')
+    results.close()
     plt.close()
 
 
@@ -435,7 +457,7 @@ def area_vs_r2_plot(all_subject_data, experiment):
                                                                                      area_lists, x_labels, text_labels):
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
         r, ci = utils.pearson_r_ci(condition_area_data, condition_r2_data)
-        r_ci_text = str(f'{condition_name}: r = {r} {ci} ')
+        r_ci_text = str(f'{condition_name}: r = {r} {ci}    intercept = {intercept}     slope = {slope}')
         plt.subplot(subplot_indices[-1], subplot_indices[0], subplot_index)
         x_vals = np.array([0, max(condition_area_data)])
         y_vals = intercept + slope * x_vals
@@ -461,6 +483,8 @@ def area_vs_r2_plot(all_subject_data, experiment):
         plt.text(22, 1, text, fontsize = 12, fontfamily = 'arial')
         print(f'{condition_name}, {experiment} regression model:\n')
         utils.regression_summary(condition_area_data, condition_r2_data)
+        with open('results.txt', 'w') as writer:
+            writer.write(r_ci_text)
         plt.tight_layout()
 
     plt.tight_layout(h_pad=0.9)

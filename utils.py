@@ -56,7 +56,7 @@ def pearson_r_ci(x, y):
     z_critical = scp.norm.ppf(1 - alpha) # z score for 95% CI
     z_sample = 0.5 * np.log((1 + r_value) / (1 - r_value)) # z score of r value
 
-    n = len(a)
+    n = len(x)
     std_err = 1 / np.sqrt(n - 3)
 
     z_ci_lower = z_sample - z_critical * std_err
