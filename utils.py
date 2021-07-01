@@ -9,6 +9,8 @@ from scipy.stats import sem, t
 from collections import namedtuple
 from termcolor import colored
 import math
+import matplotlib as plt
+from matplotlib.ticker import MultipleLocator
 
 
 def calculate_regression(block):
@@ -25,6 +27,7 @@ def calculate_regression_general(x, y):
     model = sm.OLS(y, x).fit()
     intercept, slope = model.params
     return intercept, slope
+
 
 def regression_summary(x, y):
     x = sm.add_constant(x)
@@ -49,6 +52,7 @@ def calculate_r2(actual, perceived):
     r_squared = r_score ** 2
     return r_squared
 
+
 def pearson_r_ci(x, y):
     if len(x) != len(y):
         print('Lists of uneven length in pearson calc')
@@ -57,8 +61,8 @@ def pearson_r_ci(x, y):
 
     alpha = 0.05 / 2  # Two-tail test
 
-    z_critical = scp.norm.ppf(1 - alpha) # z score for 95% CI
-    z_sample = 0.5 * np.log((1 + r_value) / (1 - r_value)) # z score of r value
+    z_critical = scp.norm.ppf(1 - alpha)  # z score for 95% CI
+    z_sample = 0.5 * np.log((1 + r_value) / (1 - r_value))  # z score of r value
 
     n = len(x)
     std_err = 1 / np.sqrt(n - 3)
@@ -66,8 +70,8 @@ def pearson_r_ci(x, y):
     z_ci_lower = z_sample - z_critical * std_err
     z_ci_upper = z_sample + z_critical * std_err
 
-    r_ci_lower = (math.exp(2*z_ci_lower) - 1) / (math.exp(2*z_ci_lower) + 1) # convert back to r
-    r_ci_upper = (math.exp(2 * z_ci_upper) - 1) / (math.exp(2 * z_ci_upper) + 1) # convert back to r
+    r_ci_lower = (math.exp(2 * z_ci_lower) - 1) / (math.exp(2 * z_ci_lower) + 1)  # convert back to r
+    r_ci_upper = (math.exp(2 * z_ci_upper) - 1) / (math.exp(2 * z_ci_upper) + 1)  # convert back to r
 
     r = f'{r_value:4.2f}'
     ci = str(f'[{r_ci_lower:4.2f} - {r_ci_upper:4.2f}]')
@@ -124,9 +128,9 @@ def _store_r2_tuples_exp1(all_subject_data):
         d2_dom_2_r2s.append(calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED))
 
     r2_tuples = r2_list_tuple(d1_dom_r2_list=d1_dom_r2s,
-                             d1_non_dom_r2_list=d1_non_dom_r2s,
-                             d2_dom_1_r2_list=d2_dom_1_r2s,
-                             d2_dom_2_r2_list=d2_dom_2_r2s)
+                              d1_non_dom_r2_list=d1_non_dom_r2s,
+                              d2_dom_1_r2_list=d2_dom_1_r2s,
+                              d2_dom_2_r2_list=d2_dom_2_r2s)
     return r2_tuples
 
 
@@ -145,9 +149,10 @@ def _store_r2_tuples_exp2(all_subject_data):
         width_width_r2s.append(calculate_r2(width_width.ACTUAL, width_width.PERCEIVED))
 
     r2_tuples = r2_list_tuple(line_width_r2_list=line_width_r2s,
-                             width_line_r2_list=width_line_r2s,
-                             width_width_r2_list=width_width_r2s)
+                              width_line_r2_list=width_line_r2s,
+                              width_width_r2_list=width_width_r2s)
     return r2_tuples
+
 
 def create_general_constants():
     general_constants = namedtuple('constants', 'CONDITION_NAMES_EXP1 CONDITION_NAMES_EXP2 CONDITION_PAIRS SUBJECT_IDS')
@@ -261,6 +266,7 @@ def create_group_plot_save_path(experiment, plot):
     savepath = Path(f'./plots/{experiment}/group_plots/{plot}.png')
     return savepath
 
+
 def create_article_plot_save_path(plot):
     path = Path(f'./plots/article_plots/')
     if not os.path.exists(path):
@@ -268,10 +274,12 @@ def create_article_plot_save_path(plot):
     savepath = Path(f'./plots/article_plots/{plot}.png')
     return savepath
 
+
 def generic_plot_save_path(experiment, type, plot):
     path = f'./plots/{experiment}/{type}/{plot}'
     path_text = colored(path, 'blue')
     return path_text
+
 
 def plot_constants_regressions_ind(experiment):
     if experiment == 'exp1':
@@ -304,9 +312,11 @@ def subplot_dimensions_area_differences(experiment):
 def x_points_group_plot(experiment):
     if experiment == 'exp1':
         x_points = [1, 2, 3, 4]
+        x_lims = (0.8, 4.2)
     else:
         x_points = [1, 2, 3]
-    return x_points
+        x_lims = (0.8, 3.2)
+    return x_points, x_lims
 
 
 def x_ticks_group_plot(experiment):
@@ -327,7 +337,7 @@ def remove_missing_data(actual_list, perceived_list, subject_ID, name):
         actual_list.pop(index)
         perceived_list.pop(index)
         # TODO figure out why below statement prints even when Exp1 is running
-        #print(f'removed missing data at index {index}, {subject_ID}, condition {name}')
+        # print(f'removed missing data at index {index}, {subject_ID}, condition {name}')
     return actual_list, perceived_list
 
 
@@ -338,7 +348,7 @@ def condition_plot_inputs(subject_data):
     width_line_inputs = plot_inputs(NAME='Present Width Pick Line', ACTUAL=subject_data.WIDTH_LINE.ACTUAL,
                                     PERCEIVED=subject_data.WIDTH_LINE.PERCEIVED, PLOT_INDEX=2)
     width_width_inputs = plot_inputs(NAME='Present Width Pick Width', ACTUAL=subject_data.WIDTH_WIDTH.ACTUAL,
-                                    PERCEIVED=subject_data.WIDTH_WIDTH.PERCEIVED, PLOT_INDEX=3)
+                                     PERCEIVED=subject_data.WIDTH_WIDTH.PERCEIVED, PLOT_INDEX=3)
     tuples = line_width_inputs, width_line_inputs, width_width_inputs
     return tuples
 
@@ -409,7 +419,8 @@ def _condition_pair_tuple_exp1(subject_data):
                         patch_1=d1_dom, patch_2=d2_dom_a, subplot_index=2)
     dom_d2_vs_d2 = Pair(data_1=subject_data.day2_dominant_1, data_2=subject_data.day2_dominant_2, label_1='d2_dom_a',
                         label_2='d2_dom_b',
-                        title='D2 dominant a - D2 dominant b', colour_1='red', colour_2='green', patch_1=d2_dom_a, patch_2=d2_dom_b,
+                        title='D2 dominant a - D2 dominant b', colour_1='red', colour_2='green', patch_1=d2_dom_a,
+                        patch_2=d2_dom_b,
                         subplot_index=3)
     tuple_list = dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
     return tuple_list
@@ -504,10 +515,99 @@ def r2_area_constants():
                                         'area_mean area_ci_lower area_ci_upper exp_1_colors exp_2_colors '
                                         'exp_1_subjects exp_2_subjects font')
 
-    r2_area_constants = constants(y_labels=['R$^2$', 'Area (cm$^2$)'], y_ticks=[[0.6, 0.7, 0.8, 0.9, 1], [0, 5, 10, 15, 20, 25]],
-                                  y_lims=[[0.6, 1.01], [0, 25]], subplot_indices=[2, 1], r2_mean=0.946, r2_ci_lower=0.9306, r2_ci_upper=0.9613,
-                                  area_mean=1.320, area_ci_lower=0.9660, area_ci_upper=1.674, exp_1_colors=['royalblue', 'darkblue'],
-                                  exp_2_colors=['darkred', 'red'], exp_1_subjects=['SUB05R', 'SUB01L'], exp_2_subjects=['sub04', 'sub23'],
+    r2_area_constants = constants(y_labels=['R$^2$', 'Area (cm$^2$)'],
+                                  y_ticks=[[0.6, 0.7, 0.8, 0.9, 1], [0, 5, 10, 15, 20, 25]],
+                                  y_lims=[[0.6, 1.01], [0, 25]], subplot_indices=[2, 1], r2_mean=0.946,
+                                  r2_ci_lower=0.9306, r2_ci_upper=0.9613,
+                                  area_mean=1.320, area_ci_lower=0.9660, area_ci_upper=1.674,
+                                  exp_1_colors=['royalblue', 'darkblue'],
+                                  exp_2_colors=['darkred', 'red'], exp_1_subjects=['SUB05R', 'SUB01L'],
+                                  exp_2_subjects=['sub04', 'sub23'],
                                   font='arial')
 
     return r2_area_constants
+
+
+def axes_params(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims, y_lims, x_label, y_label):
+    ax.set_xticks(x_ticks)
+    ax.set_xticklabels(x_tick_labels, fontsize=8, fontfamily='arial')
+    ax.set_yticks(y_ticks)
+    ax.set_yticklabels(y_tick_labels, fontsize=8, fontfamily='arial')
+    ax.set_xlim(x_lims)
+    ax.set_ylim(y_lims)
+    ax.set_xlabel(x_label, fontsize=8, fontfamily='arial')
+    ax.set_ylabel(y_label, fontsize=8, fontfamily='arial')
+    ax.grid(axis='both', linewidth=0.5, color='lightgrey')
+
+
+def write_plot_header(experiment, figure, plot):
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write('\n')
+    results.write('#####' * 20)
+    results.write(f'\n\n{figure}: {plot}\n')
+    results.close()
+
+
+def write_regression_results(experiment, x, y, intercept, slope, condition_name):
+    results = open(f'results_{experiment}.txt', 'a')
+    t_vals, t_test, f_test = regression_summary(x, y)
+    r, ci = pearson_r_ci(x, y)
+    pearson, ols = 'Pearsons', 'OLS'
+    intercept_text, slope_text = f'{intercept:4.2f}', f'{slope:4.2f}'
+    condition_name = condition_name
+    results.write(
+        f'\n{condition_name:20s}:\n{pearson:20s}: r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}')
+    results.write(f'\n\nOLS Model Summary\n t values:{t_vals}\n t_test\n: {t_test}\n f_test\n: {f_test} \n')
+    results.close()
+
+def spine_toggle(ax, left, right, top, bottom):
+    commands = [left, right, top, bottom]
+    spines = ['left', 'right', 'top', 'bottom']
+
+    for spine, command in zip(spines, commands):
+        if command == True:
+            ax.spines[spine].set_visible(True)
+        else:
+            ax.spines[spine].set_visible(False)
+
+def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
+    results = open(f'results_{experiment}.txt', 'a')
+    mean_text = f'{mean:4.2f}'
+    ci_lower = f'{mean - ci:4.2f}'
+    ci_upper = f'{mean + ci:4.2f}'
+    results.write(f'{x_label:20s}: {y_label:27s}mean = {mean_text:10s}     ci = [{ci_lower} - {ci_upper}]\n')
+    results.close()
+
+
+def add_plot_text(ax, subplot, experiment):
+    if subplot == 2 and experiment == 'exp1':
+        ax.text(0.1, -0.2, 'Day 1', fontsize=8, fontfamily='arial', transform=ax.transAxes)
+        ax.text(0.73, -0.2, 'Day 2', fontsize=8, fontfamily='arial', transform=ax.transAxes)
+        ax.annotate('', xy=(0, -0.135), xycoords='axes fraction', xytext=(0.45, -0.135),
+                    arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
+        ax.annotate('', xy=(0.6, -0.135), xycoords='axes fraction', xytext=(0.99, -0.135),
+                    arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
+
+    elif subplot == 1:
+        ax.xaxis.set_major_locator(MultipleLocator(1))
+        ax.xaxis.set_major_formatter('{x:.0f}')
+
+
+def add_plot_shading(ax, subplot, experiment, r2_ci_lower, r2_ci_upper, area_ci_lower, area_ci_upper):
+    if subplot == 2 and experiment == 'exp1':
+        ax.add_patch(mpatches.Rectangle(xy=(1, r2_ci_lower),  # point of origin.
+                                        width=3,
+                                        height=(r2_ci_upper - r2_ci_lower),
+                                        linewidth=0,
+                                        color='lightgray',
+                                        fill=True,
+                                        alpha=0.7))
+
+    if experiment == 'exp1' and subplot == 1:
+        ax.add_patch(mpatches.Rectangle(xy=(1, area_ci_lower),  # point of origin.
+                                               width=3,
+                                               height=(area_ci_upper - area_ci_lower),
+                                               linewidth=0,
+                                               color='lightgray',
+                                               fill=True,
+                                               alpha=0.7))
