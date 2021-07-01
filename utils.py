@@ -611,3 +611,13 @@ def add_plot_shading(ax, subplot, experiment, r2_ci_lower, r2_ci_upper, area_ci_
                                                color='lightgray',
                                                fill=True,
                                                alpha=0.7))
+
+def write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area):
+    results = open(f'results_{experiment}.txt', 'a')
+    intercept_text = f'{intercept:4.2f}'
+    slope_text = f'{slope:4.2f}'
+    area_text = f'{area:4.2f}'
+    results.write(f'{example_subject}\n')
+    results.write(
+        f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}\n')
+    results.close()

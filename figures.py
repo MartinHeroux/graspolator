@@ -30,26 +30,22 @@ def generate(all_subject_data, subjects, experiment):
 
 def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
-    results = open(f'results_{experiment}.txt', 'a')
-    results.write('\n')
-    results.write('#####' * 20)
+    plot = 'example_subjects_and_group_reg_summary'
 
     if experiment == 'exp1':
-        plot = f'figure_5_{experiment}'
+        figure = 'Figure 5'
         subject_1_ID = 'SUB03L'
         subject_2_ID = 'SUB11R'
         data_list = utils.store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID)
-        results.write('\nFigure 5: Example subjects and group regression summary\n')
 
     else:
-        plot = f'figure_1_{experiment}'
+        figure = 'Figure 5'
         subject_1_ID = 'sub02'
         subject_2_ID = 'sub29'
         data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
-        results.write('\nFigure 1: Example subjects and group regression summary\n')
 
-
-    path = utils.create_article_plot_save_path(plot)
+    utils.write_plot_header(experiment, figure, plot)
+    path = utils.create_article_plot_save_path(figure)
 
     subplot_rows = 4
     subplot_cols = 3
@@ -86,7 +82,6 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                                                                                               plot_indices_list,
                                                                                               example_subjects), start=1):
 
-        results.write(f'{example_subject}\n')
 
         for condition_data, condition_plot_index, condition_name in zip(example_subject_data,
                                                                         plot_indices,
@@ -116,12 +111,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.grid(axis='both', linewidth=0.5, color='lightgrey')
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
-            intercept_text = f'{intercept:4.2f}'
-            slope_text = f'{slope:4.2f}'
-            area_text = f'{area:4.2f}'
-
-            results.write(f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}\n')
-
+            utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
             legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f}cm$^2$')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
                        handlelength=1, handleheight=1, edgecolor='none')
@@ -229,7 +219,6 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
     text = colored(path, 'blue')
     print(f'{experiment} example subjects and group regressions saved in in {text}\n')
-    results.close()
     plt.close()
 
 
