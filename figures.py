@@ -31,6 +31,8 @@ def generate(all_subject_data, subjects, experiment):
 def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
     results = open(f'results_{experiment}.txt', 'a')
+    results.write('\n')
+    results.write('#####' * 20)
 
     if experiment == 'exp1':
         plot = f'figure_5_{experiment}'
@@ -114,7 +116,11 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.grid(axis='both', linewidth=0.5, color='lightgrey')
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
-            results.write(f'{condition_name}:   intercept = {intercept:4.2f}   slope = {slope:4.2f}     area = {area:4.2f}cm^2\n')
+            intercept_text = f'{intercept:4.2f}'
+            slope_text = f'{slope:4.2f}'
+            area_text = f'{area:4.2f}'
+
+            results.write(f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}\n')
 
             legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f}cm$^2$')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
@@ -231,8 +237,10 @@ def consistency_between_conditions(all_subject_data, experiment):
     plot = f'figure_7_{experiment}'
     path = utils.create_article_plot_save_path(plot)
     results = open(f'results_{experiment}.txt', 'a')
+    results.write('\n')
+    results.write('#####' * 20)
 
-    results.write('\nFigure 7: Consistency between conditions\n')
+    results.write('\n\nFigure 7: Consistency between conditions\n')
 
     plt.figure(figsize=(8 / 2.4, 8 / 2.4))
     plt.ylabel('Area difference (cm$^2$)', fontfamily='arial', fontsize=8)
@@ -286,9 +294,10 @@ def consistency_between_conditions(all_subject_data, experiment):
         mean, ci = utils.calculate_mean_ci(area_list)
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
                      markersize=3.5, elinewidth=1)
-        ci_lower = mean - ci
-        ci_upper = mean + ci
-        results.write(f'{label}:    mean area: {mean:4.2f}    ci: [{ci_lower:4.2f} - {ci_upper:4.2f}]\n')
+        mean_text = f'{mean:4.2f}'
+        ci_lower = f'{mean - ci:4.2f}'
+        ci_upper = f'{mean + ci:4.2f}'
+        results.write(f'{label:20s}: mean area = {mean_text:10s}    ci = [{ci_lower} - {ci_upper}]\n')
 
     plt.ylim([-13, 13])
     plt.yticks(list(range(-12, 13, 3)), fontfamily='arial', fontsize=8)
@@ -314,10 +323,12 @@ def consistency_between_conditions(all_subject_data, experiment):
 def r2_area_plots(all_subject_data, subjects, experiment):
 
     results = open(f'results_{experiment}.txt', 'a')
+    results.write('\n')
+    results.write('#####' * 20)
     if experiment == 'exp1':
-        results.write(f'\nFigure 6: R2 and area plot {experiment}\n')
+        results.write(f'\n\nFigure 6: R2 and area plot {experiment}\n')
     else:
-        results.write(f'\nFigure 2: R2 and area plot {experiment}\n')
+        results.write(f'\n\nFigure 2: R2 and area plot {experiment}\n')
 
     if experiment == 'exp1':
         plot = f'figure_6_{experiment}'
@@ -410,9 +421,10 @@ def r2_area_plots(all_subject_data, subjects, experiment):
         for mean, ci, x_point, y_label in zip(mean_list, ci_list, x_points, results_headers):
             plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='black', mec='black',
                          markersize=3, linewidth=1, zorder=11)
-            ci_lower = mean - ci
-            ci_upper = mean + ci
-            results.write(f'{y_label}: mean = {mean:4.2f}    ci = [{ci_lower:4.2f} - {ci_upper:4.2f}]\n')
+            mean_text = f'{mean:4.2f}'
+            ci_lower = f'{mean - ci:4.2f}'
+            ci_upper = f'{mean + ci:4.2f}'
+            results.write(f'{y_label:20s}: mean      = {mean_text:10s}     ci = [{ci_lower} - {ci_upper}]\n')
         if subplot == 2 and experiment == 'exp1':
             ax = plt.gca()
             plt.text(0.28, 0.035, 'Day 1', fontsize=8, fontfamily=params.font, transform=plt.gcf().transFigure)
@@ -454,7 +466,9 @@ def area_vs_r2_plot(all_subject_data, experiment):
     path = utils.create_article_plot_save_path(plot)
 
     results = open(f'results_{experiment}.txt', 'a')
-    results.write(f'\nFigure 3: Area vs R2 plot\n')
+    results.write('\n')
+    results.write('#####'*20)
+    results.write(f'\n\nFigure 3: Area vs R2 plot\n')
 
     area_lists = calculate_area.group_areas(all_subject_data, experiment)
     r2_lists = utils.store_r2_tuples(all_subject_data, experiment)
@@ -497,8 +511,12 @@ def area_vs_r2_plot(all_subject_data, experiment):
         plt.text(22, 1, text, fontsize = 12, fontfamily = 'arial')
         print(f'{condition_name}, {experiment} regression model:\n')
         t_vals, t_test, f_test = utils.regression_summary(condition_area_data, condition_r2_data)
-        results.write(f'{condition_name}: Pearsons: r = {r:4.2f}    ci = {ci}   OLS: intercept = {intercept:4.2f}     slope = {slope:4.2f}\n')
-        results.write(f'OLS Model Summary\n t values:{t_vals}\n t_test\n: {t_test}\n f_test\n: {f_test}\n')
+
+        pearson, ols = 'Pearsons', 'OLS'
+        intercept, slope = f'{intercept:4.2f}', f'{slope:4.2f}'
+
+        results.write(f'\n***{condition_name:^20s}****:\n{pearson:20s}: r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}: intercept = {intercept:10s}     slope = {slope:10s}')
+        results.write(f'\n\nOLS Model Summary\nt values:{t_vals}\nt_test\n: {t_test}\nf_test\n: {f_test}\n')
         plt.tight_layout()
 
     plt.tight_layout(h_pad=0.9)
@@ -514,7 +532,9 @@ def slope_comparison(all_subject_data, experiment):
     path = utils.create_article_plot_save_path(plot)
 
     results = open(f'results_{experiment}.txt', 'a')
-    results.write(f'\nFigure 4: Slope comparison\n')
+    results.write('\n')
+    results.write('#####' * 20)
+    results.write(f'\n\nFigure 4: Slope comparison\n')
 
     slopes_line_width = []
     slopes_width_line = []
@@ -536,8 +556,11 @@ def slope_comparison(all_subject_data, experiment):
     print(f'Regression model summary {experiment}, {plot} \n')
     t_vals, t_test, f_test = utils.regression_summary(slopes_line_width, slopes_width_line)
     r, ci = utils.pearson_r_ci(slopes_line_width, slopes_width_line)
-    results.write(f'Peasons: r = {r:4.2f}   ci = {ci}   OLS: intercept = {intercept:4.2f}     slope = {slope:4.2f}\n')
-    results.write(f'OLS Model Summary\n t values:{t_vals}\n t_test\n: {t_test}\n f_test\n: {f_test}\n')
+    pearson, ols = 'Pearsons', 'OLS'
+    intercept_text, slope_text = f'{intercept:4.2f}', f'{slope:4.2f}'
+    condition_name = 'Line-to-width vs width-to-line'
+    results.write(f'{condition_name:20s}:\n{pearson:20s}: r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}')
+    results.write(f'\n\nOLS Model Summary\n t values:{t_vals}\n t_test\n: {t_test}\n f_test\n: {f_test} \n')
 
     x_vals = np.array([min(slopes_line_width) - 0.25, max(slopes_line_width) + 0.25])
     y_vals = intercept + slope * x_vals

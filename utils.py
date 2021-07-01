@@ -69,9 +69,10 @@ def pearson_r_ci(x, y):
     r_ci_lower = (math.exp(2*z_ci_lower) - 1) / (math.exp(2*z_ci_lower) + 1) # convert back to r
     r_ci_upper = (math.exp(2 * z_ci_upper) - 1) / (math.exp(2 * z_ci_upper) + 1) # convert back to r
 
+    r = f'{r_value:4.2f}'
     ci = str(f'[{r_ci_lower:4.2f} - {r_ci_upper:4.2f}]')
 
-    return r_value, ci
+    return r, ci
 
 
 def calculate_mean_ci(data_list):
