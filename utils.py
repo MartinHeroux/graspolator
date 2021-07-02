@@ -11,6 +11,7 @@ from termcolor import colored
 import math
 import matplotlib as plt
 from matplotlib.ticker import MultipleLocator
+from random import random
 
 
 def calculate_regression(block):
@@ -560,6 +561,7 @@ def write_regression_results(experiment, x, y, intercept, slope, condition_name)
     results.write(f'\n\nOLS Model Summary\n t values:{t_vals}\n t_test\n: {t_test}\n f_test\n: {f_test} \n')
     results.close()
 
+
 def spine_toggle(ax, left, right, top, bottom):
     commands = [left, right, top, bottom]
     spines = ['left', 'right', 'top', 'bottom']
@@ -569,6 +571,7 @@ def spine_toggle(ax, left, right, top, bottom):
             ax.spines[spine].set_visible(True)
         else:
             ax.spines[spine].set_visible(False)
+
 
 def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
     results = open(f'results_{experiment}.txt', 'a')
@@ -605,12 +608,13 @@ def add_plot_shading(ax, subplot, experiment, r2_ci_lower, r2_ci_upper, area_ci_
 
     if experiment == 'exp1' and subplot == 1:
         ax.add_patch(mpatches.Rectangle(xy=(1, area_ci_lower),  # point of origin.
-                                               width=3,
-                                               height=(area_ci_upper - area_ci_lower),
-                                               linewidth=0,
-                                               color='lightgray',
-                                               fill=True,
-                                               alpha=0.7))
+                                        width=3,
+                                        height=(area_ci_upper - area_ci_lower),
+                                        linewidth=0,
+                                        color='lightgray',
+                                        fill=True,
+                                        alpha=0.7))
+
 
 def write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area):
     results = open(f'results_{experiment}.txt', 'a')
@@ -621,3 +625,35 @@ def write_example_subject_results(experiment, example_subject, condition_name, i
     results.write(
         f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}\n')
     results.close()
+
+
+def plot_data_scatter(ax, actual, perceived, color):
+    length_data = len(perceived)
+    jitter_values = [random() / 4 for _ in range(length_data)]
+    x_data = (np.array(actual) - 0.1) + np.array(jitter_values)
+
+    # plot scatter plot of stimulus vs perceived widths
+    ax.plot(x_data, perceived, 'o', color=color,
+            alpha=0.5, markersize=3, markeredgecolor=None, markeredgewidth=0)
+
+
+def plot_regression_line(ax, intercept, slope, color, x_1, x_2, alpha=1, width=1, order=10):
+    x1 = x_1
+    x2 = x_2
+    y1 = slope * x1 + intercept
+    y2 = slope * x2 + intercept
+
+    ax.plot([x1, x2], [y1, y2], color=color, linewidth=width, alpha=alpha, zorder=order)
+
+
+def shade_area(ax, intercept, slope, x_1, x_2):
+    x1 = x_1
+    x2 = x_2
+    y1 = slope * x1 + intercept
+    y2 = slope * x2 + intercept
+    x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
+
+    ax.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality > y_points_reg),
+                    color='lightgrey', alpha=0.5, interpolate=True)
+    ax.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality < y_points_reg),
+                    color='lightgrey', alpha=0.5, interpolate=True)

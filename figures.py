@@ -31,7 +31,7 @@ def generate(all_subject_data, subjects, experiment):
 def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
     plot = 'example_subjects_and_group_reg_summary'
-
+    
     if experiment == 'exp1':
         figure = 'Figure 5'
         subject_1_ID = 'SUB03L'
@@ -39,7 +39,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
         data_list = utils.store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID)
 
     else:
-        figure = 'Figure 5'
+        figure = 'Figure 1'
         subject_1_ID = 'sub02'
         subject_2_ID = 'sub29'
         data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
@@ -50,6 +50,8 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     subplot_rows = 4
     subplot_cols = 3
     plot_indices_list = [[1, 4, 7, 10], [2, 5, 8, 11]]
+    y_lim = [0, 16]
+    y_ticks = list(range(0, 16, 2))
 
     # set up experiment specific parameters
     if experiment == 'exp1':
@@ -82,55 +84,37 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                                                                                               plot_indices_list,
                                                                                               example_subjects), start=1):
 
-
-        for condition_data, condition_plot_index, condition_name in zip(example_subject_data,
-                                                                        plot_indices,
-                                                                        condition_names):
+        # plot each condition data
+        for condition_data, condition_plot_index, condition_name in zip(example_subject_data, plot_indices, condition_names):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
             if condition_plot_index == 1:
                 plt.title(example_subjects[0], loc='center', size=8, fontfamily='arial')
             if condition_plot_index == 2:
                 plt.title(example_subjects[1], loc='center', size=8, fontfamily='arial')
-            plt.plot(x_lims, x_lims, 'k--', linewidth=1)
 
-            length_data = len(condition_data.PERCEIVED)
-            jitter_values = [random() / 4 for _ in range(length_data)]
-            x_data = (np.array(condition_data.ACTUAL) - 0.1) + np.array(jitter_values)
-            plt.plot(x_data, condition_data.PERCEIVED, 'o', color=color,
-                     alpha=0.5, markersize=3, markeredgecolor=None, markeredgewidth=0)
-
-            intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL,
-                                                                  condition_data.PERCEIVED)
-
-            x1 = x_data_lims[0]
-            x2 = x_data_lims[1]
-            y1 = slope * x1 + intercept
-            y2 = slope * x2 + intercept
-
-            plt.plot([x1, x2], [y1, y2], color=color, linewidth=1)
-            plt.grid(axis='both', linewidth=0.5, color='lightgrey')
+            intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL, condition_data.PERCEIVED)
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
+            ax = plt.gca()
+
+            plt.plot(x_lims, x_lims, 'k--', linewidth=1)
+            utils.plot_data_scatter(ax, condition_data.ACTUAL, condition_data.PERCEIVED, color)
+            utils.plot_regression_line(ax, intercept, slope, color, x_data_lims[0], x_data_lims[1])
+            utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
+
             utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
+
             legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f}cm$^2$')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
                        handlelength=1, handleheight=1, edgecolor='none')
 
-            x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
 
-            plt.ylim([0, 16])
-            plt.xlim([x_lims[0], x_lims[1]])
-            plt.yticks(list(range(0, 16, 2)), fontfamily='arial', fontsize=8)
-            plt.xticks(x_ticks)
-
-            ax = plt.gca()
+            utils.axes_params(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
+            utils.spine_toggle(ax, False, False, False, False)
             ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
                            labelbottom=False, labeltop=False, labelleft=False, labelright=False)
-            plt.gca().spines['bottom'].set_visible(False)
-            plt.gca().spines['top'].set_visible(False)
-            plt.gca().spines['left'].set_visible(False)
-            plt.gca().spines['right'].set_visible(False)
 
+            # draw axes and ticks for left column and bottom row subplots
             if condition_plot_index in subplot_left_col:
                 ax.tick_params(axis='y', which='both', left=True, labelleft=True)
                 ax.spines['left'].set_visible(True)
@@ -143,26 +127,19 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
                 ax.spines['bottom'].set_visible(True)
-                plt.xticks(x_ticks, fontfamily='arial', fontsize=8)
+                #plt.xticks(x_ticks, fontfamily='arial', fontsize=8)
                 if condition_plot_index == 11:
                     plt.xlabel('Stimulus width (cm)', fontsize=8, fontfamily='arial')
 
-            plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality > y_points_reg),
-                             color='lightgrey', alpha=0.5, interpolate=True)
-            plt.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality < y_points_reg),
-                             color='lightgrey', alpha=0.5, interpolate=True)
 
-    # plot the group regression lines in the rightmost subplots
+    # plot group regression lines in the right subplot column
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
         for condition_tuple, condition_plot_index, label in zip(data_list, group_plot_indices, label_list):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
-            plt.plot(x_lims, x_lims, 'k--', linewidth=1)
+
             if condition_plot_index == 3:
                 plt.title('Regression lines\nAll subjects', loc='center', size=8, fontfamily='arial')
-
-            x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
-                                                               experiment)
 
             if subject_ID == example_subjects[0]:
                 line_color = colors[0]
@@ -177,30 +154,30 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                 line_width = 0.5
                 order = 5
 
-            plt.plot([x1, x2], [y1, y2], color=line_color, linewidth=line_width, zorder=order, alpha=0.7)
-            plt.yticks(list(range(0, 16, 2)), fontfamily='arial', fontsize=8)
-            plt.ylim([0, 16])
-            plt.xticks(x_ticks, fontfamily='arial', fontsize=8)
-            plt.xlim([x_lims[0], x_lims[1]])
+            intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+            alpha = 0.7
 
-            # plot condition labels
+            ax = plt.gca()
+
+            plt.plot(x_lims, x_lims, 'k--', linewidth=1)
+            utils.plot_regression_line(ax, intercept, slope, line_color, x_data_lims[0], x_data_lims[1], alpha, line_width, order)
+
+            utils.axes_params(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
+            utils.spine_toggle(ax, False, False, False, False)
+            ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
+                           labelbottom=False, labeltop=False, labelleft=False, labelright=False)
+
+            # plot condition labels (A, B, C, +/- D) + turn grid back on
             plt.text(11.5, 14, label, fontsize=12, fontfamily='arial')
+            plt.grid(True, axis='both', linewidth=0.5, color='lightgrey')
 
-            plt.gca().grid(True, linewidth=0.5, color='lightgrey')
-
-            plt.gca().spines['bottom'].set_visible(False)
-            plt.gca().spines['top'].set_visible(False)
-            plt.gca().spines['left'].set_visible(False)
-            plt.gca().spines['right'].set_visible(False)
-            plt.gca().tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
-                                  labelbottom=False, labeltop=False, labelleft=False, labelright=False)
-
+            # draw axes and ticks for bottom row
             if condition_plot_index in subplot_bottom_row:
                 plt.gca().spines['bottom'].set_visible(True)
                 plt.gca().tick_params(axis='x', which='both', bottom=True, labelbottom=True)
-                plt.xticks(x_ticks, fontfamily='arial')
 
     # plot dummy data + axis labels for cropping
+    # TODO remove for final version
     if experiment == 'exp2':
         plt.subplot(subplot_rows, subplot_cols, 12)
         plt.plot([4, 6], [6, 8])
@@ -345,9 +322,6 @@ def r2_area_plots(all_subject_data, subjects, experiment):
 
     means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
 
-    print(means_lists)
-    print(ci_lists)
-
     plt.figure(figsize=(3.3, 4.3))
     for subject, subject_data in zip(subjects, all_subject_data):
         data_pair_tuples = utils.create_data_tuples(experiment, subject_data)
@@ -394,7 +368,6 @@ def r2_area_plots(all_subject_data, subjects, experiment):
         plt.subplot(2, 1, subplot)
         plt.grid(axis='y', linewidth=0.5, color='lightgrey')
         for mean, ci, x_point, x_label in zip(mean_list, ci_list, x_points, x_labels):
-            print(mean, ci, x_point)
             plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='black', mec='black',
                          markersize=3, linewidth=1, zorder=11)
             utils.write_mean_ci_result(experiment, mean, ci, y_label, x_label)
