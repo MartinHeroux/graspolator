@@ -1,36 +1,27 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
-from random import random
-from pathlib import Path
-from matplotlib.ticker import MultipleLocator
 from termcolor import colored
 
 import utils
 import calculate_area
 
-constants = utils.create_general_constants()
-plot_constants = utils.create_plot_constants()
-
 
 def generate(all_subject_data, subjects, experiment):
-    # TODO rename to match figure numbers
-    example_subjects_group_reg_summary(all_subject_data, subjects, experiment)
-    r2_area_plots(all_subject_data, subjects, experiment)
 
-    if experiment == 'exp1':
-        consistency_between_conditions(all_subject_data, experiment)
+    figure_1_and_5(all_subject_data, subjects, experiment)
+    figure_2_and_6(all_subject_data, subjects, experiment)
 
     if experiment == 'exp2':
-        slope_comparison(all_subject_data, experiment)
-        area_vs_r2_plot(all_subject_data, experiment)
+        figure_3(all_subject_data, experiment)
+        figure_4(all_subject_data, experiment)
+
+    if experiment == 'exp1':
+        figure_7(all_subject_data, experiment)
 
 
-## panel figure of individual subjects and group reg lines
-
-def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
-
-    plot = 'example_subjects_and_group_reg_summary'
+def figure_1_and_5(all_subject_data, subjects, experiment):
+    plot = 'Example participants and group regression summary'
     
     if experiment == 'exp1':
         figure = 'Figure 5'
@@ -45,7 +36,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
         data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
 
     utils.write_plot_header(experiment, figure, plot)
-    path = utils.create_article_plot_save_path(figure)
+    path = utils.create_figure_save_path(figure)
 
     subplot_rows = 4
     subplot_cols = 3
@@ -97,7 +88,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
             ax = plt.gca()
 
-            plt.plot(x_lims, x_lims, 'k--', linewidth=1)
+            plt.plot(x_lims, x_lims, 'k--', linewidth=1) # plot line of 'reality'
             utils.plot_data_scatter(ax, condition_data.ACTUAL, condition_data.PERCEIVED, color)
             utils.plot_regression_line(ax, intercept, slope, color, x_data_lims[0], x_data_lims[1])
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
@@ -109,12 +100,12 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
                        handlelength=1, handleheight=1, edgecolor='none')
 
 
-            utils.axes_params(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
-            utils.spine_toggle(ax, False, False, False, False)
+            utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
+            utils.draw_ax_spines(ax, False, False, False, False)
             ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
                            labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
-            # draw axes and ticks for left column and bottom row subplots
+            # draw axes, labels, and ticks for left column and bottom row subplots
             if condition_plot_index in subplot_left_col:
                 ax.tick_params(axis='y', which='both', left=True, labelleft=True)
                 ax.spines['left'].set_visible(True)
@@ -127,7 +118,6 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
                 ax.spines['bottom'].set_visible(True)
-                #plt.xticks(x_ticks, fontfamily='arial', fontsize=8)
                 if condition_plot_index == 11:
                     plt.xlabel('Stimulus width (cm)', fontsize=8, fontfamily='arial')
 
@@ -162,8 +152,8 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
             plt.plot(x_lims, x_lims, 'k--', linewidth=1)
             utils.plot_regression_line(ax, intercept, slope, line_color, x_data_lims[0], x_data_lims[1], alpha, line_width, order)
 
-            utils.axes_params(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
-            utils.spine_toggle(ax, False, False, False, False)
+            utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
+            utils.draw_ax_spines(ax, False, False, False, False)
             ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
                            labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
@@ -191,18 +181,18 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
     plt.tight_layout(h_pad=0.4, w_pad=0.9)
     plt.savefig(path, dpi=300)
-    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
-    plt.savefig(path_svg)
-    print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
+    #path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    #plt.savefig(path_svg)
+    #print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
     text = colored(path, 'blue')
     print(f'{experiment} example subjects and group regressions saved in in {text}\n')
     plt.close()
 
 
-def consistency_between_conditions(all_subject_data, experiment):
-    plot = 'Area_difference_between_conditions'
+def figure_7(all_subject_data, experiment):
+    plot = 'Area difference between conditions'
     figure = 'Figure_7'
-    path = utils.create_article_plot_save_path(figure)
+    path = utils.create_figure_save_path(figure)
 
     utils.write_plot_header(experiment, figure, plot)
 
@@ -237,9 +227,9 @@ def consistency_between_conditions(all_subject_data, experiment):
                      markersize=3.5, elinewidth=1)
         utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
 
-    utils.axes_params(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
-    utils.spine_toggle(ax, left=True, right=False, top=False, bottom=True)
-    plt.grid(which='both', axis='x', linewidth=0.5, color='lightgrey')
+    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
+    utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True)
+    plt.grid(which='both', axis='x', linewidth=0.5, color='lightgrey') # turn grid off for x axis
 
     plt.text(0.15, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.text(0.41, 0.01, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
@@ -253,18 +243,18 @@ def consistency_between_conditions(all_subject_data, experiment):
     plt.close()
 
 
-def r2_area_plots(all_subject_data, subjects, experiment):
-    plot = 'r2_area_summary'
+def figure_2_and_6(all_subject_data, subjects, experiment):
+    plot = 'Area and R^2 Group Summary'
     if experiment == 'exp1':
         figure = 'Figure_6'
     else:
         figure = 'Figure_2'
-    path = utils.create_article_plot_save_path(figure)
+    path = utils.create_figure_save_path(figure)
 
     utils.write_plot_header(experiment, figure, plot)
 
     x_points, x_lims = utils.x_points_group_plot(experiment)
-    x_labels = utils.x_ticks_group_plot(experiment)
+    x_labels = utils.x_tick_labels_group_plot(experiment)
     plot_text = ['B', 'A']
     results_headers = ['R^2', 'Area (cm2)']
     params = utils.r2_area_constants()
@@ -284,9 +274,8 @@ def r2_area_plots(all_subject_data, subjects, experiment):
         text_y_plot_2 = 1
         y_lims = [(0.6, 1), (0, 20)]
 
-    r2_means, r2_cis = utils.store_r2_means_CIs_per_condition(all_subject_data, experiment)
-    area_means, area_cis = calculate_area.store_area_means_CIs_per_condition(all_subject_data, experiment)
-
+    r2_means, r2_cis = utils.store_condition_r2_means_and_cis(all_subject_data, experiment)
+    area_means, area_cis = calculate_area.store_condition_area_means_and_cis(all_subject_data, experiment)
     means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
 
     plt.figure(figsize=(3.3, 4.3))
@@ -315,7 +304,7 @@ def r2_area_plots(all_subject_data, subjects, experiment):
             plt.plot(x_points, y_points, color=line_color, alpha=alpha, linewidth=line_width, zorder=order)
 
             ax = plt.gca()
-            utils.axes_params(ax, x_points, y_tick, x_labels, y_tick, x_lims, y_lim, None, y_label)
+            utils.set_ax_parameters(ax, x_points, y_tick, x_labels, y_tick, x_lims, y_lim, None, y_label)
 
             if experiment == 'exp1' and subplot == 2:
                 plt.ylim(0.75, 1)
@@ -324,11 +313,11 @@ def r2_area_plots(all_subject_data, subjects, experiment):
                 plt.text(text_x, text_y_plot_1, text, fontsize=11, fontfamily='arial')
                 ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                                labelbottom=False, labeltop=False, labelleft=True, labelright=False)
-                utils.spine_toggle(ax, True, False, False, False)
+                utils.draw_ax_spines(ax, True, False, False, False)
             else:
                 plt.text(text_x, text_y_plot_2, text, fontsize=11, fontfamily='arial')
                 ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
-                utils.spine_toggle(ax, True, False, False, True)
+                utils.draw_ax_spines(ax, True, False, False, True)
 
 
     for mean_list, ci_list, subplot, y_label in zip(means_lists, ci_lists, params.subplot_indices, results_headers):
@@ -350,16 +339,16 @@ def r2_area_plots(all_subject_data, subjects, experiment):
     plt.close()
 
 
-def area_vs_r2_plot(all_subject_data, experiment):
+def figure_3(all_subject_data, experiment):
     figure = 'Figure_3'
-    plot = 'area_r2_regression'
-    path = utils.create_article_plot_save_path(figure)
+    plot = 'Area vs R^2 Regression'
+    path = utils.create_figure_save_path(figure)
 
     utils.write_plot_header(experiment, figure, plot)
 
     area_lists = calculate_area.group_areas(all_subject_data, experiment)
-    r2_lists = utils.store_r2_tuples(all_subject_data, experiment)
-    x_labels = utils.x_ticks_group_plot(experiment)
+    r2_lists = utils.store_r2_lists(all_subject_data, experiment)
+    x_labels = utils.x_tick_labels_group_plot(experiment)
 
     if experiment == 'exp1':
         subplot_indices = [1, 2, 3, 4]
@@ -385,21 +374,23 @@ def area_vs_r2_plot(all_subject_data, experiment):
                     zorder=10)
 
         ax = plt.gca()
-        utils.axes_params(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, y_label)
-        utils.spine_toggle(ax, True, False, False, False)
+        utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, y_label)
+        utils.draw_ax_spines(ax, True, False, False, False)
         ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                               labelbottom=False, labeltop=False, labelleft=True, labelright=False)
 
-
+        # draw axes and ticks for bottom subplot
         if subplot_index == 4 and experiment == 'exp1' or subplot_index == 3 and experiment == 'exp2':
             plt.xlabel('Area (cm$^2$)', size=8, fontfamily='arial')
             ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
             ax.spines['bottom'].set_visible(True)
+
+        # label subplot letter (A, B, C, +-/ D)
         plt.text(22, 1, text, fontsize = 12, fontfamily = 'arial')
 
         utils.write_regression_results(experiment, condition_area_data, condition_r2_data, intercept, slope, condition_name)
 
-        plt.tight_layout()
+        #plt.tight_layout()
 
     plt.tight_layout(h_pad=0.9)
     plt.savefig(path, dpi=300)
@@ -408,10 +399,10 @@ def area_vs_r2_plot(all_subject_data, experiment):
     plt.close()
 
 
-def slope_comparison(all_subject_data, experiment):
+def figure_4(all_subject_data, experiment):
     figure = 'Figure_4'
-    plot = 'slope_comparison'
-    path = utils.create_article_plot_save_path(figure)
+    plot = 'Slope regression: Line-to-width vs. width-to-line'
+    path = utils.create_figure_save_path(figure)
     condition_name = 'line-to-width vs width-to-line'
 
     utils.write_plot_header(experiment, figure, plot)
@@ -441,12 +432,14 @@ def slope_comparison(all_subject_data, experiment):
     x_vals = np.array([min(slopes_line_width) - 0.25, max(slopes_line_width) + 0.25])
     y_vals = intercept + slope * x_vals
 
+    # plot regression line
     plt.plot(x_vals, y_vals, color='black', linewidth=1, zorder=10)
+    # plot individual slope values
     plt.scatter(slopes_line_width, slopes_width_line, c='gray', marker='o', alpha=0.6, s=5, zorder=5, linewidths=0)
 
     ax = plt.gca()
-    utils.spine_toggle(ax, True, False, False, True)
-    utils.axes_params(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, y_label)
+    utils.draw_ax_spines(ax, True, False, False, True)
+    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, y_label)
 
     plt.tight_layout()
 

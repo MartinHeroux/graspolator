@@ -15,136 +15,6 @@ def triangle_area(b, h):
     return area
 
 
-def between_conditions(experiment, subject_data):
-    tuple_list = utils.condition_pair_tuple(experiment, subject_data)
-
-    if experiment == 'exp1':
-
-        dom_vs_non_dom_area = _condition_pair_area_exp1(tuple_list[0], experiment)
-        dom_d1_vs_d2_area = _condition_pair_area_exp1(tuple_list[1], experiment)
-        dom_d2_vs_d2_area = _condition_pair_area_exp1(tuple_list[2], experiment)
-
-        areas = dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area
-
-    elif experiment == 'exp2':
-
-        areas = _condition_pair_area_exp2(tuple_list, experiment)
-
-    return areas
-
-
-def _condition_pair_area_exp1(condition_pair_tuple, experiment):
-    intercept_a, slope_a = utils.calculate_regression(condition_pair_tuple.data_1)
-    intercept_b, slope_b = utils.calculate_regression(condition_pair_tuple.data_2)
-
-    x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = condition_pair_endpoints(condition_pair_tuple, experiment)
-    intersect_x, intersect_y = _point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b)
-    group = _subject_group_reg_lines_exp1(intersect_x)
-    if group == 'cross':
-        total_area = _reg_line_crosser_area(intersect_x, intersect_y, y1_y2_a[0], y1_y2_a[1], y1_y2_b[0], y1_y2_b[1],
-                                            experiment)
-    else:
-        total_area = _reg_line_no_cross_area(y1_y2_a[0], y1_y2_a[1], y1_y2_b[0], y1_y2_b[1], experiment)
-    return total_area
-
-
-def _condition_pair_area_exp2(condition_pair_tuple, experiment):
-    intercept_a, slope_a = utils.calculate_regression(condition_pair_tuple.data_1)
-    intercept_b, slope_b = utils.calculate_regression(condition_pair_tuple.data_2)
-    intercept_reality, slope_reality = 0, 1
-
-    x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = condition_pair_endpoints(condition_pair_tuple, experiment)
-    x1_x2_reality, y1_y2_reality = [3, 9], [3, 9]
-
-    intersect_x_1, intersect_y_1 = _point_of_intersection_reg_lines(intercept_a, slope_a, intercept_reality,
-                                                                    slope_reality)
-    intersect_x_2, intersect_y_2 = _point_of_intersection_reg_lines(intercept_b, slope_b, intercept_reality,
-                                                                    slope_reality)
-
-    area_line_first = _reg_reality_area(intersect_x_1, intersect_y_1, y1_y2_a, y1_y2_reality, experiment)
-    area_width_first = _reg_reality_area(intersect_x_2, intersect_y_2, y1_y2_b, y1_y2_reality, experiment)
-
-    areas = area_line_first, area_width_first
-
-    return areas
-
-
-def _reg_reality_area(intersection_x, intersection_y, y_coordinates_1, y_coordinates_2, experiment):
-    group = _subject_group_reg_lines_exp2(intersection_x)
-    if group == 'cross':
-        total_area = _reg_line_crosser_area(intersection_x, intersection_y, y_coordinates_1[0], y_coordinates_1[1],
-                                            y_coordinates_2[0], y_coordinates_2[1], experiment)
-    else:
-        total_area = _reg_line_no_cross_area(y_coordinates_1[0], y_coordinates_1[1], y_coordinates_2[0],
-                                             y_coordinates_2[1], experiment)
-    return total_area
-
-
-def _point_of_intersection_reg_lines(intercept_a, slope_a, intercept_b, slope_b):
-    m1, b1 = slope_a, intercept_a
-    m2, b2 = slope_b, intercept_b
-    x_intersect = (b2 - b1) / (m1 - m2)
-    y_intersect = (x_intersect * slope_a) + intercept_a
-    return x_intersect, y_intersect
-
-
-def _subject_group_reg_lines_exp1(x_intersect):
-    if 2 <= x_intersect <= 10:
-        group = 'cross'
-    else:
-        group = 'no_cross'
-    return group
-
-
-def _subject_group_reg_lines_exp2(x_intersect):
-    if 3 <= x_intersect <= 9:
-        group = 'cross'
-    else:
-        group = 'no_cross'
-    return group
-
-
-def _reg_line_crosser_area(x_intersect, y_intersect, y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b, experiment):
-    if experiment == 'exp1':
-        x1 = 2
-        x2 = 10
-    elif experiment == 'exp2':
-        x1 = 3
-        x2 = 9
-    else:
-        print('experiment not defined reg line crosser area')
-
-    h_left_trapezium = x_intersect - x1
-    h_right_trapezium = x2 - x_intersect
-
-    left_trap_area_a = trapezium_area(y_at_x2_a, y_intersect, h_left_trapezium)
-    right_trap_area_a = trapezium_area(y_intersect, y_at_x10_a, h_right_trapezium)
-
-    left_trap_area_b = trapezium_area(y_at_x2_b, y_intersect, h_left_trapezium)
-    right_trap_area_b = trapezium_area(y_intersect, y_at_x10_b, h_right_trapezium)
-
-    left_area = abs(left_trap_area_a - left_trap_area_b)
-    right_area = abs(right_trap_area_a - right_trap_area_b)
-
-    total_area = abs(left_area + right_area)
-    return total_area
-
-
-def _reg_line_no_cross_area(y_at_x2_a, y_at_x10_a, y_at_x2_b, y_at_x10_b, experiment):
-    if experiment == 'exp1':
-        h = 8
-    elif experiment == 'exp2':
-        h = 6
-    else:
-        print("experiment not defined reg line no cross area")
-
-    area_a = trapezium_area(y_at_x2_a, y_at_x10_a, h)
-    area_b = trapezium_area(y_at_x2_b, y_at_x10_b, h)
-
-    total_area = abs(area_a - area_b)
-    return total_area
-
-
 def actual_vs_perceived(actual, perceived, experiment):
     intercept, slope = utils.calculate_regression_general(actual, perceived)
     x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
@@ -275,18 +145,6 @@ def _maximiser_area_calc(y_at_x2, y_at_x10, experiment):
     return area_difference
 
 
-def condition_pair_endpoints(condition_pair_tuple, experiment):
-    x1_a, x2_a, y1_a, y2_a = reg_line_endpoints(condition_pair_tuple.data_1[0], condition_pair_tuple.data_1[1],
-                                                experiment)
-    x1_b, x2_b, y1_b, y2_b = reg_line_endpoints(condition_pair_tuple.data_2[0], condition_pair_tuple.data_2[1],
-                                                experiment)
-    x1_x2_a = [x1_a, x2_a]
-    x1_x2_b = [x1_b, x2_b]
-    y1_y2_a = [y1_a, y2_a]
-    y1_y2_b = [y1_b, y2_b]
-    return x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b
-
-
 def point_of_intersection_with_reality(intercept, slope):
     m1, b1 = 1, 0
     m2, b2 = slope, intercept
@@ -347,15 +205,6 @@ def _group_areas_exp2(all_subject_data):
     return area_lists_per_condition
 
 
-def difference_of_difference_areas(experiment, subject_data):
-    dom_vs_non_dom_area, dom_d1_vs_d2_area, d2_dom_vs_dom_area = between_conditions(experiment,
-                                                                                    subject_data)
-    hands_vs_day = dom_vs_non_dom_area - d2_dom_vs_dom_area
-    hands_vs_days = dom_vs_non_dom_area - dom_d1_vs_d2_area
-    day_vs_days = d2_dom_vs_dom_area - dom_d1_vs_d2_area
-    return hands_vs_day, hands_vs_days, day_vs_days
-
-
 def reg_line_endpoints(actual, perceived, experiment):
     intercept, slope = calculate_regression_general(actual, perceived)
     if experiment == 'exp1':
@@ -371,7 +220,7 @@ def reg_line_endpoints(actual, perceived, experiment):
     return x1, x2, y1, y2
 
 
-def store_area_means_CIs_per_condition(all_subject_data, experiment):
+def store_condition_area_means_and_cis(all_subject_data, experiment):
     if experiment == 'exp1':
         area_lists = _group_areas_exp1(all_subject_data)
 

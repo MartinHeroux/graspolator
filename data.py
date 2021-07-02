@@ -9,9 +9,8 @@ general_constants = create_general_constants()
 
 
 def get_data_and_subjects(experiment, data_folder):
-    """comment about what this is doing"""
+    """Read and store all participant data and participant identifiers"""
     if experiment == 'exp1':
-        # TODO rename to make matching between experiments
         all_subject_data = get_exp1_data(data_folder)
         subjects = get_directory_list(data_folder)
 
@@ -32,11 +31,9 @@ def get_data_and_subjects(experiment, data_folder):
 
 def get_exp1_data(data_folder):
     all_subject_data = []
-    widest_lines = []
     subjects = general_constants.SUBJECT_IDS
     for subject in subjects:
-        all_subject_data.append(_read_parse_exp1(data_folder, subject)[0])
-        widest_lines.append(_read_parse_exp1(data_folder, subject)[1])
+        all_subject_data.append(_read_parse_exp1(data_folder, subject))
     return all_subject_data
 
 
@@ -44,11 +41,9 @@ def _read_parse_exp1(data_folder, subject):
     subject_folder = data_folder / subject
     current_subject_data = _read_subject_data(subject_folder)
     current_subject_data = _fix_data(current_subject_data, subject_folder, subject)
-    widest_line = _extract_widest_line_based_on_visual_inspection(
-        current_subject_data
-    )
+    widest_line = _extract_widest_line_based_on_visual_inspection(current_subject_data)
     blocks = _parse_data(current_subject_data)
-    return blocks, widest_line
+    return blocks
 
 
 def _fix_data(current_subject_data, subject_folder, subject):

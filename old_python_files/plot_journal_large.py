@@ -6,19 +6,20 @@ from random import random
 from pathlib import Path
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
+import old_python_files.old_functions
 import utils
 import plot_utils
 import calculate_area
 
 constants = utils.create_general_constants()
-plot_constants = utils.create_plot_constants()
+plot_constants = old_python_files.old_functions.create_plot_constants()
 
 
 ## panel figure of individual subjects and group reg lines
 
 def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
     plot = f'example_subjects_group_regression_{experiment}'
-    path = utils.create_article_plot_save_path(plot)
+    path = utils.create_figure_save_path(plot)
 
     tuple_list = plot_utils.store_example_subject_plot_info(all_subject_data, subjects, experiment)
 

@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 from matplotlib.lines import Line2D
 
+import old_python_files.old_functions
 import utils
 
 
@@ -147,8 +148,8 @@ def replacement_values(all_subject_data, indices_to_replace):
     for index in indices_to_replace:
         data = all_subject_data[index]
         D2_dom_1, D2_dom_2 = data[2], data[3]
-        intercept_1, slope_1 = utils.calculate_regression(D2_dom_1)
-        intercept_2, slope_2 = utils.calculate_regression(D2_dom_2)
+        intercept_1, slope_1 = old_python_files.old_functions.calculate_regression(D2_dom_1)
+        intercept_2, slope_2 = old_python_files.old_functions.calculate_regression(D2_dom_2)
         x = 10
         value_at_10_a = (slope_1 * x) + intercept_1
         value_at_10_b = (slope_2 * x) + intercept_2

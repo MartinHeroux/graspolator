@@ -5,12 +5,12 @@ from matplotlib.lines import Line2D
 import matplotlib.patches as mpatches
 from termcolor import colored
 
+import old_python_files.old_functions
 import utils
 import calculate_area
-import plot_utils
 
 general_constants = utils.create_general_constants()
-plot_constants = utils.create_plot_constants()
+plot_constants = old_python_files.old_functions.create_plot_constants()
 SMALLEST_WIDTH = 2
 LARGEST_WIDTH = 10
 YLIM = [0, 15]
@@ -18,9 +18,9 @@ YLIM = [0, 15]
 
 def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
     plot = 'scatterplot_regression'
-    path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
+    path = old_python_files.old_functions.create_individual_plot_save_path(experiment, plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
-    subplot_width, subplot_length, x_lims, fig_size = utils.plot_constants_regressions_ind(experiment)
+    subplot_width, subplot_length, x_lims, fig_size = old_python_files.old_functions.plot_constants_regressions_ind(experiment)
 
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Scatterplot + Regression Line'))
@@ -32,7 +32,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
         length_data = len(condition_tuple.PERCEIVED)
         jitter_values = [random() / 4 for _ in range(length_data)]
         x_data = np.array(condition_tuple.ACTUAL) + np.array(jitter_values)
-        color = utils.color_manip(condition_tuple.PLOT_INDEX)
+        color = old_python_files.old_functions.color_manip(condition_tuple.PLOT_INDEX)
         plt.plot(x_data, condition_tuple.PERCEIVED, 'o', color = color, alpha=plot_constants.ALPHA)
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL,
@@ -71,9 +71,9 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
 
 def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
     plot = 'area_between_reg_and_reality'
-    path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
+    path = old_python_files.old_functions.create_individual_plot_save_path(experiment, plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
-    subplot_width, subplot_length, x_lims, fig_size = utils.plot_constants_regressions_ind(experiment)
+    subplot_width, subplot_length, x_lims, fig_size = old_python_files.old_functions.plot_constants_regressions_ind(experiment)
 
     plt.figure(figsize=fig_size)
     plt.suptitle(str(subject_ID + ' Area Plots (reality vs. regression lines)'))
@@ -92,7 +92,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
             y_max = y2
 
         area = calculate_area.actual_vs_perceived(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, experiment)
-        color = utils.color_manip(condition_tuple.PLOT_INDEX)
+        color = old_python_files.old_functions.color_manip(condition_tuple.PLOT_INDEX)
 
         x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
         plt.plot([x1, x2], [y1, y2], color=color)
@@ -124,12 +124,12 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
 
 def area_between_conditions_plot(subject_ID, subject_data, experiment):
     plot = 'area_difference_between_conditions'
-    path = utils.create_individual_plot_save_path(experiment, plot, subject_ID)
+    path = old_python_files.old_functions.create_individual_plot_save_path(experiment, plot, subject_ID)
 
-    data_pair_tuples = utils.condition_pair_tuple(experiment, subject_data)
-    data_pair_areas = calculate_area.between_conditions(experiment, subject_data)
+    data_pair_tuples = old_python_files.old_functions.condition_pair_tuple(experiment, subject_data)
+    data_pair_areas = old_python_files.old_functions.between_conditions(experiment, subject_data)
 
-    subplot_width, subplot_length, x_lims, fig_size = utils.subplot_dimensions_area_differences(experiment)
+    subplot_width, subplot_length, x_lims, fig_size = old_python_files.old_functions.subplot_dimensions_area_differences(experiment)
 
     if experiment == 'exp1':
         plt.figure(figsize=(15, 5))
@@ -142,7 +142,7 @@ def area_between_conditions_plot(subject_ID, subject_data, experiment):
 
             plt.subplot(subplot_width, subplot_length, data_pair_tuple.subplot_index)
 
-            x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuple, experiment)
+            x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = old_python_files.old_functions.condition_pair_endpoints(data_pair_tuple, experiment)
             y_points.append(y1_y2_b)
             y_points.append(y1_y2_a)
 
@@ -164,7 +164,7 @@ def area_between_conditions_plot(subject_ID, subject_data, experiment):
             plt.xlabel('Actual width (cm)')
             plt.grid()
 
-            y_max, y_min = utils.max_min(y_points)
+            y_max, y_min = old_python_files.old_functions.max_min(y_points)
 
             plt.ylim([y_min, (y_max + 2)])
             plt.yticks(range(int(y_min), int((y_max + 2))))
@@ -200,7 +200,7 @@ def _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment,
 
     plt.subplot(subplot_width, subplot_length, data_pair_tuples.subplot_index)
 
-    x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = calculate_area.condition_pair_endpoints(data_pair_tuples, experiment)
+    x1_x2_a, x1_x2_b, y1_y2_a, y1_y2_b = old_python_files.old_functions.condition_pair_endpoints(data_pair_tuples, experiment)
     x1_x2_reality, y1_y2_reality = [3, 9], [3, 9]
 
     y_points.append(y1_y2_b)
@@ -228,7 +228,7 @@ def _plot_between_conditions_exp2(data_pair_tuples, data_pair_areas, experiment,
     plt.xlabel('Actual width (cm)')
     plt.grid()
 
-    y_max, y_min = utils.max_min(y_points)
+    y_max, y_min = old_python_files.old_functions.max_min(y_points)
 
     plt.ylim([y_min, (y_max + 2)])
     plt.yticks(range(int(y_min), int((y_max + 2))))

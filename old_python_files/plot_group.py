@@ -7,17 +7,17 @@ from matplotlib.lines import Line2D
 from matplotlib import cm
 from termcolor import colored
 
+import old_python_files.old_functions
 import utils
 import calculate_area
-import plot_utils
 
 constants = utils.create_general_constants()
-plot_constants = utils.create_plot_constants()
+plot_constants = old_python_files.old_functions.create_plot_constants()
 
 
 def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
     plot = 'reg_lines_by_group'
-    path = utils.create_group_plot_save_path(experiment, plot)
+    path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
     legend_handles = [plot_constants.MINIMISER_PATCH,
                       plot_constants.MAXIMISER_PATCH,
                       plot_constants.CROSSER_PATCH]
@@ -52,7 +52,7 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
             y_points.append(y2)
             x_points.append(x1)
             x_points.append(x2)
-            line_colour = utils.subject_line_colour(intersect_x, y1, experiment)
+            line_colour = old_python_files.old_functions.subject_line_colour(intersect_x, y1, experiment)
             plt.plot([x1, x2], [y1, y2], color=line_colour, linewidth=0.5)
 
 
@@ -79,7 +79,7 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
 
 def kathy_difference_of_differences(all_subject_data, experiment):
     plot = 'difference_of_differences'
-    path = utils.create_group_plot_save_path(experiment, plot)
+    path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
 
     plt.figure(figsize=(7, 10))
     plt.suptitle(str('Difference of Differences'))
@@ -101,7 +101,7 @@ def kathy_difference_of_differences(all_subject_data, experiment):
     hands_vs_day_list, hands_vs_days_list, day_vs_days_list = [], [], []
 
     for subject_data in all_subject_data:
-        hands_vs_day, hands_vs_days, day_vs_days = calculate_area.difference_of_difference_areas(experiment, subject_data)
+        hands_vs_day, hands_vs_days, day_vs_days = old_python_files.old_functions.difference_of_difference_areas(experiment, subject_data)
 
         hands_vs_day_list.append(hands_vs_day)
         hands_vs_days_list.append(hands_vs_days)
@@ -112,7 +112,7 @@ def kathy_difference_of_differences(all_subject_data, experiment):
         plt.plot(x_points_base, y_points, color='silver', alpha=0.5)
 
     area_diff_list = [hands_vs_day_list, hands_vs_days_list, day_vs_days_list]
-    area_max, area_min = utils.max_min(area_diff_list)
+    area_max, area_min = old_python_files.old_functions.max_min(area_diff_list)
     y_range = range(int(-area_max), int(area_max + 2))
 
     for x_point, area_list in zip(x_points_base, area_diff_list):
@@ -133,7 +133,7 @@ def kathy_difference_of_differences(all_subject_data, experiment):
 
 def area_per_condition_plot(all_subject_data, experiment):
     plot = 'areas_by_condition'
-    path = utils.create_group_plot_save_path(experiment, plot)
+    path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
 
     plt.figure(figsize=(10, 10))
     plt.suptitle(str('Area Between Regression and Reality Lines'))
@@ -141,7 +141,7 @@ def area_per_condition_plot(all_subject_data, experiment):
     plt.xlabel('Condition')
 
     x_points = utils.x_points_group_plot(experiment)
-    x_labels = utils.x_ticks_group_plot(experiment)
+    x_labels = utils.x_tick_labels_group_plot(experiment)
 
     plt.xticks(x_points, labels=x_labels)
 
@@ -163,12 +163,12 @@ def area_per_condition_plot(all_subject_data, experiment):
 
         plt.plot(x_points, y_points, color='darkgrey', alpha=0.5)
 
-    area_means, area_CIs = calculate_area.store_area_means_CIs_per_condition(all_subject_data, experiment)
+    area_means, area_CIs = calculate_area.store_condition_area_means_and_cis(all_subject_data, experiment)
 
     for mean, ci, x_point in zip(area_means, area_CIs, x_points):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='r', mec='r', markersize=8)
 
-    area_max, area_min = utils.max_min(all_area_lists)
+    area_max, area_min = old_python_files.old_functions.max_min(all_area_lists)
     plt.ylim(area_min - 1, area_max + 2)
     plt.legend(handles=legend_elements, loc='best')
     plt.grid()
@@ -180,11 +180,11 @@ def area_per_condition_plot(all_subject_data, experiment):
 
 def area_vs_r2_plot(all_subject_data, experiment):
     plot = 'area_r2_regression'
-    path = utils.create_group_plot_save_path(experiment, plot)
+    path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
 
     area_lists = calculate_area.group_areas(all_subject_data, experiment)
-    r2_lists = utils.store_r2_tuples(all_subject_data, experiment)
-    x_labels = utils.x_ticks_group_plot(experiment)
+    r2_lists = utils.store_r2_lists(all_subject_data, experiment)
+    x_labels = utils.x_tick_labels_group_plot(experiment)
     subplot_indices = utils.x_points_group_plot(experiment)
 
 
@@ -220,7 +220,7 @@ def area_vs_r2_plot(all_subject_data, experiment):
 
 def r2_per_condition_plot(all_subject_data, experiment):
     plot = 'r2_per_condition'
-    path = utils.create_group_plot_save_path(experiment, plot)
+    path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
 
     legend_elements = [Line2D([0], [0], color='silver', lw=2, label='Individual Subjects'),
                        Line2D([0], [0], marker='o', label='Mean R^2', mec='r',
@@ -232,7 +232,7 @@ def r2_per_condition_plot(all_subject_data, experiment):
     plt.ylabel('R^2')
     plt.xlabel('Condition')
     x_points = utils.x_points_group_plot(experiment)
-    x_labels = utils.x_ticks_group_plot(experiment)
+    x_labels = utils.x_tick_labels_group_plot(experiment)
 
     plt.xticks(x_points, labels=x_labels)
     all_r2_lists = []
@@ -248,12 +248,12 @@ def r2_per_condition_plot(all_subject_data, experiment):
 
         plt.plot(x_points, y_points, color='darkgrey', alpha=0.5)
 
-    mean_list, ci_list = utils.store_r2_means_CIs_per_condition(all_subject_data, experiment)
+    mean_list, ci_list = utils.store_condition_r2_means_and_cis(all_subject_data, experiment)
 
     for mean, ci, x_point in zip(mean_list, ci_list, x_points):
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='r', mec='r', markersize=8)
 
-    r2_max, r2_min = utils.max_min(all_r2_lists)
+    r2_max, r2_min = old_python_files.old_functions.max_min(all_r2_lists)
     plt.ylim(r2_min - 0.01, 1.01)
 
     plt.legend(handles=legend_elements, loc='lower right')
@@ -265,9 +265,9 @@ def r2_per_condition_plot(all_subject_data, experiment):
 
 def lovisa_between_condition_regression(all_subject_data, experiment):
     plot = 'between_condition_regression'
-    path = utils.create_group_plot_save_path(experiment, plot)
+    path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
 
-    r2_tuple = utils.store_r2_tuples(all_subject_data, experiment)
+    r2_tuple = utils.store_r2_lists(all_subject_data, experiment)
     area_tuple = calculate_area.group_areas(all_subject_data, experiment)
 
     subplot_indices = [1, 2]
@@ -305,7 +305,7 @@ def lovisa_between_condition_regression(all_subject_data, experiment):
 
 def slope_comparison(all_subject_data, experiment):
     plot = 'slope_comparison'
-    path = utils.create_group_plot_save_path(experiment, plot)
+    path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
 
     slopes_line_width = []
     slopes_width_line = []

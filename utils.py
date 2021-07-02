@@ -7,20 +7,9 @@ import numpy as np
 from matplotlib import patches as mpatches
 from scipy.stats import sem, t
 from collections import namedtuple
-from termcolor import colored
 import math
-import matplotlib as plt
 from matplotlib.ticker import MultipleLocator
 from random import random
-
-
-def calculate_regression(block):
-    x = block.ACTUAL
-    y = block.PERCEIVED
-    x = sm.add_constant(x)
-    model = sm.OLS(y, x).fit()
-    intercept, slope = model.params
-    return intercept, slope
 
 
 def calculate_regression_general(x, y):
@@ -97,8 +86,8 @@ def calculate_ci(data_list):
     return ci
 
 
-def store_r2_means_CIs_per_condition(all_subject_data, experiment):
-    r2_lists = store_r2_tuples(all_subject_data, experiment)
+def store_condition_r2_means_and_cis(all_subject_data, experiment):
+    r2_lists = store_r2_lists(all_subject_data, experiment)
     mean_list = []
     ci_list = []
     for r2_list in r2_lists:
@@ -107,7 +96,7 @@ def store_r2_means_CIs_per_condition(all_subject_data, experiment):
     return mean_list, ci_list
 
 
-def store_r2_tuples(all_subject_data, experiment):
+def store_r2_lists(all_subject_data, experiment):
     if experiment == 'exp1':
         r2_lists = _store_r2_tuples_exp1(all_subject_data)
     else:
@@ -197,45 +186,6 @@ def create_general_constants():
                                           "SUB28R"])
 
 
-def max_min(list_of_lists):
-    maximums_list = []
-    minimums_list = []
-    for data_list in list_of_lists:
-        maximums_list.append(max(data_list))
-        minimums_list.append(min(data_list))
-    maximum, minimum = max(maximums_list), min(minimums_list)
-    return maximum, minimum
-
-
-def calculate_and_save_r_squared_to_txt(all_subject_data):
-    constants = create_general_constants()
-    for subject_ID, current_subject_data in zip(constants.SUBJECT_IDS, all_subject_data):
-        _r_squared(subject_ID, current_subject_data)
-
-
-def _r_squared(subject_ID, current_subject_data):
-    condition_names = ['day1_dominant', "day1_non_dominant", "day2_dominant_1", "day2_dominant_2"]
-    r_square_file = open("old_python_files/r_squared_values.txt", "a")
-    r_square_file.write(f'subject: {subject_ID} \n')
-    for condition_name, condition_data in zip(condition_names, current_subject_data):
-        r_square_file = open("old_python_files/r_squared_values.txt", "a")
-        actual_widths = condition_data.actual_widths
-        perceived_widths = condition_data.perceived_widths
-        r_score, p_value = scp.pearsonr(actual_widths, perceived_widths)
-        r_squared = r_score ** 2
-        line_to_write = [f" {condition_name} r_squared: {r_squared:4.2f} \n"]
-        r_square_file.writelines(line_to_write)
-    r_square_file.close
-
-
-def get_filename_list(directory):
-    filenames = []
-    for root, dirs, files in os.walk(directory):
-        for filename in files:
-            filenames.append(filename)
-    return filenames
-
-
 def get_directory_list(directory):
     directories = []
     for root, dirs, files in os.walk(directory):
@@ -252,62 +202,12 @@ def create_data_tuples(experiment, subject_data):
     return plot_inputs
 
 
-def create_individual_plot_save_path(experiment, plot, subject_ID):
-    path = Path(f'./plots/{experiment}/individual_plots/{plot}')
-    if not os.path.exists(path):
-        os.makedirs(path)
-    savepath = Path(f'./plots/{experiment}/individual_plots/{plot}/{plot}_{subject_ID}.png')
-    return savepath
-
-
-def create_group_plot_save_path(experiment, plot):
-    path = Path(f'./plots/{experiment}/group_plots/')
-    if not os.path.exists(path):
-        os.makedirs(path)
-    savepath = Path(f'./plots/{experiment}/group_plots/{plot}.png')
-    return savepath
-
-
-def create_article_plot_save_path(plot):
+def create_figure_save_path(plot):
     path = Path(f'./plots/article_plots/')
     if not os.path.exists(path):
         os.makedirs(path)
     savepath = Path(f'./plots/article_plots/{plot}.png')
     return savepath
-
-
-def generic_plot_save_path(experiment, type, plot):
-    path = f'./plots/{experiment}/{type}/{plot}'
-    path_text = colored(path, 'blue')
-    return path_text
-
-
-def plot_constants_regressions_ind(experiment):
-    if experiment == 'exp1':
-        subplot_width = 4
-        subplot_length = 1
-        x_range = [2, 10]
-        fig_size = [7, 20]
-    else:
-        subplot_width = 1
-        subplot_length = 3
-        x_range = [3, 9]
-        fig_size = [15, 5]
-    return subplot_width, subplot_length, x_range, fig_size
-
-
-def subplot_dimensions_area_differences(experiment):
-    if experiment == 'exp1':
-        subplot_width = 1
-        subplot_length = 3
-        x_range = [2, 10]
-        fig_size = (15, 7)
-    else:
-        subplot_width = 1
-        subplot_length = 1
-        x_range = [3, 9]
-        fig_size = [15, 5]
-    return subplot_width, subplot_length, x_range, fig_size
 
 
 def x_points_group_plot(experiment):
@@ -320,7 +220,7 @@ def x_points_group_plot(experiment):
     return x_points, x_lims
 
 
-def x_ticks_group_plot(experiment):
+def x_tick_labels_group_plot(experiment):
     if experiment == 'exp1':
         x_ticks = ['Dominant', 'Non-dominant', 'Dominant', 'Dominant']
     else:
@@ -337,8 +237,6 @@ def remove_missing_data(actual_list, perceived_list, subject_ID, name):
     for index in indices_to_remove:
         actual_list.pop(index)
         perceived_list.pop(index)
-        # TODO figure out why below statement prints even when Exp1 is running
-        # print(f'removed missing data at index {index}, {subject_ID}, condition {name}')
     return actual_list, perceived_list
 
 
@@ -352,26 +250,6 @@ def condition_plot_inputs(subject_data):
                                      PERCEIVED=subject_data.WIDTH_WIDTH.PERCEIVED, PLOT_INDEX=3)
     tuples = line_width_inputs, width_line_inputs, width_width_inputs
     return tuples
-
-
-def create_plot_constants():
-    plot_constants = namedtuple('plot_constants', 'PLOT_SUBDIRECTORIES ACTUAL_WIDTH_RANGE PERCEIVED_WIDTH_RANGE ALPHA '
-                                                  'SMALLEST_WIDTH LARGEST_WIDTH Y_MIN Y_MAX REALITY_LINE_MIN '
-                                                  'REALITY_LINE_MAX '
-                                                  'MINIMISER_PATCH MAXIMISER_PATCH CROSSER_PATCH WIDE_SIZE SQUARE_SIZE')
-    return plot_constants(PLOT_SUBDIRECTORIES=['group_plots',
-                                               'regression_plots',
-                                               'consistency_plots',
-                                               'area_plots'],
-                          ACTUAL_WIDTH_RANGE=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-                          PERCEIVED_WIDTH_RANGE=[0.5] + list(range(1, 15)),
-                          ALPHA=0.5,
-                          SMALLEST_WIDTH=2, LARGEST_WIDTH=10, Y_MIN=0, Y_MAX=14, REALITY_LINE_MIN=0,
-                          REALITY_LINE_MAX=14,
-                          MINIMISER_PATCH=mpatches.Patch(color='firebrick', label='Minimiser'),
-                          MAXIMISER_PATCH=mpatches.Patch(color='green', label='Maximiser'),
-                          CROSSER_PATCH=mpatches.Patch(color='royalblue', label='Crosser'),
-                          WIDE_SIZE=[15, 5], SQUARE_SIZE=[10, 10])
 
 
 def store_index_condition_data_tuple(subject_data):
@@ -390,82 +268,6 @@ def store_index_condition_data_tuple(subject_data):
                                      PERCEIVED=subject_data.day2_dominant_2.PERCEIVED)
     tuples = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
     return tuples
-
-
-def condition_pair_tuple(experiment, subject_data):
-    if experiment == 'exp1':
-        tuple_list = _condition_pair_tuple_exp1(subject_data)
-    elif experiment == 'exp2':
-        tuple_list = _condition_pair_tuple_exp2(subject_data)
-    else:
-        print('experiment not defined tuple list')
-
-    return tuple_list
-
-
-def _condition_pair_tuple_exp1(subject_data):
-    d1_dom = mpatches.Patch(color='blue', label='Day 1 Dominant')
-    d1_non_dom = mpatches.Patch(color='orange', label='Day 1 Non Dominant')
-    d2_dom_a = mpatches.Patch(color='red', label='Day 2 Dominant A')
-    d2_dom_b = mpatches.Patch(color='green', label='Day 2 Dominant B')
-
-    Pair = namedtuple('Pair', 'data_1 data_2 label_1 label_2 title colour_1 colour_2 patch_1 patch_2 subplot_index')
-    dom_vs_non_dom = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day1_non_dominant, label_1='d1_dom',
-                          label_2='d1_non_dom',
-                          title='D1 dominant - D1 non-dominant', colour_1='blue', colour_2='orange', patch_1=d1_dom,
-                          patch_2=d1_non_dom, subplot_index=1)
-    dom_d1_vs_d2 = Pair(data_1=subject_data.day1_dominant, data_2=subject_data.day2_dominant_1, label_1='d1_dom',
-                        label_2='d2_dom_a',
-                        title='D1 dominant - D2 dominant', colour_1='blue', colour_2='red',
-                        patch_1=d1_dom, patch_2=d2_dom_a, subplot_index=2)
-    dom_d2_vs_d2 = Pair(data_1=subject_data.day2_dominant_1, data_2=subject_data.day2_dominant_2, label_1='d2_dom_a',
-                        label_2='d2_dom_b',
-                        title='D2 dominant a - D2 dominant b', colour_1='red', colour_2='green', patch_1=d2_dom_a,
-                        patch_2=d2_dom_b,
-                        subplot_index=3)
-    tuple_list = dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
-    return tuple_list
-
-
-def _condition_pair_tuple_exp2(subject_data):
-    line_width = mpatches.Patch(color='blue', label='Show Line Pick Width')
-    width_line = mpatches.Patch(color='orange', label='Present Width Pick Line')
-
-    Pair = namedtuple('Pair', 'data_1 data_2 label_1 label_2 title colour_1 colour_2 patch_1 patch_2 subplot_index')
-
-    linefirst_vs_widthfirst = Pair(data_1=subject_data.LINE_WIDTH, data_2=subject_data.WIDTH_LINE, label_1='line_width',
-                                   label_2='width_line',
-                                   title='Reciprocal Condition Area Difference', colour_1='blue', colour_2='orange',
-                                   patch_1=line_width,
-                                   patch_2=width_line, subplot_index=1)
-    return linefirst_vs_widthfirst
-
-
-def subject_line_colour(intersection_x_value, y_when_x_equals_2, experiment):
-    if experiment == 'exp1':
-        x1 = 2
-        x2 = 10
-    elif experiment == 'exp2':
-        x1 = 3
-        x2 = 9
-
-    if x1 <= intersection_x_value <= x2:
-        line_colour = 'royalblue'
-    elif y_when_x_equals_2 < x1:
-        line_colour = 'firebrick'
-    else:
-        line_colour = 'green'
-    return line_colour
-
-
-def color_manip(plot_index):
-    if plot_index == 1:
-        colour = 'firebrick'
-    elif plot_index == 2:
-        colour = 'firebrick'
-    else:
-        colour = 'firebrick'
-    return colour
 
 
 def store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID):
@@ -529,7 +331,7 @@ def r2_area_constants():
     return r2_area_constants
 
 
-def axes_params(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims, y_lims, x_label, y_label):
+def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims, y_lims, x_label, y_label):
     ax.set_xticks(x_ticks)
     ax.set_xticklabels(x_tick_labels, fontsize=8, fontfamily='arial')
     ax.set_yticks(y_ticks)
@@ -562,7 +364,7 @@ def write_regression_results(experiment, x, y, intercept, slope, condition_name)
     results.close()
 
 
-def spine_toggle(ax, left, right, top, bottom):
+def draw_ax_spines(ax, left, right, top, bottom):
     commands = [left, right, top, bottom]
     spines = ['left', 'right', 'top', 'bottom']
 

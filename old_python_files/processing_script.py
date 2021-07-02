@@ -40,4 +40,4 @@ for experiment in experiments:
 
 for experiment in experiments:
     all_subject_data, subjects = data.get_data_and_subjects(experiment)
-    figures.example_subjects_group_reg_summary(all_subject_data, subjects, experiment)
+    figures.figure_1_and_5(all_subject_data, subjects, experiment)

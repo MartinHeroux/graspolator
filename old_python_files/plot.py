@@ -19,7 +19,7 @@ def individual_regressions(all_subject_data, experiment, subjects):
     print('Note - this takes a while')
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         plot_individual.scatterplots_and_reg_lines(subject_ID, subject_data, experiment)
-    path = utils.generic_plot_save_path(experiment, 'individual_plots', 'scatterplot_regression')
+    path = old_python_files.old_functions.generic_plot_save_path(experiment, 'individual_plots', 'scatterplot_regression')
     print(f'All individual regression plots saved in {path}\n')
 
 
@@ -32,7 +32,7 @@ def individual_areas_to_reality(all_subject_data, experiment, subjects):
     print('Note - this takes a while')
     for subject_ID, current_subject_data in zip(subjects, all_subject_data):
         plot_individual.areas_between_regression_and_reality(subject_ID, current_subject_data, experiment)
-    path = utils.generic_plot_save_path(experiment, 'individual_plots', 'area_between_reg_and_reality')
+    path = old_python_files.old_functions.generic_plot_save_path(experiment, 'individual_plots', 'area_between_reg_and_reality')
     print(f'All individual areas between regression line and reality saved in {path}\n')
 
 
@@ -41,7 +41,7 @@ def individual_areas_between_conditions(all_subject_data, experiment, subjects):
     print('Note - this takes a while')
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         plot_individual.area_between_conditions_plot(subject_ID, subject_data, experiment)
-    path = utils.generic_plot_save_path(experiment, 'individual_plots', 'area_between_conditions')
+    path = old_python_files.old_functions.generic_plot_save_path(experiment, 'individual_plots', 'area_between_conditions')
     print(f'All individual areas between conditions saved in {path}\n')
 
 
