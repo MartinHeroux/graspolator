@@ -200,89 +200,56 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
 
 def consistency_between_conditions(all_subject_data, experiment):
-    plot = f'figure_7_{experiment}'
-    path = utils.create_article_plot_save_path(plot)
-    results = open(f'results_{experiment}.txt', 'a')
-    results.write('\n')
-    results.write('#####' * 20)
+    plot = 'Area_difference_between_conditions'
+    figure = 'Figure_7'
+    path = utils.create_article_plot_save_path(figure)
 
-    results.write('\n\nFigure 7: Consistency between conditions\n')
+    utils.write_plot_header(experiment, figure, plot)
 
-    plt.figure(figsize=(8 / 2.4, 8 / 2.4))
-    plt.ylabel('Area difference (cm$^2$)', fontfamily='arial', fontsize=8)
-    plt.grid(axis='y', linewidth=0.5, color='lightgrey')
-    y_points_list = []
-    between_hands_areas, across_days_areas, within_day_areas = [], [], []
-
-    x_points_base = [1.3, 1.6, 1.9]
+    x_ticks = [1.3, 1.6, 1.9]
     x_points_left = [1.27, 1.57, 1.87]
     x_points_right = [1.33, 1.63, 1.93]
-    x_labels = ['Across hands', 'Within hands', 'Within hands']
+    x_tick_labels = ['Across hands', 'Within hands', 'Within hands']
+    x_descriptors = ['Same day', '1 week apart', 'Same day']
+    x_lim = [1.19, 2.02]
+    y_lim = [-13, 13]
+    y_ticks = list(range(-12, 13, 3))
+    y_label = 'Area difference (cm$^2$)'
 
-    plt.xticks(x_points_base, labels=x_labels, fontfamily='arial', fontsize=8)
+    between_hands_areas, across_days_areas, within_day_areas = [], [], []
+
+    plt.figure(figsize=(8 / 2.4, 8 / 2.4))
+    ax = plt.gca()
 
     for line_number, subject_data in enumerate(all_subject_data, start=1):
-        jitter_values = [random() / 60 for _ in range(len(x_points_base))]
-        if line_number < 15:
-            x_points_jitter = np.array(x_points_right) + np.array(jitter_values)
-        else:
-            x_points_jitter = np.array(x_points_right) - np.array(jitter_values)
+        area_comparison_list = calculate_area.return_condition_comparison_areas(subject_data, experiment)
+        utils.plot_comparison_areas(ax, line_number, x_ticks, x_points_right, area_comparison_list)
 
-        d1_dom_area = calculate_area.actual_vs_perceived(subject_data.day1_dominant.ACTUAL,
-                                                         subject_data.day1_dominant.PERCEIVED,
-                                                         experiment)
-        d1_non_dom_area = calculate_area.actual_vs_perceived(subject_data.day1_non_dominant.ACTUAL,
-                                                             subject_data.day1_non_dominant.PERCEIVED,
-                                                             experiment)
-        d2_dom_1_area = calculate_area.actual_vs_perceived(subject_data.day2_dominant_1.ACTUAL,
-                                                           subject_data.day2_dominant_1.PERCEIVED,
-                                                           experiment)
-        d2_dom_2_area = calculate_area.actual_vs_perceived(subject_data.day2_dominant_2.ACTUAL,
-                                                           subject_data.day2_dominant_2.PERCEIVED,
-                                                           experiment)
-
-        dom_vs_non_dom_area = d1_dom_area - d1_non_dom_area
-        between_hands_areas.append(dom_vs_non_dom_area)
-
-        dom_d1_vs_d2_area = d1_dom_area - d2_dom_1_area
-        across_days_areas.append(dom_d1_vs_d2_area)
-
-        dom_d2_vs_d2_area = d2_dom_1_area - d2_dom_2_area
-        within_day_areas.append(dom_d2_vs_d2_area)
-
-        y_points = [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
-        y_points_list.append(y_points)
-        plt.plot(x_points_jitter, y_points, mfc='gray', marker='^', alpha=0.6, markersize=3, linestyle='', mec='none')
+        between_hands_areas.append(area_comparison_list[0])
+        across_days_areas.append(area_comparison_list[1])
+        within_day_areas.append(area_comparison_list[2])
 
     area_diff_list = [between_hands_areas, across_days_areas, within_day_areas]
 
-    for x_point, area_list, label in zip(x_points_left, area_diff_list, x_labels):
+    for x_point, area_list, label, descriptor in zip(x_points_left, area_diff_list, x_tick_labels, x_descriptors):
         mean, ci = utils.calculate_mean_ci(area_list)
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
                      markersize=3.5, elinewidth=1)
-        mean_text = f'{mean:4.2f}'
-        ci_lower = f'{mean - ci:4.2f}'
-        ci_upper = f'{mean + ci:4.2f}'
-        results.write(f'{label:20s}: mean area = {mean_text:10s}    ci = [{ci_lower} - {ci_upper}]\n')
+        utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
 
-    plt.ylim([-13, 13])
-    plt.yticks(list(range(-12, 13, 3)), fontfamily='arial', fontsize=8)
+    utils.axes_params(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
+    utils.spine_toggle(ax, left=True, right=False, top=False, bottom=True)
+    plt.grid(which='both', axis='x', linewidth=0.5, color='lightgrey')
 
     plt.text(0.15, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.text(0.41, 0.01, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.text(0.71, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
 
     plt.plot([1, 3], [0, 0], color='black', linewidth=0.5)
-    plt.xlim([1.19, 2.02])
-
-    plt.gca().spines['top'].set_visible(False)
-    plt.gca().spines['right'].set_visible(False)
-    plt.gca().tick_params(axis='x', which='both', bottom=True)
 
     plt.savefig(path, dpi=300, bbox_inches='tight')
     text = colored(path, 'blue')
-    print(f'Group consistency plots saved in {text}\n')
-    results.close()
+    print(f'Area_difference_between_conditions saved in {text}\n')
     plt.close()
 
 
@@ -324,7 +291,7 @@ def r2_area_plots(all_subject_data, subjects, experiment):
 
     plt.figure(figsize=(3.3, 4.3))
     for subject, subject_data in zip(subjects, all_subject_data):
-        data_pair_tuples = utils.create_data_tuples(experiment, subject_data)
+        data_pairs = utils.create_data_tuples(experiment, subject_data)
         y_points_r2 = []
         y_points_area = []
 
@@ -335,9 +302,9 @@ def r2_area_plots(all_subject_data, subjects, experiment):
         else:
             line_color, line_width, order, alpha = 'grey', 0.5, 5, 0.3
 
-        for tuple in data_pair_tuples:
-            y_points_r2.append(utils.calculate_r2(tuple.ACTUAL, tuple.PERCEIVED))
-            y_points_area.append(calculate_area.actual_vs_perceived(tuple.ACTUAL, tuple.PERCEIVED, experiment))
+        for pair in data_pairs:
+            y_points_r2.append(utils.calculate_r2(pair.ACTUAL, pair.PERCEIVED))
+            y_points_area.append(calculate_area.actual_vs_perceived(pair.ACTUAL, pair.PERCEIVED, experiment))
 
         y_point_lists = [y_points_r2, y_points_area]
 

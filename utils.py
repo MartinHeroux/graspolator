@@ -657,3 +657,13 @@ def shade_area(ax, intercept, slope, x_1, x_2):
                     color='lightgrey', alpha=0.5, interpolate=True)
     ax.fill_between(x_colour_points, y_points_reality, y_points_reg, where=(y_points_reality < y_points_reg),
                     color='lightgrey', alpha=0.5, interpolate=True)
+
+
+def plot_comparison_areas(ax, line_number, x_points_base, x_points_right, y_points):
+    jitter_values = [random() / 60 for _ in range(len(x_points_base))]
+    if line_number < 15:
+        x_points_jitter = np.array(x_points_right) + np.array(jitter_values)
+    else:
+        x_points_jitter = np.array(x_points_right) - np.array(jitter_values)
+
+    ax.plot(x_points_jitter, y_points, mfc='gray', marker='^', alpha=0.6, markersize=3, linestyle='', mec='none')

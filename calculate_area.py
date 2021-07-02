@@ -391,3 +391,27 @@ def store_area_means_CIs_per_condition(all_subject_data, experiment):
         ci_list = [line_width_ci, width_line_ci, width_width_ci]
 
     return mean_list, ci_list
+
+
+def return_condition_comparison_areas(subject_data, experiment):
+    d1_dom_area = actual_vs_perceived(subject_data.day1_dominant.ACTUAL,
+                                      subject_data.day1_dominant.PERCEIVED,
+                                      experiment)
+    d1_non_dom_area = actual_vs_perceived(subject_data.day1_non_dominant.ACTUAL,
+                                          subject_data.day1_non_dominant.PERCEIVED,
+                                          experiment)
+    d2_dom_1_area = actual_vs_perceived(subject_data.day2_dominant_1.ACTUAL,
+                                        subject_data.day2_dominant_1.PERCEIVED,
+                                        experiment)
+    d2_dom_2_area = actual_vs_perceived(subject_data.day2_dominant_2.ACTUAL,
+                                        subject_data.day2_dominant_2.PERCEIVED,
+                                        experiment)
+
+    dom_vs_non_dom_area = d1_dom_area - d1_non_dom_area
+
+    dom_d1_vs_d2_area = d1_dom_area - d2_dom_1_area
+
+    dom_d2_vs_d2_area = d2_dom_1_area - d2_dom_2_area
+
+    return [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
+
