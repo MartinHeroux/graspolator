@@ -12,6 +12,33 @@ from matplotlib.ticker import MultipleLocator
 from random import random
 
 
+#######################################
+# PARSING DATA
+#######################################
+
+def read_yaml_corrections_file(fix_yaml):
+    if not fix_yaml.is_file():
+        return
+    with open(fix_yaml) as config_file:
+        return yaml.load(config_file, Loader=yaml.FullLoader)
+
+
+def remove_missing_data(actual_list, perceived_list, subject_ID, name):
+    indices_to_remove = []
+    for trial in perceived_list:
+        if trial == "":
+            indices_to_remove.append(perceived_list.index(trial))
+    indices_to_remove.reverse()
+    for index in indices_to_remove:
+        actual_list.pop(index)
+        perceived_list.pop(index)
+    return actual_list, perceived_list
+
+
+#########################################
+# EQUATIONS
+#########################################
+
 def calculate_regression_general(x, y):
     x = sm.add_constant(x)
     model = sm.OLS(y, x).fit()
@@ -28,13 +55,6 @@ def regression_summary(x, y):
     f_test = model.f_test(np.identity(2))
 
     return t_vals, t_test, f_test
-
-
-def read_yaml_corrections_file(fix_yaml):
-    if not fix_yaml.is_file():
-        return
-    with open(fix_yaml) as config_file:
-        return yaml.load(config_file, Loader=yaml.FullLoader)
 
 
 def calculate_r2(actual, perceived):
@@ -85,6 +105,10 @@ def calculate_ci(data_list):
     ci = std_err * t.ppf((1 + confidence) / 2, n - 1)
     return ci
 
+
+##########################################################
+# OBJECT STORAGE
+##########################################################
 
 def store_condition_r2_means_and_cis(all_subject_data, experiment):
     r2_lists = store_r2_lists(all_subject_data, experiment)
@@ -144,100 +168,12 @@ def _store_r2_tuples_exp2(all_subject_data):
     return r2_tuples
 
 
-def create_general_constants():
-    general_constants = namedtuple('constants', 'CONDITION_NAMES_EXP1 CONDITION_NAMES_EXP2 CONDITION_PAIRS SUBJECT_IDS')
-    return general_constants(CONDITION_NAMES_EXP1=['D1 dominant',
-                                                   'D1 non-dominant',
-                                                   'D2 dominant 1',
-                                                   'D2 dominant 2'],
-                             CONDITION_NAMES_EXP2=['Line to width', 'Width to line', 'Width to width'],
-                             CONDITION_PAIRS=['between_hands',
-                                              'between_days',
-                                              'within_day'],
-                             SUBJECT_IDS=["SUB01L",
-                                          "SUB01R",
-                                          "SUB02L",
-                                          "SUB02R",
-                                          "SUB03L",
-                                          "SUB03R",
-                                          "SUB04R",
-                                          "SUB05R",
-                                          "SUB06R",
-                                          "SUB07R",
-                                          "SUB08R",
-                                          "SUB09R",
-                                          "SUB10R",
-                                          "SUB11R",
-                                          "SUB12R",
-                                          "SUB13R",
-                                          "SUB14R",
-                                          "SUB16R",
-                                          "SUB17R",
-                                          "SUB18R",
-                                          "SUB19R",
-                                          "SUB20R",
-                                          "SUB21R",
-                                          "SUB22R",
-                                          "SUB23R",
-                                          "SUB24R",
-                                          "SUB25R",
-                                          "SUB26R",
-                                          "SUB27R",
-                                          "SUB28R"])
-
-
-def get_directory_list(directory):
-    directories = []
-    for root, dirs, files in os.walk(directory):
-        for directory in dirs:
-            directories.append(directory)
-    return directories
-
-
 def create_data_tuples(experiment, subject_data):
     if experiment == 'exp1':
         plot_inputs = store_index_condition_data_tuple(subject_data)
     else:
         plot_inputs = condition_plot_inputs(subject_data)
     return plot_inputs
-
-
-def create_figure_save_path(plot):
-    path = Path(f'./plots/article_plots/')
-    if not os.path.exists(path):
-        os.makedirs(path)
-    savepath = Path(f'./plots/article_plots/{plot}.png')
-    return savepath
-
-
-def x_points_group_plot(experiment):
-    if experiment == 'exp1':
-        x_points = [1, 2, 3, 4]
-        x_lims = (0.8, 4.2)
-    else:
-        x_points = [1, 2, 3]
-        x_lims = (0.8, 3.2)
-    return x_points, x_lims
-
-
-def x_tick_labels_group_plot(experiment):
-    if experiment == 'exp1':
-        x_ticks = ['Dominant', 'Non-dominant', 'Dominant', 'Dominant']
-    else:
-        x_ticks = ['Line-to-width', 'Width-to-line', 'Width-to-width']
-    return x_ticks
-
-
-def remove_missing_data(actual_list, perceived_list, subject_ID, name):
-    indices_to_remove = []
-    for trial in perceived_list:
-        if trial == "":
-            indices_to_remove.append(perceived_list.index(trial))
-    indices_to_remove.reverse()
-    for index in indices_to_remove:
-        actual_list.pop(index)
-        perceived_list.pop(index)
-    return actual_list, perceived_list
 
 
 def condition_plot_inputs(subject_data):
@@ -249,24 +185,6 @@ def condition_plot_inputs(subject_data):
     width_width_inputs = plot_inputs(NAME='Present Width Pick Width', ACTUAL=subject_data.WIDTH_WIDTH.ACTUAL,
                                      PERCEIVED=subject_data.WIDTH_WIDTH.PERCEIVED, PLOT_INDEX=3)
     tuples = line_width_inputs, width_line_inputs, width_width_inputs
-    return tuples
-
-
-def store_index_condition_data_tuple(subject_data):
-    index_name_data = namedtuple('index_name_data', 'PLOT_INDEX DATA_INDEX NAME ACTUAL PERCEIVED')
-    d1_dom_tuple = index_name_data(PLOT_INDEX=1, DATA_INDEX=0, NAME='d1_dominant',
-                                   ACTUAL=subject_data.day1_dominant.ACTUAL,
-                                   PERCEIVED=subject_data.day1_dominant.PERCEIVED)
-    d1_non_dom_tuple = index_name_data(PLOT_INDEX=2, DATA_INDEX=1, NAME='d2_non_dominant',
-                                       ACTUAL=subject_data.day1_non_dominant.ACTUAL,
-                                       PERCEIVED=subject_data.day1_non_dominant.PERCEIVED)
-    d2_dom_1_tuple = index_name_data(PLOT_INDEX=3, DATA_INDEX=2, NAME='d2_dominant_1',
-                                     ACTUAL=subject_data.day2_dominant_1.ACTUAL,
-                                     PERCEIVED=subject_data.day2_dominant_1.PERCEIVED)
-    d2_dom_2_tuple = index_name_data(PLOT_INDEX=4, DATA_INDEX=3, NAME='d2_dominant_2',
-                                     ACTUAL=subject_data.day2_dominant_2.ACTUAL,
-                                     PERCEIVED=subject_data.day2_dominant_2.PERCEIVED)
-    tuples = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
     return tuples
 
 
@@ -313,6 +231,88 @@ def extract_condition_data(subject_data, experiment):
     return condition_data_list
 
 
+def store_index_condition_data_tuple(subject_data):
+    index_name_data = namedtuple('index_name_data', 'PLOT_INDEX DATA_INDEX NAME ACTUAL PERCEIVED')
+    d1_dom_tuple = index_name_data(PLOT_INDEX=1, DATA_INDEX=0, NAME='d1_dominant',
+                                   ACTUAL=subject_data.day1_dominant.ACTUAL,
+                                   PERCEIVED=subject_data.day1_dominant.PERCEIVED)
+    d1_non_dom_tuple = index_name_data(PLOT_INDEX=2, DATA_INDEX=1, NAME='d2_non_dominant',
+                                       ACTUAL=subject_data.day1_non_dominant.ACTUAL,
+                                       PERCEIVED=subject_data.day1_non_dominant.PERCEIVED)
+    d2_dom_1_tuple = index_name_data(PLOT_INDEX=3, DATA_INDEX=2, NAME='d2_dominant_1',
+                                     ACTUAL=subject_data.day2_dominant_1.ACTUAL,
+                                     PERCEIVED=subject_data.day2_dominant_1.PERCEIVED)
+    d2_dom_2_tuple = index_name_data(PLOT_INDEX=4, DATA_INDEX=3, NAME='d2_dominant_2',
+                                     ACTUAL=subject_data.day2_dominant_2.ACTUAL,
+                                     PERCEIVED=subject_data.day2_dominant_2.PERCEIVED)
+    tuples = d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple
+    return tuples
+
+
+#########################################################
+# CONSTANTS
+#########################################################
+
+def create_general_constants():
+    general_constants = namedtuple('constants', 'CONDITION_NAMES_EXP1 CONDITION_NAMES_EXP2 CONDITION_PAIRS SUBJECT_IDS')
+    return general_constants(CONDITION_NAMES_EXP1=['D1 dominant',
+                                                   'D1 non-dominant',
+                                                   'D2 dominant 1',
+                                                   'D2 dominant 2'],
+                             CONDITION_NAMES_EXP2=['Line to width', 'Width to line', 'Width to width'],
+                             CONDITION_PAIRS=['between_hands',
+                                              'between_days',
+                                              'within_day'],
+                             SUBJECT_IDS=["SUB01L",
+                                          "SUB01R",
+                                          "SUB02L",
+                                          "SUB02R",
+                                          "SUB03L",
+                                          "SUB03R",
+                                          "SUB04R",
+                                          "SUB05R",
+                                          "SUB06R",
+                                          "SUB07R",
+                                          "SUB08R",
+                                          "SUB09R",
+                                          "SUB10R",
+                                          "SUB11R",
+                                          "SUB12R",
+                                          "SUB13R",
+                                          "SUB14R",
+                                          "SUB16R",
+                                          "SUB17R",
+                                          "SUB18R",
+                                          "SUB19R",
+                                          "SUB20R",
+                                          "SUB21R",
+                                          "SUB22R",
+                                          "SUB23R",
+                                          "SUB24R",
+                                          "SUB25R",
+                                          "SUB26R",
+                                          "SUB27R",
+                                          "SUB28R"])
+
+
+def x_points_group_plot(experiment):
+    if experiment == 'exp1':
+        x_points = [1, 2, 3, 4]
+        x_lims = (0.8, 4.2)
+    else:
+        x_points = [1, 2, 3]
+        x_lims = (0.8, 3.2)
+    return x_points, x_lims
+
+
+def x_tick_labels_group_plot(experiment):
+    if experiment == 'exp1':
+        x_ticks = ['Dominant', 'Non-dominant', 'Dominant', 'Dominant']
+    else:
+        x_ticks = ['Line-to-width', 'Width-to-line', 'Width-to-width']
+    return x_ticks
+
+
 def r2_area_constants():
     constants = namedtuple('constants', 'y_labels y_ticks y_lims subplot_indices r2_mean r2_ci_lower r2_ci_upper '
                                         'area_mean area_ci_lower area_ci_upper exp_1_colors exp_2_colors '
@@ -331,6 +331,30 @@ def r2_area_constants():
     return r2_area_constants
 
 
+####################################################################
+# PATHS AND DIRECTORIES
+####################################################################
+
+def create_figure_save_path(plot):
+    path = Path(f'./plots/article_plots/')
+    if not os.path.exists(path):
+        os.makedirs(path)
+    savepath = Path(f'./plots/article_plots/{plot}.png')
+    return savepath
+
+
+def get_directory_list(directory):
+    directories = []
+    for root, dirs, files in os.walk(directory):
+        for directory in dirs:
+            directories.append(directory)
+    return directories
+
+
+##################################################################
+# PLOT APPEARANCE
+##################################################################
+
 def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims, y_lims, x_label, y_label):
     ax.set_xticks(x_ticks)
     ax.set_xticklabels(x_tick_labels, fontsize=8, fontfamily='arial')
@@ -343,27 +367,6 @@ def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims
     ax.grid(axis='both', linewidth=0.5, color='lightgrey')
 
 
-def write_plot_header(experiment, figure, plot):
-    results = open(f'results_{experiment}.txt', 'a')
-    results.write('\n')
-    results.write('#####' * 20)
-    results.write(f'\n\n{figure}: {plot}\n')
-    results.close()
-
-
-def write_regression_results(experiment, x, y, intercept, slope, condition_name):
-    results = open(f'results_{experiment}.txt', 'a')
-    t_vals, t_test, f_test = regression_summary(x, y)
-    r, ci = pearson_r_ci(x, y)
-    pearson, ols = 'Pearsons', 'OLS'
-    intercept_text, slope_text = f'{intercept:4.2f}', f'{slope:4.2f}'
-    condition_name = condition_name
-    results.write(
-        f'\n{condition_name:20s}:\n{pearson:20s}: r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}')
-    results.write(f'\n\nOLS Model Summary\n t values:{t_vals}\n t_test\n: {t_test}\n f_test\n: {f_test} \n')
-    results.close()
-
-
 def draw_ax_spines(ax, left, right, top, bottom):
     commands = [left, right, top, bottom]
     spines = ['left', 'right', 'top', 'bottom']
@@ -373,15 +376,6 @@ def draw_ax_spines(ax, left, right, top, bottom):
             ax.spines[spine].set_visible(True)
         else:
             ax.spines[spine].set_visible(False)
-
-
-def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
-    results = open(f'results_{experiment}.txt', 'a')
-    mean_text = f'{mean:4.2f}'
-    ci_lower = f'{mean - ci:4.2f}'
-    ci_upper = f'{mean + ci:4.2f}'
-    results.write(f'{x_label:20s}: {y_label:27s}mean = {mean_text:10s}     ci = [{ci_lower} - {ci_upper}]\n')
-    results.close()
 
 
 def add_plot_text(ax, subplot, experiment):
@@ -416,17 +410,6 @@ def add_plot_shading(ax, subplot, experiment, r2_ci_lower, r2_ci_upper, area_ci_
                                         color='lightgray',
                                         fill=True,
                                         alpha=0.7))
-
-
-def write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area):
-    results = open(f'results_{experiment}.txt', 'a')
-    intercept_text = f'{intercept:4.2f}'
-    slope_text = f'{slope:4.2f}'
-    area_text = f'{area:4.2f}'
-    results.write(f'{example_subject}\n')
-    results.write(
-        f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}\n')
-    results.close()
 
 
 def plot_data_scatter(ax, actual, perceived, color):
@@ -469,3 +452,54 @@ def plot_comparison_areas(ax, line_number, x_points_base, x_points_right, y_poin
         x_points_jitter = np.array(x_points_right) - np.array(jitter_values)
 
     ax.plot(x_points_jitter, y_points, mfc='gray', marker='^', alpha=0.6, markersize=3, linestyle='', mec='none')
+
+
+#########################################################################
+# RESULT WRITING
+##########################################################################
+
+def write_plot_header(experiment, figure, plot):
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write('\n')
+    results.write('#####' * 20)
+    results.write(f'\n\n{figure}: {plot}\n')
+    results.close()
+
+
+def write_regression_results(experiment, x, y, intercept, slope, condition_name):
+    results = open(f'results_{experiment}.txt', 'a')
+    t_vals, t_test, f_test = regression_summary(x, y)
+    r, ci = pearson_r_ci(x, y)
+    pearson, ols = 'Pearsons', 'OLS'
+    intercept_text, slope_text = f'{intercept:4.2f}', f'{slope:4.2f}'
+    condition_name = condition_name
+    results.write(
+        f'\n****{condition_name:^20s}****\n{pearson:20s}: r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}')
+    results.write(f'\n\nOLS Model Summary\n t values:{t_vals}\n t_test\n: {t_test}\n f_test\n: {f_test} \n')
+    results.close()
+
+
+def write_example_subject_name(experiment, example_subject):
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write(f'{example_subject}\n')
+    results.close()
+
+
+def write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area):
+    results = open(f'results_{experiment}.txt', 'a')
+    intercept_text = f'{intercept:4.2f}'
+    slope_text = f'{slope:4.2f}'
+    area_text = f'{area:4.2f}'
+
+    results.write(
+        f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}\n')
+    results.close()
+
+
+def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
+    results = open(f'results_{experiment}.txt', 'a')
+    mean_text = f'{mean:4.2f}'
+    ci_lower = f'{mean - ci:4.2f}'
+    ci_upper = f'{mean + ci:4.2f}'
+    results.write(f'{x_label:20s}: {y_label:27s}mean = {mean_text:10s}     ci = [{ci_lower} - {ci_upper}]\n')
+    results.close()

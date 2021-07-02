@@ -46,7 +46,7 @@ def figure_1_and_5(all_subject_data, subjects, experiment):
 
     # set up experiment specific parameters
     if experiment == 'exp1':
-        condition_names = ['dominant', 'non-dominant', 'dominant', 'dominant']
+        condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
         x_lims = [1, 11]
         x_data_lims = [2, 10]
         subplot_left_col = [1, 4, 7, 10]
@@ -74,7 +74,7 @@ def figure_1_and_5(all_subject_data, subjects, experiment):
     for column, (example_subject_data, color, plot_indices, example_subject) in enumerate(zip(data_list, colors,
                                                                                               plot_indices_list,
                                                                                               example_subjects), start=1):
-
+        utils.write_example_subject_name(experiment, example_subject)
         # plot each condition data
         for condition_data, condition_plot_index, condition_name in zip(example_subject_data, plot_indices, condition_names):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
@@ -92,7 +92,6 @@ def figure_1_and_5(all_subject_data, subjects, experiment):
             utils.plot_data_scatter(ax, condition_data.ACTUAL, condition_data.PERCEIVED, color)
             utils.plot_regression_line(ax, intercept, slope, color, x_data_lims[0], x_data_lims[1])
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
-
             utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
 
             legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f}cm$^2$')]
@@ -266,6 +265,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         text_y_plot_1 = 25
         text_y_plot_2 = 1
         y_lims = [(0.7, 1), (0, 26)]
+        condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
     else:
         colors = params.exp_2_colors
         example_subjects = params.exp_2_subjects
@@ -273,6 +273,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         text_y_plot_1 = 20
         text_y_plot_2 = 1
         y_lims = [(0.6, 1), (0, 20)]
+        condition_names = ['Line-to-width', 'Width-to-line', 'Width-to-width']
 
     r2_means, r2_cis = utils.store_condition_r2_means_and_cis(all_subject_data, experiment)
     area_means, area_cis = calculate_area.store_condition_area_means_and_cis(all_subject_data, experiment)
@@ -323,7 +324,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     for mean_list, ci_list, subplot, y_label in zip(means_lists, ci_lists, params.subplot_indices, results_headers):
         plt.subplot(2, 1, subplot)
         plt.grid(axis='y', linewidth=0.5, color='lightgrey')
-        for mean, ci, x_point, x_label in zip(mean_list, ci_list, x_points, x_labels):
+        for mean, ci, x_point, x_label in zip(mean_list, ci_list, x_points, condition_names):
             plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='black', mec='black',
                          markersize=3, linewidth=1, zorder=11)
             utils.write_mean_ci_result(experiment, mean, ci, y_label, x_label)
