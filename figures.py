@@ -198,7 +198,7 @@ def figure_7(all_subject_data, experiment):
     x_ticks = [1.3, 1.6, 1.9]
     x_points_left = [1.27, 1.57, 1.87]
     x_points_right = [1.33, 1.63, 1.93]
-    x_tick_labels = ['Across hands', 'Within hands', 'Within hands']
+    x_tick_labels = ['Across hands', 'Within hand', 'Within hand']
     x_descriptors = ['Same day', '1 week apart', 'Same day']
     x_lim = [1.19, 2.02]
     y_lim = [-13, 13]
@@ -386,7 +386,7 @@ def figure_3(all_subject_data, experiment):
             ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
             ax.spines['bottom'].set_visible(True)
 
-        # label subplot letter (A, B, C, +-/ D)
+        # label subplot letter (A, B, C, +/- D)
         plt.text(22, 1, text, fontsize = 12, fontfamily = 'arial')
 
         utils.write_regression_results(experiment, condition_area_data, condition_r2_data, intercept, slope, condition_name)
