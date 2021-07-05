@@ -428,6 +428,7 @@ def figure_4(all_subject_data, experiment):
 
     intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
 
+    # print and plot results without outlier
     for slope_1, slope_2 in zip(slopes_line_width, slopes_width_line):
         if slope_2 > 1.7:
             plt.plot(slope_1, slope_2, marker='o', color='white', markeredgecolor='gray', markersize=2, markeredgewidth=0.5)
