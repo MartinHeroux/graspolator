@@ -428,7 +428,18 @@ def figure_4(all_subject_data, experiment):
 
     intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
 
+    for slope_1, slope_2 in zip(slopes_line_width, slopes_width_line):
+        if slope_2 > 1.7:
+            plt.plot(slope_1, slope_2, marker='o', color='white', markeredgecolor='gray', markersize=2, markeredgewidth=0.5)
+            index = slopes_width_line.index(slope_2)
+            slope_line_width_2 = slopes_line_width
+            slope_width_line_2 = slopes_width_line
+            slope_line_width_2.pop(index)
+            slope_width_line_2.pop(index)
+            intercept_2, slope_2 = utils.calculate_regression_general(slope_line_width_2, slope_width_line_2)
+
     utils.write_regression_results(experiment, slopes_line_width, slopes_width_line, intercept, slope, condition_name)
+    utils.write_regression_results(experiment, slope_line_width_2, slope_width_line_2, intercept_2, slope_2, 'Outlier removed')
 
     x_vals = np.array([min(slopes_line_width) - 0.25, max(slopes_line_width) + 0.25])
     y_vals = intercept + slope * x_vals
