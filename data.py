@@ -1,11 +1,22 @@
 from typing import NamedTuple
 from collections import namedtuple
 from pathlib import Path
+import numpy as np
 
 import utils
 from utils import get_directory_list, create_general_constants
 
 general_constants = create_general_constants()
+
+def write_participant_demographics(experiment, data_folder):
+    age_mean, age_sd, number_females, right_handed = _get_participant_demographics(experiment, data_folder)
+
+    results = open(f'results_{experiment}.txt', 'a')
+    age = 'Age mean:'
+    fem = 'N females:'
+    right = 'R handed:'
+    results.write(f'{age:10s} {age_mean:3.1f} (SD: {age_sd:3.1f})\n{fem:10s} {number_females:10s}\n{right:10s} {right_handed:5s}\n\n')
+    results.close()
 
 
 def get_data_and_subjects(experiment, data_folder):
@@ -22,6 +33,73 @@ def get_data_and_subjects(experiment, data_folder):
         print('no experiment name defined')
 
     return all_subject_data, subjects
+
+
+###########################################
+# DEMOGRAPHICS
+###########################################
+
+def _get_participant_demographics(experiment, data_folder):
+    subjects = utils.get_directory_list(Path(f'./data/{experiment}'))
+
+    if experiment == 'exp1':
+        _remove_old_names(subjects)
+
+    ages, genders, handednessi = [], [], []
+
+    for subject in subjects:
+        subject_folder = data_folder / subject
+        demographic_txt = _read_dem_data(subject_folder)
+        age, gender, handedness = _extract_age_gender_handedness(experiment, demographic_txt)
+        ages.append(int(age))
+        genders.append(gender)
+        handednessi.append(handedness)
+
+    age_mean, age_sd = np.mean(ages), np.std(ages)
+    if experiment == 'exp1':
+        number_females = genders.count('F')
+        right_handed = handednessi.count('R')
+    else:
+        number_females = genders.count('f')
+        right_handed = handednessi.count('r')
+
+    return age_mean, age_sd, str(number_females), str(right_handed)
+
+
+def _read_dem_data(subject_folder):
+    path_to_data_file = subject_folder / (subject_folder.name + ".txt")
+    with open(path_to_data_file) as file:
+        current_subject_data = file.readlines()
+    return current_subject_data
+
+
+def _remove_old_names(subjects):
+    if len(subjects) == 32:
+        subjects.pop(-1)
+        subjects.pop(-1)
+
+    if len(subjects) != 30:
+        print("Error in popping 'old' directories")
+        exit
+    else:
+        print(f'List is now {len(subjects)}')
+
+
+def _extract_age_gender_handedness(experiment, demographic_txt):
+    if experiment == 'exp1':
+        age = demographic_txt[0].split(':')[1].strip()
+        gender = demographic_txt[1].split(':')[1].strip()
+        handedness = demographic_txt[2].split(':')[1].strip()
+
+        #widest_object_visual = demographic_txt[3].splilt(':')[1]
+        #widest_object_grasp = demographic_txt[4].splilt(':')[1]
+
+    if experiment == 'exp2':
+        age = demographic_txt[1].split(':')[1].strip()
+        gender = demographic_txt[2].split(':')[1].strip()
+        handedness = demographic_txt[3].split(':')[1].strip()
+
+    return age, gender, handedness
 
 
 ############################################
@@ -60,7 +138,7 @@ def _fix_data(current_subject_data, subject_folder, subject):
                     index.append(i)
             index.reverse()
             results = open('results_exp1.txt', 'a')
-            results.write(f'{str(len(index)):5s} saturated data points removed for {subject}\n')
+            results.write(f'{str(len(index)):5s} saturated data point(s) removed for {subject}\n')
             results.close()
             for index in index:
                 current_subject_data.pop(index)
@@ -71,7 +149,7 @@ def _fix_data(current_subject_data, subject_folder, subject):
             current_subject_data.pop(deletion_target - 1)
             results = open('results_exp1.txt', 'a')
             txt = '1'
-            results.write(f'{txt:5s} outlier   data point removed for {subject}\n')
+            results.write(f'{txt:5s} outlier   data point(s) removed for {subject}\n')
             results.close()
         return current_subject_data
 

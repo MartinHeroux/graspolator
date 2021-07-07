@@ -31,7 +31,7 @@ def remove_missing_data(actual_list, perceived_list, subject_ID, name):
     indices_to_remove.reverse()
     if len(indices_to_remove) > 0:
         results = open('results_exp2.txt', 'a')
-        results.write(f'{str(len(indices_to_remove)):5s} saturated data points removed for {subject_ID}\n')
+        results.write(f'{str(len(indices_to_remove)):5s} saturated data point(s) removed for {subject_ID}\n')
         results.close()
     for index in indices_to_remove:
         actual_list.pop(index)
