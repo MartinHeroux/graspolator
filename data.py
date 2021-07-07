@@ -59,6 +59,9 @@ def _fix_data(current_subject_data, subject_folder, subject):
                 if (line.split(":")[0].split("_")[0] == "MEASURE") and (line.split(":")[1].strip() == '999'):
                     index.append(i)
             index.reverse()
+            results = open('results_exp1.txt', 'a')
+            results.write(f'{str(len(index)):5s} saturated data points removed for {subject}\n')
+            results.close()
             for index in index:
                 current_subject_data.pop(index)
                 current_subject_data.pop(index - 1)
@@ -66,6 +69,10 @@ def _fix_data(current_subject_data, subject_folder, subject):
         else:
             current_subject_data.pop(deletion_target)
             current_subject_data.pop(deletion_target - 1)
+            results = open('results_exp1.txt', 'a')
+            txt = '1'
+            results.write(f'{txt:5s} outlier   data point removed for {subject}\n')
+            results.close()
         return current_subject_data
 
 
