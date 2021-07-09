@@ -8,6 +8,7 @@ from utils import get_directory_list, create_general_constants
 
 general_constants = create_general_constants()
 
+
 def write_participant_demographics(experiment, data_folder):
     age_mean, age_sd, number_females, right_handed = _get_participant_demographics(experiment, data_folder)
 

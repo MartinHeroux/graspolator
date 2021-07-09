@@ -58,6 +58,8 @@ def regression_summary(x, y):
     t_test = model.t_test([1, 0])
     f_test = model.f_test(np.identity(2))
 
+    print(model.summary())
+
     return t_vals, t_test, f_test
 
 

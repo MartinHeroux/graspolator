@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 from termcolor import colored
+from pathlib import Path
 
 import utils
 import calculate_area
@@ -9,28 +10,28 @@ import calculate_area
 
 def generate(all_subject_data, subjects, experiment):
 
-    figure_1_and_5(all_subject_data, subjects, experiment)
     figure_2_and_6(all_subject_data, subjects, experiment)
+    figure_3_and_7(all_subject_data, subjects, experiment)
 
     if experiment == 'exp2':
-        figure_3(all_subject_data, experiment)
         figure_4(all_subject_data, experiment)
+        figure_5(all_subject_data, experiment)
 
     if experiment == 'exp1':
-        figure_7(all_subject_data, experiment)
+        figure_8(all_subject_data, experiment)
 
 
-def figure_1_and_5(all_subject_data, subjects, experiment):
+def figure_2_and_6(all_subject_data, subjects, experiment):
     plot = 'Example participants and group regression summary'
     
     if experiment == 'exp1':
-        figure = 'Figure 5'
+        figure = 'Figure 6'
         subject_1_ID = 'SUB03L'
         subject_2_ID = 'SUB11R'
         data_list = utils.store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID)
 
     else:
-        figure = 'Figure 1'
+        figure = 'Figure 2'
         subject_1_ID = 'sub02'
         subject_2_ID = 'sub29'
         data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
@@ -180,17 +181,17 @@ def figure_1_and_5(all_subject_data, subjects, experiment):
 
     plt.tight_layout(h_pad=0.4, w_pad=0.9)
     plt.savefig(path, dpi=300)
-    #path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
-    #plt.savefig(path_svg)
-    #print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
+    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    plt.savefig(path_svg)
+    print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
     text = colored(path, 'blue')
     print(f'{experiment} example subjects and group regressions saved in in {text}\n')
     plt.close()
 
 
-def figure_7(all_subject_data, experiment):
+def figure_8(all_subject_data, experiment):
     plot = 'Area difference between conditions'
-    figure = 'Figure_7'
+    figure = 'Figure_8'
     path = utils.create_figure_save_path(figure)
 
     utils.write_plot_header(experiment, figure, plot)
@@ -242,12 +243,12 @@ def figure_7(all_subject_data, experiment):
     plt.close()
 
 
-def figure_2_and_6(all_subject_data, subjects, experiment):
+def figure_3_and_7(all_subject_data, subjects, experiment):
     plot = 'Area and R^2 Group Summary'
     if experiment == 'exp1':
-        figure = 'Figure_6'
+        figure = 'Figure_7'
     else:
-        figure = 'Figure_2'
+        figure = 'Figure_3'
     path = utils.create_figure_save_path(figure)
 
     utils.write_plot_header(experiment, figure, plot)
@@ -340,8 +341,8 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     plt.close()
 
 
-def figure_3(all_subject_data, experiment):
-    figure = 'Figure_3'
+def figure_4(all_subject_data, experiment):
+    figure = 'Figure_4'
     plot = 'Area vs R^2 Regression'
     path = utils.create_figure_save_path(figure)
 
@@ -400,8 +401,8 @@ def figure_3(all_subject_data, experiment):
     plt.close()
 
 
-def figure_4(all_subject_data, experiment):
-    figure = 'Figure_4'
+def figure_5(all_subject_data, experiment):
+    figure = 'Figure_5'
     plot = 'Slope regression: Line-to-width vs. width-to-line'
     path = utils.create_figure_save_path(figure)
     condition_name = 'line-to-width vs width-to-line'
