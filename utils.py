@@ -304,10 +304,10 @@ def create_general_constants():
 def x_points_group_plot(experiment):
     if experiment == 'exp1':
         x_points = [1, 2, 3, 4]
-        x_lims = (0.8, 4.2)
+        x_lims = (0.95, 4.05)
     else:
         x_points = [1, 2, 3]
-        x_lims = (0.8, 3.2)
+        x_lims = (0.95, 3.05)
     return x_points, x_lims
 
 
@@ -324,7 +324,7 @@ def r2_area_constants():
                                         'area_mean area_ci_lower area_ci_upper exp_1_colors exp_2_colors '
                                         'exp_1_subjects exp_2_subjects font')
 
-    r2_area_constants = constants(y_labels=['R$^2$', 'Area (cm$^2$)'],
+    r2_area_constants = constants(y_labels=['R$^2$', 'Error (cm$^2$)'],
                                   y_ticks=[[0.6, 0.7, 0.8, 0.9, 1], [0, 5, 10, 15, 20, 25]],
                                   y_lims=[[0.6, 1.01], [0, 25]], subplot_indices=[2, 1], r2_mean=0.946,
                                   r2_ci_lower=0.9306, r2_ci_upper=0.9613,
@@ -373,7 +373,7 @@ def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims
     ax.grid(axis='both', linewidth=0.5, color='lightgrey')
 
 
-def draw_ax_spines(ax, left, right, top, bottom):
+def draw_ax_spines(ax, left, right, top, bottom, y_offset = False):
     commands = [left, right, top, bottom]
     spines = ['left', 'right', 'top', 'bottom']
 
@@ -382,6 +382,9 @@ def draw_ax_spines(ax, left, right, top, bottom):
             ax.spines[spine].set_visible(True)
         else:
             ax.spines[spine].set_visible(False)
+
+    if y_offset == True:
+        ax.spines['left'].set_position(('outward', 3))
 
 
 def add_plot_text(ax, subplot, experiment):
@@ -404,18 +407,18 @@ def add_plot_shading(ax, subplot, experiment, r2_ci_lower, r2_ci_upper, area_ci_
                                         width=3,
                                         height=(r2_ci_upper - r2_ci_lower),
                                         linewidth=0,
-                                        color='lightgray',
+                                        color='gray',
                                         fill=True,
-                                        alpha=0.7))
+                                        alpha=0.5))
 
     if experiment == 'exp1' and subplot == 1:
         ax.add_patch(mpatches.Rectangle(xy=(1, area_ci_lower),  # point of origin.
                                         width=3,
                                         height=(area_ci_upper - area_ci_lower),
                                         linewidth=0,
-                                        color='lightgray',
+                                        color='gray',
                                         fill=True,
-                                        alpha=0.7))
+                                        alpha=0.5))
 
 
 def plot_data_scatter(ax, actual, perceived, color):
@@ -451,13 +454,14 @@ def shade_area(ax, intercept, slope, x_1, x_2):
 
 
 def plot_comparison_areas(ax, line_number, x_points_base, x_points_right, y_points):
-    jitter_values = [random() / 60 for _ in range(len(x_points_base))]
+    jitter_values = [random() / 150 for _ in range(len(x_points_base))]
     if line_number < 15:
         x_points_jitter = np.array(x_points_right) + np.array(jitter_values)
     else:
         x_points_jitter = np.array(x_points_right) - np.array(jitter_values)
 
     ax.plot(x_points_jitter, y_points, mfc='gray', marker='^', alpha=0.6, markersize=3, linestyle='', mec='none')
+
 
 
 #########################################################################

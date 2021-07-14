@@ -128,7 +128,6 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 if condition_plot_index == 11:
                     plt.xlabel('Stimulus width (cm)', fontsize=8, fontfamily='arial')
 
-
     # plot group regression lines in the right subplot column
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
@@ -202,15 +201,15 @@ def figure_8(all_subject_data, experiment):
 
     utils.write_plot_header(experiment, figure, plot)
 
-    x_ticks = [1.3, 1.6, 1.9]
-    x_points_left = [1.27, 1.57, 1.87]
-    x_points_right = [1.33, 1.63, 1.93]
+    x_ticks = [1.3, 1.45, 1.6]
+    x_points_left = [1.29, 1.44, 1.59]
+    x_points_right = [1.31, 1.46, 1.61]
     x_tick_labels = ['Across hands', 'Within hand', 'Within hand']
     x_descriptors = ['Same day', '1 week apart', 'Same day']
-    x_lim = [1.19, 2.02]
-    y_lim = [-13, 13]
-    y_ticks = list(range(-12, 13, 3))
-    y_label = 'Area difference (cm$^2$)'
+    x_lim = [1.285, 1.6199]
+    y_lim = [-14, 12]
+    y_ticks = list(range(-14, 13, 2))
+    y_label = 'Difference in error (cm$^2$)'
 
     between_hands_areas, across_days_areas, within_day_areas = [], [], []
 
@@ -230,19 +229,19 @@ def figure_8(all_subject_data, experiment):
     for x_point, area_list, label, descriptor in zip(x_points_left, area_diff_list, x_tick_labels, x_descriptors):
         mean, ci = utils.calculate_mean_ci(area_list)
         plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
-                     markersize=3.5, elinewidth=1)
+                     markersize=3.5, elinewidth=1, zorder=10)
         utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
 
-    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
-    utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True)
-    plt.grid(which='both', axis='x', linewidth=0.5, color='lightgrey') # turn grid off for x axis
-
-    plt.text(0.15, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.08, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.text(0.41, 0.01, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.71, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.77, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.grid(False)
 
-    plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5)
+    plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5, zorder=5)
+
+    utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, y_offset=True)
+    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
+    plt.grid(False)  # turn grid off for x axis
 
     plt.savefig(path, dpi=300, bbox_inches='tight')
     text = colored(path, 'blue')
@@ -263,25 +262,21 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     x_points, x_lims = utils.x_points_group_plot(experiment)
     x_labels = utils.x_tick_labels_group_plot(experiment)
     plot_text = ['B', 'A']
-    results_headers = ['R^2', 'Area (cm2)']
+    results_headers = ['R^2', 'Error (cm2)']
     params = utils.r2_area_constants()
 
     if experiment == 'exp1':
         colors = params.exp_1_colors
         example_subjects = params.exp_1_subjects
-        text_x = 4.3
-        text_y_plot_1 = 25
-        text_y_plot_2 = 1
-        y_lims = [(0.7, 1), (0, 26)]
+        y_lims = [(0.7, 1), (0, 25)]
         condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
+        x_ticks = [0.95, 2, 3, 4.05]
     else:
         colors = params.exp_2_colors
         example_subjects = params.exp_2_subjects
-        text_x = 3.3
-        text_y_plot_1 = 20
-        text_y_plot_2 = 1
         y_lims = [(0.6, 1), (0, 20)]
         condition_names = ['Line-to-width', 'Width-to-line', 'Width-to-width']
+        x_ticks = [0.95, 2, 3.05]
 
     r2_means, r2_cis = utils.store_condition_r2_means_and_cis(all_subject_data, experiment)
     area_means, area_cis = calculate_area.store_condition_area_means_and_cis(all_subject_data, experiment)
@@ -311,27 +306,26 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                                                                    params.y_ticks, y_lims, plot_text):
             plt.subplot(2, 1, subplot)
             plt.plot(x_points, y_points, color=line_color, alpha=alpha, linewidth=line_width, zorder=order)
-
             ax = plt.gca()
-            utils.set_ax_parameters(ax, x_points, y_tick, x_labels, y_tick, x_lims, y_lim, None, y_label)
+            if subplot == 1:
+                #plt.text(text_x, text_y_plot_1, text, fontsize=11, fontfamily='arial')
+                ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
+                               labelbottom=False, labeltop=False, labelleft=True, labelright=False)
+                utils.draw_ax_spines(ax, True, False, False, False, y_offset=True)
+                plt.gcf().text(0.00001, 0.9, text, fontsize=12, fontfamily='arial')
+            else:
+                #plt.text(text_x, text_y_plot_2, text, fontsize=11, fontfamily='arial')
+                ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
+                utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, y_offset=True)
+                plt.gcf().text(0.00001, 0.45, text, fontsize=12, fontfamily='arial')
+
+            utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, y_label)
 
             if experiment == 'exp1' and subplot == 2:
                 plt.ylim(0.75, 1)
 
-            if subplot == 1:
-                plt.text(text_x, text_y_plot_1, text, fontsize=11, fontfamily='arial')
-                ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
-                               labelbottom=False, labeltop=False, labelleft=True, labelright=False)
-                utils.draw_ax_spines(ax, True, False, False, False)
-            else:
-                plt.text(text_x, text_y_plot_2, text, fontsize=11, fontfamily='arial')
-                ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
-                utils.draw_ax_spines(ax, True, False, False, True)
-
-
     for mean_list, ci_list, subplot, y_label in zip(means_lists, ci_lists, params.subplot_indices, results_headers):
         plt.subplot(2, 1, subplot)
-        plt.grid(axis='y', linewidth=0.5, color='lightgrey')
         for mean, ci, x_point, x_label in zip(mean_list, ci_list, x_points, condition_names):
             plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='black', mec='black',
                          markersize=3, linewidth=1, zorder=11)
@@ -340,7 +334,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
         ax = plt.gca()
         utils.add_plot_text(ax, subplot, experiment)
         utils.add_plot_shading(ax, subplot, experiment, params.r2_ci_lower, params.r2_ci_upper, params.area_ci_lower, params.area_ci_upper)
-
+    plt.grid(False)
     plt.tight_layout(h_pad=0.6, w_pad=0.9)
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')
