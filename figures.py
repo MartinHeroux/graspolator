@@ -389,7 +389,7 @@ def figure_4(all_subject_data, experiment):
             ax.spines['bottom'].set_visible(True)
 
         # label subplot letter (A, B, C, +/- D)
-        plt.text(22, 1, text, fontsize = 12, fontfamily = 'arial')
+        plt.text(-6, 0.98, text, fontsize = 12, fontfamily = 'arial')
 
         utils.write_regression_results(experiment, condition_area_data, condition_r2_data, intercept, slope, condition_name)
 
