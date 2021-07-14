@@ -329,8 +329,8 @@ def r2_area_constants():
                                   y_lims=[[0.6, 1.01], [0, 25]], subplot_indices=[2, 1], r2_mean=0.946,
                                   r2_ci_lower=0.9306, r2_ci_upper=0.9613,
                                   area_mean=1.320, area_ci_lower=0.9660, area_ci_upper=1.674,
-                                  exp_1_colors=['royalblue', 'darkblue'],
-                                  exp_2_colors=['darkred', 'red'], exp_1_subjects=['SUB05R', 'SUB01L'],
+                                  exp_1_colors=['indigo', 'mediumorchid'],
+                                  exp_2_colors=['darkgreen', 'limegreen'], exp_1_subjects=['SUB05R', 'SUB01L'],
                                   exp_2_subjects=['sub04', 'sub23'],
                                   font='arial')
 

@@ -42,33 +42,38 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     subplot_rows = 4
     subplot_cols = 3
     plot_indices_list = [[1, 4, 7, 10], [2, 5, 8, 11]]
-    y_lim = [0, 16]
-    y_ticks = list(range(0, 16, 2))
+    y_ticks = list(range(0, 17, 2))
 
     # set up experiment specific parameters
     if experiment == 'exp1':
         condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
-        x_lims = [1, 11]
+        x_lims = [0, 12]
         x_data_lims = [2, 10]
         subplot_left_col = [1, 4, 7, 10]
         subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9, 12]
-        colors = ['royalblue', 'darkblue']
+        colors = ['indigo', 'mediumorchid']
         example_subjects = [subject_1_ID, subject_2_ID]
-        x_ticks = list(range(2, 11, 2))
+        x_ticks = list(range(0, 12, 2))
         label_list = ['A', 'B', 'C', 'D']
+        y_lim = [0, 16]
+        example_subject_labels = ['Exp2 sub01', 'Exp2 sub02']
+        text_coordinates = (-4, 15)
 
     else:
         condition_names = ['line to width', 'width to line', 'width to width', 'dummy_data']
-        x_lims = [1, 11]
+        x_lims = [2, 10]
         x_data_lims = [3, 9]
         subplot_left_col = [1, 4, 7, 10]
         subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9]
-        colors = ['darkred', 'red']
+        colors = ['darkgreen', 'limegreen']
         example_subjects = [subject_1_ID, subject_2_ID]
-        x_ticks = list(range(2, 11, 2))
-        label_list = ['A', 'B', 'C']
+        x_ticks = list(range(2, 12, 2))
+        label_list = ['A', 'B', 'C', 'D']
+        y_lim = [0, 14]
+        example_subject_labels = ['Exp1 sub01', 'Exp1 sub02']
+        text_coordinates = (-1.5, 13)
 
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
     # plot example subjects in left and centre subplot cols
@@ -77,12 +82,12 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                                                                                               example_subjects), start=1):
         utils.write_example_subject_name(experiment, example_subject)
         # plot each condition data
-        for condition_data, condition_plot_index, condition_name in zip(example_subject_data, plot_indices, condition_names):
+        for condition_data, condition_plot_index, condition_name, label in zip(example_subject_data, plot_indices, condition_names, label_list):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
             if condition_plot_index == 1:
-                plt.title(example_subjects[0], loc='center', size=8, fontfamily='arial')
+                plt.title(example_subject_labels[0], loc='center', size=8, fontfamily='arial')
             if condition_plot_index == 2:
-                plt.title(example_subjects[1], loc='center', size=8, fontfamily='arial')
+                plt.title(example_subject_labels[1], loc='center', size=8, fontfamily='arial')
 
             intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL, condition_data.PERCEIVED)
             area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
@@ -95,7 +100,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
             utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
 
-            legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f}cm$^2$')]
+            legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f} cm$^2$')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
                        handlelength=1, handleheight=1, edgecolor='none')
 
@@ -114,6 +119,8 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 elif condition_plot_index == 7 and experiment == 'exp1':
                     ax.set_ylabel('                                              Perceived width (cm)',
                                   fontfamily='arial', fontsize=8)
+                # plot condition labels (A, B, C, +/- D)
+                plt.text(text_coordinates[0], text_coordinates[1], label, fontsize=14, fontfamily='arial')
 
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
@@ -157,8 +164,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
                            labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
-            # plot condition labels (A, B, C, +/- D) + turn grid back on
-            plt.text(11.5, 14, label, fontsize=12, fontfamily='arial')
+            # turn grid back on
             plt.grid(True, axis='both', linewidth=0.5, color='lightgrey')
 
             # draw axes and ticks for bottom row
@@ -234,8 +240,9 @@ def figure_8(all_subject_data, experiment):
     plt.text(0.15, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.text(0.41, 0.01, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.text(0.71, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.grid(False)
 
-    plt.plot([1, 3], [0, 0], color='black', linewidth=0.5)
+    plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5)
 
     plt.savefig(path, dpi=300, bbox_inches='tight')
     text = colored(path, 'blue')
@@ -287,9 +294,9 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
         y_points_area = []
 
         if subject == example_subjects[0]:
-            line_color, line_width, order, alpha = colors[0], 0.75, 10, 0.3
+            line_color, line_width, order, alpha = colors[0], 0.75, 10, 0.5
         elif subject == example_subjects[1]:
-            line_color, line_width, order, alpha = colors[1], 0.75, 10, 0.3
+            line_color, line_width, order, alpha = colors[1], 0.75, 10, 0.5
         else:
             line_color, line_width, order, alpha = 'grey', 0.5, 5, 0.3
 
@@ -372,7 +379,7 @@ def figure_4(all_subject_data, experiment):
         x_vals = np.array([0, max(condition_area_data)])
         y_vals = intercept + slope * x_vals
         plt.plot(x_vals, y_vals, color='black', linewidth=1, zorder=11)
-        plt.scatter(condition_area_data, condition_r2_data, c='gray', marker='o', alpha=0.6, s=5, linewidths=0,
+        plt.scatter(condition_area_data, condition_r2_data, c='dimgray', marker='o', alpha=0.6, s=5, linewidths=0,
                     zorder=10)
 
         ax = plt.gca()
@@ -383,7 +390,7 @@ def figure_4(all_subject_data, experiment):
 
         # draw axes and ticks for bottom subplot
         if subplot_index == 4 and experiment == 'exp1' or subplot_index == 3 and experiment == 'exp2':
-            plt.xlabel('Area (cm$^2$)', size=8, fontfamily='arial')
+            plt.xlabel('Error (cm$^2$)', size=8, fontfamily='arial')
             ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
             ax.spines['bottom'].set_visible(True)
 
