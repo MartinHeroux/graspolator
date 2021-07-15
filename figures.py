@@ -25,13 +25,13 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     plot = 'Example participants and group regression summary'
     
     if experiment == 'exp1':
-        figure = 'Figure 6'
+        figure = 'Figure_6'
         subject_1_ID = 'SUB03L'
         subject_2_ID = 'SUB11R'
         data_list = utils.store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID)
 
     else:
-        figure = 'Figure 2'
+        figure = 'Figure_2'
         subject_1_ID = 'sub02'
         subject_2_ID = 'sub29'
         data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
@@ -54,10 +54,10 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         group_plot_indices = [3, 6, 9, 12]
         colors = ['indigo', 'mediumorchid']
         example_subjects = [subject_1_ID, subject_2_ID]
-        x_ticks = list(range(0, 12, 2))
+        x_ticks = list(range(0, 13, 2))
         label_list = ['A', 'B', 'C', 'D']
         y_lim = [0, 16]
-        example_subject_labels = ['Exp2 sub01', 'Exp2 sub02']
+        example_subject_labels = ['Exp2 sub01\n', 'Exp2 sub02\n']
         text_coordinates = (-4, 15)
 
     else:
@@ -72,7 +72,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         x_ticks = list(range(2, 12, 2))
         label_list = ['A', 'B', 'C', 'D']
         y_lim = [0, 14]
-        example_subject_labels = ['Exp1 sub01', 'Exp1 sub02']
+        example_subject_labels = ['Exp1 sub01\n', 'Exp1 sub02\n']
         text_coordinates = (-1.5, 13)
 
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
@@ -202,13 +202,13 @@ def figure_8(all_subject_data, experiment):
     utils.write_plot_header(experiment, figure, plot)
 
     x_ticks = [1.3, 1.45, 1.6]
-    x_points_left = [1.29, 1.44, 1.59]
-    x_points_right = [1.31, 1.46, 1.61]
+    x_points_left = [1.3, 1.45, 1.6]
+    x_points_right = [1.315, 1.465, 1.615]
     x_tick_labels = ['Across hands', 'Within hand', 'Within hand']
     x_descriptors = ['Same day', '1 week apart', 'Same day']
-    x_lim = [1.285, 1.6199]
-    y_lim = [-14, 12]
-    y_ticks = list(range(-14, 13, 2))
+    x_lim = [1.295, 1.63]
+    y_lim = [-12.001, 12]
+    y_ticks = list(range(-12, 13, 3))
     y_label = 'Difference in error (cm$^2$)'
 
     between_hands_areas, across_days_areas, within_day_areas = [], [], []
@@ -232,14 +232,15 @@ def figure_8(all_subject_data, experiment):
                      markersize=3.5, elinewidth=1, zorder=10)
         utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
 
-    plt.text(0.08, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.41, 0.01, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.77, 0.01, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(1.2, 0.01, 'A', fontsize=12, fontfamily='arial', color='white')
+    plt.text(0.075, 0.008, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.385, 0.008, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.75, 0.008, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
     plt.grid(False)
 
     plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5, zorder=5)
 
-    utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, y_offset=True)
+    utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
     utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
     plt.grid(False)  # turn grid off for x axis
 
@@ -308,21 +309,19 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
             plt.plot(x_points, y_points, color=line_color, alpha=alpha, linewidth=line_width, zorder=order)
             ax = plt.gca()
             if subplot == 1:
-                #plt.text(text_x, text_y_plot_1, text, fontsize=11, fontfamily='arial')
                 ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                                labelbottom=False, labeltop=False, labelleft=True, labelright=False)
                 utils.draw_ax_spines(ax, True, False, False, False, y_offset=True)
                 plt.gcf().text(0.00001, 0.9, text, fontsize=12, fontfamily='arial')
             else:
-                #plt.text(text_x, text_y_plot_2, text, fontsize=11, fontfamily='arial')
                 ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
-                utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, y_offset=True)
+                utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
                 plt.gcf().text(0.00001, 0.45, text, fontsize=12, fontfamily='arial')
 
             utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, y_label)
 
             if experiment == 'exp1' and subplot == 2:
-                plt.ylim(0.75, 1)
+                plt.ylim(0.70, 1)
 
     for mean_list, ci_list, subplot, y_label in zip(means_lists, ci_lists, params.subplot_indices, results_headers):
         plt.subplot(2, 1, subplot)

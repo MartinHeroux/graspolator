@@ -373,7 +373,7 @@ def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims
     ax.grid(axis='both', linewidth=0.5, color='lightgrey')
 
 
-def draw_ax_spines(ax, left, right, top, bottom, y_offset = False):
+def draw_ax_spines(ax, left, right, top, bottom, x_offset = False, y_offset = False):
     commands = [left, right, top, bottom]
     spines = ['left', 'right', 'top', 'bottom']
 
@@ -385,15 +385,17 @@ def draw_ax_spines(ax, left, right, top, bottom, y_offset = False):
 
     if y_offset == True:
         ax.spines['left'].set_position(('outward', 3))
+    if x_offset == True:
+        ax.spines['bottom'].set_position(('outward', 5))
 
 
 def add_plot_text(ax, subplot, experiment):
     if subplot == 2 and experiment == 'exp1':
-        ax.text(0.1, -0.2, 'Day 1', fontsize=8, fontfamily='arial', transform=ax.transAxes)
-        ax.text(0.73, -0.2, 'Day 2', fontsize=8, fontfamily='arial', transform=ax.transAxes)
-        ax.annotate('', xy=(0, -0.135), xycoords='axes fraction', xytext=(0.45, -0.135),
+        ax.text(0.1, -0.25, 'Day 1', fontsize=8, fontfamily='arial', transform=ax.transAxes)
+        ax.text(0.75, -0.25, 'Day 2', fontsize=8, fontfamily='arial', transform=ax.transAxes)
+        ax.annotate('', xy=(0, -0.17), xycoords='axes fraction', xytext=(0.45, -0.17),
                     arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
-        ax.annotate('', xy=(0.6, -0.135), xycoords='axes fraction', xytext=(0.99, -0.135),
+        ax.annotate('', xy=(0.6, -0.17), xycoords='axes fraction', xytext=(0.99, -0.17),
                     arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
 
     elif subplot == 1:
@@ -454,7 +456,7 @@ def shade_area(ax, intercept, slope, x_1, x_2):
 
 
 def plot_comparison_areas(ax, line_number, x_points_base, x_points_right, y_points):
-    jitter_values = [random() / 150 for _ in range(len(x_points_base))]
+    jitter_values = [random() / 200 for _ in range(len(x_points_base))]
     if line_number < 15:
         x_points_jitter = np.array(x_points_right) + np.array(jitter_values)
     else:
