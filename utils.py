@@ -324,7 +324,7 @@ def r2_area_constants():
                                         'area_mean area_ci_lower area_ci_upper exp_1_colors exp_2_colors '
                                         'exp_1_subjects exp_2_subjects font')
 
-    r2_area_constants = constants(y_labels=['R$^2$', 'Error (cm$^2$)'],
+    r2_area_constants = constants(y_labels=['R$^2$', 'Normalised error (cm$^2$)'],
                                   y_ticks=[[0.6, 0.7, 0.8, 0.9, 1], [0, 1, 2, 3, 4]],
                                   y_lims=[[0.6, 1.01], [0, 4]], subplot_indices=[2, 1], r2_mean=0.946,
                                   r2_ci_lower=0.9306, r2_ci_upper=0.9613,

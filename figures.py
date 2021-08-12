@@ -209,7 +209,7 @@ def figure_8(all_subject_data, experiment):
     x_lim = [1.295, 1.63]
     y_lim = [-2.001, 2]
     y_ticks = list(range(-2, 3))
-    y_label = 'Difference in error (cm$^2$)'
+    y_label = 'Difference in normalised error (cm$^2$)'
 
     between_hands_areas, across_days_areas, within_day_areas = [], [], []
 
@@ -383,7 +383,7 @@ def figure_4(all_subject_data, experiment):
 
         # draw axes and ticks for bottom subplot
         if subplot_index == 4 and experiment == 'exp1' or subplot_index == 3 and experiment == 'exp2':
-            plt.xlabel('Error (cm$^2$)', size=8, fontfamily='arial')
+            plt.xlabel('Normalised error (cm$^2$)', size=8, fontfamily='arial')
             ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
             ax.spines['bottom'].set_visible(True)
 
