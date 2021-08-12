@@ -29,21 +29,22 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
         subplot_width = 2
         subplot_length = 2
         figsize = (10, 10)
+        condition_names = ['Day 1 dominant', 'Day 1 non-dominant', 'Day 2 dominant A', 'Day 2 dominant B']
     else:
         subplot_indices = [1, 2, 3]
         subplot_width = 1
         subplot_length = 3
         figsize = (15, 5)
+        condition_names = ['Visual -> Proprioceptive', 'Proprioceptive -> Visual', 'Proprioceptive -> Proprioceptive']
 
     plt.figure(figsize= figsize)
-    plt.suptitle(str('Participant Regression Lines'))
+    plt.suptitle(str('Participant Regression Lines'), fontfamily = 'arial', fontsize = 10)
 
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
         for condition_tuple in data_list:
             plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
             plt.grid(True)
-            plt.title(condition_tuple.NAME, loc='right')
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
             intersect_x, intersect_y = calculate_area.point_of_intersection_with_reality(intercept, slope)
             x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
@@ -53,21 +54,22 @@ def subject_reg_lines_by_category(experiment, subjects, all_subject_data):
             x_points.append(x1)
             x_points.append(x2)
             line_colour = old_python_files.old_functions.subject_line_colour(intersect_x, y1, experiment)
-            plt.plot([x1, x2], [y1, y2], color=line_colour, linewidth=0.5)
+            plt.plot([x1, x2], [y1, y2], color='grey', linewidth=0.5)
 
 
         y_min, y_max = min(y_points) - 1, max(y_points) + 1
         x_min, x_max = min(x_points) - 1, max(x_points) + 1
 
-        for subplot in subplot_indices:
+        for subplot, condition_name in zip(subplot_indices, condition_names):
             plt.subplot(subplot_width, subplot_length, subplot)
-            plt.xticks(list(range(x_min, x_max)))
-            plt.xlim([x_min, x_max])
-            plt.yticks(list(range(int(y_min), int(y_max))))
-            plt.ylim([y_min, y_max])
-            plt.ylabel('Perceived width (cm)')
-            plt.xlabel('Actual width (cm)')
-            plt.legend(handles=legend_handles, loc='upper left')
+            plt.title(condition_name, loc='right', fontfamily='arial', fontsize=10)
+            plt.xticks([2, 4, 6, 8, 10], fontfamily = 'arial', fontsize = 10)
+            plt.xlim([2, 10])
+            plt.yticks([0, 2, 4, 6, 8, 10, 12, 14], fontfamily = 'arial', fontsize = 10)
+            plt.ylim([0, 14])
+            plt.ylabel('Response width (cm)', fontfamily = 'arial', fontsize = 10)
+            plt.xlabel('Actual width (cm)', fontfamily = 'arial', fontsize = 10)
+            #plt.legend(handles=legend_handles, loc='upper left')
             plt.plot([2, 10], [2, 10], 'k--', linewidth=1.5)
 
 
@@ -157,7 +159,7 @@ def area_per_condition_plot(all_subject_data, experiment):
         y_points = []
 
         for tuple in data_pair_tuples:
-            y_points.append(calculate_area.actual_vs_perceived(tuple.ACTUAL, tuple.PERCEIVED, experiment))
+            y_points.append(calculate_area.normalised(tuple.ACTUAL, tuple.PERCEIVED, experiment))
 
         all_area_lists.append(y_points)
 

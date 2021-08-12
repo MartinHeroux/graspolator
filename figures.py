@@ -90,7 +90,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 plt.title(example_subject_labels[1], loc='center', size=8, fontfamily='arial')
 
             intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL, condition_data.PERCEIVED)
-            area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
+            area = calculate_area.normalised(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
             ax = plt.gca()
 
@@ -111,22 +111,22 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                            labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
             # draw axes, labels, and ticks for left column and bottom row subplots
-            if condition_plot_index in subplot_left_col:
-                ax.tick_params(axis='y', which='both', left=True, labelleft=True)
-                ax.spines['left'].set_visible(True)
-                if condition_plot_index == 4 and experiment == 'exp2':
-                    ax.set_ylabel('Perceived width (cm)', fontfamily='arial', fontsize=8)
-                elif condition_plot_index == 7 and experiment == 'exp1':
-                    ax.set_ylabel('                                              Perceived width (cm)',
+            #if condition_plot_index in subplot_left_col:
+            ax.tick_params(axis='y', which='both', left=True, labelleft=True)
+            ax.spines['left'].set_visible(True)
+            if condition_plot_index == 4 and experiment == 'exp2':
+                ax.set_ylabel('Perceived width (cm)', fontfamily='arial', fontsize=8)
+            elif condition_plot_index == 7 and experiment == 'exp1':
+                ax.set_ylabel('                                              Perceived width (cm)',
                                   fontfamily='arial', fontsize=8)
                 # plot condition labels (A, B, C, +/- D)
-                plt.text(text_coordinates[0], text_coordinates[1], label, fontsize=14, fontfamily='arial')
+            #plt.text(text_coordinates[0], text_coordinates[1], label, fontsize=14, fontfamily='arial')
 
-            if condition_plot_index in subplot_bottom_row:
-                ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
-                ax.spines['bottom'].set_visible(True)
-                if condition_plot_index == 11:
-                    plt.xlabel('Stimulus width (cm)', fontsize=8, fontfamily='arial')
+            #if condition_plot_index in subplot_bottom_row:
+            ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
+            ax.spines['bottom'].set_visible(True)
+            if condition_plot_index == 11:
+                plt.xlabel('Stimulus width (cm)', fontsize=8, fontfamily='arial')
 
     # plot group regression lines in the right subplot column
     for subject_ID, subject_data in zip(subjects, all_subject_data):
@@ -160,8 +160,8 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
 
             utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
             utils.draw_ax_spines(ax, False, False, False, False)
-            ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
-                           labelbottom=False, labeltop=False, labelleft=False, labelright=False)
+            #ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
+                           #labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
             # turn grid back on
             plt.grid(True, axis='both', linewidth=0.5, color='lightgrey')
@@ -207,8 +207,8 @@ def figure_8(all_subject_data, experiment):
     x_tick_labels = ['Across hands', 'Within hand', 'Within hand']
     x_descriptors = ['Same day', '1 week apart', 'Same day']
     x_lim = [1.295, 1.63]
-    y_lim = [-12.001, 12]
-    y_ticks = list(range(-12, 13, 3))
+    y_lim = [-2.001, 2]
+    y_ticks = list(range(-2, 3))
     y_label = 'Difference in error (cm$^2$)'
 
     between_hands_areas, across_days_areas, within_day_areas = [], [], []
@@ -269,13 +269,13 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     if experiment == 'exp1':
         colors = params.exp_1_colors
         example_subjects = params.exp_1_subjects
-        y_lims = [(0.7, 1), (0, 25)]
+        y_lims = [(0.7, 1), (0, 4)]
         condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
         x_ticks = [0.95, 2, 3, 4.05]
     else:
         colors = params.exp_2_colors
         example_subjects = params.exp_2_subjects
-        y_lims = [(0.6, 1), (0, 20)]
+        y_lims = [(0.6, 1), (0, 4)]
         condition_names = ['Line-to-width', 'Width-to-line', 'Width-to-width']
         x_ticks = [0.95, 2, 3.05]
 
@@ -298,7 +298,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
 
         for pair in data_pairs:
             y_points_r2.append(utils.calculate_r2(pair.ACTUAL, pair.PERCEIVED))
-            y_points_area.append(calculate_area.actual_vs_perceived(pair.ACTUAL, pair.PERCEIVED, experiment))
+            y_points_area.append(calculate_area.normalised(pair.ACTUAL, pair.PERCEIVED, experiment))
 
         y_point_lists = [y_points_r2, y_points_area]
 
@@ -306,7 +306,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                                                                    params.y_labels,
                                                                    params.y_ticks, y_lims, plot_text):
             plt.subplot(2, 1, subplot)
-            plt.plot(x_points, y_points, color=line_color, alpha=alpha, linewidth=line_width, zorder=order)
+            plt.plot(x_points, y_points, color='gray', alpha=0.3, linewidth=line_width, zorder=order)
             ax = plt.gca()
             if subplot == 1:
                 ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
@@ -359,8 +359,8 @@ def figure_4(all_subject_data, experiment):
         subplot_indices = [1, 2, 3]
         text_labels = ['A', 'B', 'C']
 
-    x_lims, y_lims = (0, 20), (0.6, 1)
-    x_ticks, y_ticks = [0, 5, 10, 15, 20], [0.6, 0.7, 0.8, 0.9, 1]
+    x_lims, y_lims = (0, 4), (0.6, 1)
+    x_ticks, y_ticks = [0, 1, 2, 3, 4], [0.6, 0.7, 0.8, 0.9, 1]
     x_label, y_label = None, 'R$^2$'
 
     plt.figure(figsize=(3.3, 7))
@@ -388,14 +388,14 @@ def figure_4(all_subject_data, experiment):
             ax.spines['bottom'].set_visible(True)
 
         # label subplot letter (A, B, C, +/- D)
-        plt.text(-6, 0.98, text, fontsize = 12, fontfamily = 'arial')
+        plt.text(-1, 0.98, text, fontsize = 12, fontfamily = 'arial')
 
         utils.write_regression_results(experiment, condition_area_data, condition_r2_data, intercept, slope, condition_name)
 
         #plt.tight_layout()
 
     plt.tight_layout(h_pad=0.9)
-    plt.savefig(path, dpi=300)
+    plt.savefig(path, dpi=300, bbox_inches='tight')
     text = colored(f'{path}', 'blue')
     print(f'{experiment} area vs r2 plots saved in {text}\n')
     plt.close()

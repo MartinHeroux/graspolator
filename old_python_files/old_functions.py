@@ -8,7 +8,7 @@ from statsmodels import api as sm
 from termcolor import colored
 
 import utils
-from calculate_area import actual_vs_perceived, trapezium_area, reg_line_endpoints
+from calculate_area import normalised, trapezium_area, reg_line_endpoints
 
 mpl.get_configdir()
 import matplotlib.pyplot as plt
@@ -101,14 +101,14 @@ def store_r2_and_area_tuples_exp1(all_subject_data, subject_IDs):
                                                                      d1_non_dom_tuple.PERCEIVED),
                                     d2_dom_1_r2=utils.calculate_r2(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED),
                                     d2_dom_2_r2=utils.calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED),
-                                    d1_dom_area=actual_vs_perceived(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED,
-                                                                    experiment),
-                                    d1_non_dom_area=actual_vs_perceived(d1_non_dom_tuple.ACTUAL,
-                                                                        d1_non_dom_tuple.PERCEIVED, experiment),
-                                    d2_dom_1_area=actual_vs_perceived(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED,
-                                                                      experiment),
-                                    d2_dom_2_area=actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED,
-                                                                      experiment))
+                                    d1_dom_area=normalised(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED,
+                                                           experiment),
+                                    d1_non_dom_area=normalised(d1_non_dom_tuple.ACTUAL,
+                                                               d1_non_dom_tuple.PERCEIVED, experiment),
+                                    d2_dom_1_area=normalised(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED,
+                                                             experiment),
+                                    d2_dom_2_area=normalised(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED,
+                                                             experiment))
 
         r2_area_tuples.append(r2s_areas_tuple)
 
@@ -131,12 +131,12 @@ def store_r2_and_area_tuples_exp2(all_subject_data, subject_IDs):
                                     line_width_r2=utils.calculate_r2(line_width.ACTUAL, line_width.PERCEIVED),
                                     width_line_r2=utils.calculate_r2(width_line.ACTUAL, width_line.PERCEIVED),
                                     width_width_r2=utils.calculate_r2(width_width.ACTUAL, width_width.PERCEIVED),
-                                    line_width_area=actual_vs_perceived(line_width.ACTUAL, line_width.PERCEIVED,
-                                                                        experiment),
-                                    width_line_area=actual_vs_perceived(width_line.ACTUAL, width_line.PERCEIVED,
-                                                                        experiment),
-                                    width_width_area=actual_vs_perceived(width_width.ACTUAL, width_width.PERCEIVED,
-                                                                         experiment))
+                                    line_width_area=normalised(line_width.ACTUAL, line_width.PERCEIVED,
+                                                               experiment),
+                                    width_line_area=normalised(width_line.ACTUAL, width_line.PERCEIVED,
+                                                               experiment),
+                                    width_width_area=normalised(width_width.ACTUAL, width_width.PERCEIVED,
+                                                                experiment))
 
         r2_area_tuples.append(r2s_areas_tuple)
 

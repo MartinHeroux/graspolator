@@ -74,7 +74,7 @@ def example_subjects_group_reg_summary(all_subject_data, subjects, experiment):
 
             plt.plot([x1, x2], [y1, y2], color=color)
             plt.grid(axis='both')
-            area = calculate_area.actual_vs_perceived(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
+            area = calculate_area.normalised(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
 
             legend_handles = [mpatches.Patch(color='grey', alpha=0.3, label=f'{area:4.2f}$cm^2$')]
             plt.legend(handles=legend_handles, loc='upper left')

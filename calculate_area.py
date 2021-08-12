@@ -15,7 +15,7 @@ def triangle_area(b, h):
     return area
 
 
-def actual_vs_perceived(actual, perceived, experiment):
+def normalised(actual, perceived, experiment):
     intercept, slope = utils.calculate_regression_general(actual, perceived)
     x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
     x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(actual, perceived, experiment)
@@ -30,7 +30,13 @@ def actual_vs_perceived(actual, perceived, experiment):
         area_total = _minimiser_area_calc(y_at_x2, y_at_x10, experiment)
     else:
         area_total = _maximiser_area_calc(y_at_x2, y_at_x10, experiment)
-    return abs(area_total)
+
+    if experiment == 'exp1':
+        normalised_area = (abs(area_total) / 8)
+    elif experiment == 'exp2':
+        normalised_area = (abs(area_total) / 6)
+
+    return normalised_area
 
 
 def _subject_group(x_intersect, y_at_x2, experiment):
@@ -172,10 +178,10 @@ def _group_areas_exp1(all_subject_data):
         d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = utils.store_index_condition_data_tuple(
             subject_data)
 
-        d1_dom_areas.append(actual_vs_perceived(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED, experiment)),
-        d1_non_dom_areas.append(actual_vs_perceived(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED, experiment)),
-        d2_dom_1_areas.append(actual_vs_perceived(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED, experiment)),
-        d2_dom_2_areas.append(actual_vs_perceived(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED, experiment))
+        d1_dom_areas.append(normalised(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED, experiment)),
+        d1_non_dom_areas.append(normalised(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED, experiment)),
+        d2_dom_1_areas.append(normalised(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED, experiment)),
+        d2_dom_2_areas.append(normalised(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED, experiment))
 
     area_lists_per_condition = area_list_tuple(d1_dom_area_list=d1_dom_areas,
                                                d1_non_dom_area_list=d1_non_dom_areas,
@@ -195,9 +201,9 @@ def _group_areas_exp2(all_subject_data):
 
         line_width, width_line, width_width = data_tuples[0], data_tuples[1], data_tuples[2]
 
-        line_width_areas.append(actual_vs_perceived(line_width.ACTUAL, line_width.PERCEIVED, experiment)),
-        width_line_areas.append(actual_vs_perceived(width_line.ACTUAL, width_line.PERCEIVED, experiment)),
-        width_width_areas.append(actual_vs_perceived(width_width.ACTUAL, width_width.PERCEIVED, experiment))
+        line_width_areas.append(normalised(line_width.ACTUAL, line_width.PERCEIVED, experiment)),
+        width_line_areas.append(normalised(width_line.ACTUAL, width_line.PERCEIVED, experiment)),
+        width_width_areas.append(normalised(width_width.ACTUAL, width_width.PERCEIVED, experiment))
 
     area_lists_per_condition = area_list_tuple(line_width_area_list=line_width_areas,
                                                width_line_area_list=width_line_areas,
@@ -243,18 +249,18 @@ def store_condition_area_means_and_cis(all_subject_data, experiment):
 
 
 def return_condition_comparison_areas(subject_data, experiment):
-    d1_dom_area = actual_vs_perceived(subject_data.day1_dominant.ACTUAL,
-                                      subject_data.day1_dominant.PERCEIVED,
-                                      experiment)
-    d1_non_dom_area = actual_vs_perceived(subject_data.day1_non_dominant.ACTUAL,
-                                          subject_data.day1_non_dominant.PERCEIVED,
-                                          experiment)
-    d2_dom_1_area = actual_vs_perceived(subject_data.day2_dominant_1.ACTUAL,
-                                        subject_data.day2_dominant_1.PERCEIVED,
-                                        experiment)
-    d2_dom_2_area = actual_vs_perceived(subject_data.day2_dominant_2.ACTUAL,
-                                        subject_data.day2_dominant_2.PERCEIVED,
-                                        experiment)
+    d1_dom_area = normalised(subject_data.day1_dominant.ACTUAL,
+                             subject_data.day1_dominant.PERCEIVED,
+                             experiment)
+    d1_non_dom_area = normalised(subject_data.day1_non_dominant.ACTUAL,
+                                 subject_data.day1_non_dominant.PERCEIVED,
+                                 experiment)
+    d2_dom_1_area = normalised(subject_data.day2_dominant_1.ACTUAL,
+                               subject_data.day2_dominant_1.PERCEIVED,
+                               experiment)
+    d2_dom_2_area = normalised(subject_data.day2_dominant_2.ACTUAL,
+                               subject_data.day2_dominant_2.PERCEIVED,
+                               experiment)
 
     dom_vs_non_dom_area = d1_dom_area - d1_non_dom_area
 
