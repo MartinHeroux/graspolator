@@ -10,7 +10,7 @@ from collections import namedtuple
 import math
 from matplotlib.ticker import MultipleLocator
 from random import random
-
+import matplotlib.text as mpl_text
 
 #######################################
 # PARSING DATA
@@ -515,3 +515,5 @@ def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
     ci_upper = f'{mean + ci:4.2f}'
     results.write(f'{x_label:20s}: {y_label:27s}mean = {mean_text:10s}     ci = [{ci_lower} - {ci_upper}]\n')
     results.close()
+
+

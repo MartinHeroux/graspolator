@@ -91,6 +91,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
 
             intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL, condition_data.PERCEIVED)
             area = calculate_area.normalised(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
+            r2 = utils.calculate_r2(condition_data.ACTUAL, condition_data.PERCEIVED)
 
             ax = plt.gca()
 
@@ -100,7 +101,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
             utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
 
-            legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f} cm$^2$')]
+            legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f} cm$^2$'), mpatches.Patch(color='white', alpha=0.5, label=f'{r2:3.2f}')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
                        handlelength=1, handleheight=1, edgecolor='none')
 
@@ -111,27 +112,34 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                            labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
             # draw axes, labels, and ticks for left column and bottom row subplots
-            #if condition_plot_index in subplot_left_col:
-            ax.tick_params(axis='y', which='both', left=True, labelleft=True)
-            ax.spines['left'].set_visible(True)
+            if condition_plot_index in subplot_left_col:
+                ax.tick_params(axis='y', which='both', left=True, labelleft=True)
+                ax.spines['left'].set_visible(True)
+                plt.text(text_coordinates[0], text_coordinates[1], label, fontsize=14, fontfamily='arial')
             if condition_plot_index == 4 and experiment == 'exp2':
                 ax.set_ylabel('Perceived width (cm)', fontfamily='arial', fontsize=8)
             elif condition_plot_index == 7 and experiment == 'exp1':
                 ax.set_ylabel('                                              Perceived width (cm)',
                                   fontfamily='arial', fontsize=8)
-                # plot condition labels (A, B, C, +/- D)
-            #plt.text(text_coordinates[0], text_coordinates[1], label, fontsize=14, fontfamily='arial')
+                #plot condition labels (A, B, C, +/- D)
 
-            #if condition_plot_index in subplot_bottom_row:
-            ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
-            ax.spines['bottom'].set_visible(True)
+
+            if condition_plot_index in subplot_bottom_row:
+                ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
+                ax.spines['bottom'].set_visible(True)
             if condition_plot_index == 11:
                 plt.xlabel('Stimulus width (cm)', fontsize=8, fontfamily='arial')
 
     # plot group regression lines in the right subplot column
+    if experiment == 'exp1':
+        intercept_lists = [[], [], [], []]
+        slope_lists = [[], [], [], []]
+    else:
+        intercept_lists = [[], [], []]
+        slope_lists = [[], [], []]
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
-        for condition_tuple, condition_plot_index, label in zip(data_list, group_plot_indices, label_list):
+        for condition_tuple, condition_plot_index, label, condition_name, intercept_list, slope_list in zip(data_list, group_plot_indices, label_list, condition_names, intercept_lists, slope_lists):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
 
             if condition_plot_index == 3:
@@ -151,6 +159,8 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 order = 5
 
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
+            intercept_list.append(intercept)
+            slope_list.append(slope)
             alpha = 0.7
 
             ax = plt.gca()
@@ -160,8 +170,8 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
 
             utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
             utils.draw_ax_spines(ax, False, False, False, False)
-            #ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
-                           #labelbottom=False, labeltop=False, labelleft=False, labelright=False)
+            ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
+                           labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
             # turn grid back on
             plt.grid(True, axis='both', linewidth=0.5, color='lightgrey')
@@ -170,6 +180,27 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             if condition_plot_index in subplot_bottom_row:
                 plt.gca().spines['bottom'].set_visible(True)
                 plt.gca().tick_params(axis='x', which='both', bottom=True, labelbottom=True)
+
+    intercept_means = []
+    intercept_cis = []
+    slope_means = []
+    slope_cis = []
+
+    for intercept_list in intercept_lists:
+        intercept_means.append(np.mean(intercept_list))
+        intercept_cis.append(utils.calculate_ci(intercept_list))
+
+    for slope_list in slope_lists:
+        slope_means.append(np.mean(slope_list))
+        slope_cis.append(utils.calculate_ci(slope_list))
+
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write('\n')
+    results.close()
+
+    for condition_name, intercept_mean, intercept_ci, slope_mean, slope_ci in zip(condition_names, intercept_means, intercept_cis, slope_means, slope_cis):
+        utils.write_mean_ci_result(experiment, intercept_mean, intercept_ci, 'intercept', condition_name)
+        utils.write_mean_ci_result(experiment, slope_mean, slope_ci, 'slope', condition_name)
 
     # plot dummy data + axis labels for cropping
     # TODO remove for final version

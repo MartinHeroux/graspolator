@@ -214,7 +214,6 @@ def _crosser_signed(x_intersect, y_intersect, y1, y2):
         area_right = (area_reality_line_right - area_reg_line_right) * -1
 
     area_total = area_left + area_right
-    print(area_left, area_right)
 
     return area_total
 
