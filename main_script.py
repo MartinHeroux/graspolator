@@ -4,9 +4,9 @@ import os
 import data
 import figures
 
-experiments = ['exp2', 'exp1']
-data_folders = [Path('./data/exp2'), Path('./data/exp1')]
-results_files = [Path('./results_exp2.txt'), Path('./results_exp1.txt')]
+experiments = ['exp1']
+data_folders = [Path('./data/exp1')]
+results_files = [Path('./results_exp1.txt')]
 
 for experiment, data_folder, results_file in zip(experiments, data_folders, results_files):
     if results_file.exists():

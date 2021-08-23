@@ -194,62 +194,6 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     plt.close()
 
 
-def figure_8(all_subject_data, experiment):
-    plot = 'Area difference between conditions'
-    figure = 'Figure_8'
-    path = utils.create_figure_save_path(figure)
-
-    utils.write_plot_header(experiment, figure, plot)
-
-    x_ticks = [1.3, 1.45, 1.6]
-    x_points_left = [1.3, 1.45, 1.6]
-    x_points_right = [1.315, 1.465, 1.615]
-    x_tick_labels = ['Across hands', 'Within hand', 'Within hand']
-    x_descriptors = ['Same day', '1 week apart', 'Same day']
-    x_lim = [1.295, 1.63]
-    y_lim = [-2.001, 2]
-    y_ticks = list(range(-2, 3))
-    y_label = 'Difference in normalised error (cm$^2$)'
-
-    between_hands_areas, across_days_areas, within_day_areas = [], [], []
-
-    plt.figure(figsize=(8 / 2.4, 8 / 2.4))
-    ax = plt.gca()
-
-    for line_number, subject_data in enumerate(all_subject_data, start=1):
-        area_comparison_list = calculate_area.return_condition_comparison_areas(subject_data, experiment)
-        utils.plot_comparison_areas(ax, line_number, x_ticks, x_points_right, area_comparison_list)
-
-        between_hands_areas.append(area_comparison_list[0])
-        across_days_areas.append(area_comparison_list[1])
-        within_day_areas.append(area_comparison_list[2])
-
-    area_diff_list = [between_hands_areas, across_days_areas, within_day_areas]
-
-    for x_point, area_list, label, descriptor in zip(x_points_left, area_diff_list, x_tick_labels, x_descriptors):
-        mean, ci = utils.calculate_mean_ci(area_list)
-        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
-                     markersize=3.5, elinewidth=1, zorder=10)
-        utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
-
-    plt.text(1.2, 0.01, 'A', fontsize=12, fontfamily='arial', color='white')
-    plt.text(0.075, 0.008, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.385, 0.008, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.75, 0.008, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.grid(False)
-
-    plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5, zorder=5)
-
-    utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
-    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
-    plt.grid(False)  # turn grid off for x axis
-
-    plt.savefig(path, dpi=300, bbox_inches='tight')
-    text = colored(path, 'blue')
-    print(f'Area_difference_between_conditions saved in {text}\n')
-    plt.close()
-
-
 def figure_3_and_7(all_subject_data, subjects, experiment):
     plot = 'Area and R^2 Group Summary'
     if experiment == 'exp1':
@@ -460,4 +404,60 @@ def figure_5(all_subject_data, experiment):
     plt.savefig(path, dpi=300)
     text = colored(f'{path}', 'blue')
     print(f'slope comparison saved in {text}\n')
+    plt.close()
+
+
+def figure_8(all_subject_data, experiment):
+    plot = 'Area difference between conditions'
+    figure = 'Figure_8'
+    path = utils.create_figure_save_path(figure)
+
+    utils.write_plot_header(experiment, figure, plot)
+
+    x_ticks = [1.3, 1.45, 1.6]
+    x_points_left = [1.3, 1.45, 1.6]
+    x_points_right = [1.315, 1.465, 1.615]
+    x_tick_labels = ['Across hands', 'Within hand', 'Within hand']
+    x_descriptors = ['Same day', '1 week apart', 'Same day']
+    x_lim = [1.295, 1.63]
+    y_lim = [-2.001, 2]
+    y_ticks = list(range(-2, 3))
+    y_label = 'Difference in normalised error (cm$^2$)'
+
+    between_hands_areas, across_days_areas, within_day_areas = [], [], []
+
+    plt.figure(figsize=(8 / 2.4, 8 / 2.4))
+    ax = plt.gca()
+
+    for line_number, subject_data in enumerate(all_subject_data, start=1):
+        area_comparison_list = calculate_area.return_condition_comparison_areas(subject_data, experiment)
+        utils.plot_comparison_areas(ax, line_number, x_ticks, x_points_right, area_comparison_list)
+
+        between_hands_areas.append(area_comparison_list[0])
+        across_days_areas.append(area_comparison_list[1])
+        within_day_areas.append(area_comparison_list[2])
+
+    area_diff_list = [between_hands_areas, across_days_areas, within_day_areas]
+
+    for x_point, area_list, label, descriptor in zip(x_points_left, area_diff_list, x_tick_labels, x_descriptors):
+        mean, ci = utils.calculate_mean_ci(area_list)
+        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
+                     markersize=3.5, elinewidth=1, zorder=10)
+        utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
+
+    plt.text(1.2, 0.01, 'A', fontsize=12, fontfamily='arial', color='white')
+    plt.text(0.075, 0.008, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.385, 0.008, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.text(0.75, 0.008, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+    plt.grid(False)
+
+    plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5, zorder=5)
+
+    utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
+    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
+    plt.grid(False)  # turn grid off for x axis
+
+    plt.savefig(path, dpi=300, bbox_inches='tight')
+    text = colored(path, 'blue')
+    print(f'Area_difference_between_conditions saved in {text}\n')
     plt.close()

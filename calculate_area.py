@@ -39,6 +39,29 @@ def normalised(actual, perceived, experiment):
     return normalised_area
 
 
+def normalised_signed(actual, perceived, experiment):
+    intercept, slope = utils.calculate_regression_general(actual, perceived)
+    x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
+    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(actual, perceived, experiment)
+    group = _subject_group(x_intersect, y_at_x2, experiment)
+
+    if group == 'crosser':
+        area_total = _crosser_signed(x_intersect, y_intersect, y_at_x2, y_at_x10)
+    elif group == 'crosser_triangle':
+        area_total = _crosser_triangle_signed(x_intersect, y_intersect, y_at_x2, y_at_x10)
+    elif group == 'minimiser':
+        area_total = _minimiser_signed(y_at_x2, y_at_x10)
+    else:
+        area_total = _maximiser_signed(y_at_x2, y_at_x10)
+
+    if experiment == 'exp1':
+        normalised_area_signed = ((area_total) / 8)
+    elif experiment == 'exp2':
+        normalised_area_signed = ((area_total) / 6)
+
+    return normalised_area_signed
+
+
 def _subject_group(x_intersect, y_at_x2, experiment):
     if experiment == 'exp1':
         x1 = 2
@@ -151,6 +174,75 @@ def _maximiser_area_calc(y_at_x2, y_at_x10, experiment):
     return area_difference
 
 
+def _minimiser_signed(y1, y2):
+    h = 8
+    whole_area = 48
+
+    area = trapezium_area(y1, y2, h)
+    area_total = (whole_area - area) * -1
+
+    return area_total
+
+
+def _maximiser_signed(y1, y2):
+    h = 8
+    whole_area = 48
+
+    area = trapezium_area(y1, y2, h)
+    area_total = (area - whole_area)
+    return area_total
+
+
+def _crosser_signed(x_intersect, y_intersect, y1, y2):
+    x1 = 2
+    x2 = 10
+
+    h_left_trapezium = x_intersect - x1
+    h_right_trapezium = x2 - x_intersect
+
+    area_reality_line_left = trapezium_area(x1, y_intersect, h_left_trapezium)
+    area_reality_line_right = trapezium_area(y_intersect, x2, h_right_trapezium)
+
+    area_reg_line_left = trapezium_area(y1, y_intersect, h_left_trapezium)
+    area_reg_line_right = trapezium_area(y_intersect, y2, h_right_trapezium)
+
+    if y1 <= x1:
+        area_left = (area_reality_line_left - area_reg_line_left) * -1
+        area_right = area_reg_line_right - area_reality_line_right
+    else:
+        area_left = area_reg_line_left - area_reality_line_left
+        area_right = (area_reality_line_right - area_reg_line_right) * -1
+
+    area_total = area_left + area_right
+    print(area_left, area_right)
+
+    return area_total
+
+
+def _crosser_triangle_signed(x_intersect, y_intersect, y1, y2):
+    x1 = 2
+    x2 = 10
+
+    h_left_shapes = x_intersect - x1
+    h_right_trapezium = x2 - x_intersect
+
+    b_length = (y_intersect + abs(y1))
+    a_length_left = (x1 + abs(y1))
+
+    area_reality_line_left = trapezium_area(a_length_left, b_length, h_left_shapes)
+    area_reality_line_right = trapezium_area(y_intersect, x2, h_right_trapezium)
+
+    area_reg_line_left = triangle_area(b_length, h_left_shapes)
+    area_reg_line_right = trapezium_area(y_intersect, y2, h_right_trapezium)
+
+    area_left = (area_reality_line_left - area_reg_line_left) * -1
+    area_right = area_reg_line_right - area_reality_line_right
+
+    area_total = area_left + area_right
+
+    return area_total
+
+
 def point_of_intersection_with_reality(intercept, slope):
     m1, b1 = 1, 0
     m2, b2 = slope, intercept
@@ -249,24 +341,24 @@ def store_condition_area_means_and_cis(all_subject_data, experiment):
 
 
 def return_condition_comparison_areas(subject_data, experiment):
-    d1_dom_area = normalised(subject_data.day1_dominant.ACTUAL,
+    d1_dom_area = normalised_signed(subject_data.day1_dominant.ACTUAL,
                              subject_data.day1_dominant.PERCEIVED,
                              experiment)
-    d1_non_dom_area = normalised(subject_data.day1_non_dominant.ACTUAL,
+    d1_non_dom_area = normalised_signed(subject_data.day1_non_dominant.ACTUAL,
                                  subject_data.day1_non_dominant.PERCEIVED,
                                  experiment)
-    d2_dom_1_area = normalised(subject_data.day2_dominant_1.ACTUAL,
+    d2_dom_1_area = normalised_signed(subject_data.day2_dominant_1.ACTUAL,
                                subject_data.day2_dominant_1.PERCEIVED,
                                experiment)
-    d2_dom_2_area = normalised(subject_data.day2_dominant_2.ACTUAL,
+    d2_dom_2_area = normalised_signed(subject_data.day2_dominant_2.ACTUAL,
                                subject_data.day2_dominant_2.PERCEIVED,
                                experiment)
 
-    dom_vs_non_dom_area = d1_dom_area - d1_non_dom_area
+    dom_vs_non_dom_area = (d1_dom_area - d1_non_dom_area)
 
-    dom_d1_vs_d2_area = d1_dom_area - d2_dom_1_area
+    dom_d1_vs_d2_area = (d1_dom_area - d2_dom_1_area)
 
-    dom_d2_vs_d2_area = d2_dom_1_area - d2_dom_2_area
+    dom_d2_vs_d2_area = (d2_dom_1_area - d2_dom_2_area)
 
     return [dom_vs_non_dom_area, dom_d1_vs_d2_area, dom_d2_vs_d2_area]
 
