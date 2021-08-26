@@ -50,6 +50,20 @@ def calculate_regression_general(x, y):
     return intercept, slope
 
 
+def calculate_reg_intercept(x, y):
+    x = sm.add_constant(x)
+    model = sm.OLS(y, x).fit()
+    intercept, slope = model.params
+    return intercept
+
+
+def calculate_reg_slope(x, y):
+    x = sm.add_constant(x)
+    model = sm.OLS(y, x).fit()
+    intercept, slope = model.params
+    return slope
+
+
 def regression_summary(x, y):
     x = sm.add_constant(x)
     model = sm.OLS(y, x).fit()
@@ -324,7 +338,7 @@ def r2_area_constants():
                                         'area_mean area_ci_lower area_ci_upper exp_1_colors exp_2_colors '
                                         'exp_1_subjects exp_2_subjects font')
 
-    r2_area_constants = constants(y_labels=['R$^2$', 'Normalised error (cm$^2$)'],
+    r2_area_constants = constants(y_labels=['R$^2$', 'Normalised error (cm$^2$ / cm)'],
                                   y_ticks=[[0.6, 0.7, 0.8, 0.9, 1], [0, 1, 2, 3, 4]],
                                   y_lims=[[0.6, 1.01], [0, 4]], subplot_indices=[2, 1], r2_mean=0.946,
                                   r2_ci_lower=0.9306, r2_ci_upper=0.9613,
@@ -455,7 +469,7 @@ def shade_area(ax, intercept, slope, x_1, x_2):
                     color='lightgrey', alpha=0.5, interpolate=True)
 
 
-def plot_comparison_areas(ax, line_number, x_points_base, x_points_right, y_points):
+def plot_condition_comparisons(ax, line_number, x_points_base, x_points_right, y_points):
     jitter_values = [random() / 200 for _ in range(len(x_points_base))]
     if line_number < 15:
         x_points_jitter = np.array(x_points_right) + np.array(jitter_values)
@@ -465,6 +479,26 @@ def plot_comparison_areas(ax, line_number, x_points_base, x_points_right, y_poin
     ax.plot(x_points_jitter, y_points, mfc='gray', marker='^', alpha=0.6, markersize=3, linestyle='', mec='none')
 
 
+def return_condition_comparisons(subject_data, measure):
+    if measure == 'R2':
+        func = calculate_r2
+    elif measure == 'intercept':
+        func = calculate_reg_intercept
+    else:
+        func = calculate_reg_slope
+
+    d1_dom = func(subject_data.day1_dominant.ACTUAL, subject_data.day1_dominant.PERCEIVED)
+    d1_non_dom = func(subject_data.day1_non_dominant.ACTUAL, subject_data.day1_non_dominant.PERCEIVED)
+    d2_dom_1 = func(subject_data.day2_dominant_1.ACTUAL, subject_data.day2_dominant_1.PERCEIVED)
+    d2_dom_2 = func(subject_data.day2_dominant_2.ACTUAL, subject_data.day2_dominant_2.PERCEIVED)
+
+    dom_vs_non_dom = (d1_dom - d1_non_dom)
+
+    dom_d1_vs_d2 = (d1_dom - d2_dom_1)
+
+    dom_d2_vs_d2 = (d2_dom_1 - d2_dom_2)
+
+    return [dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2]
 
 #########################################################################
 # RESULT WRITING

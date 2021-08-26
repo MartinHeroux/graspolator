@@ -76,6 +76,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         text_coordinates = (-1.5, 13)
 
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
+    plt.rcParams.update({'font.family': 'arial'})
     # plot example subjects in left and centre subplot cols
     for column, (example_subject_data, color, plot_indices, example_subject) in enumerate(zip(data_list, colors,
                                                                                               plot_indices_list,
@@ -101,11 +102,11 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
             utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
 
-            legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f} cm$^2$'), mpatches.Patch(color='white', alpha=0.5, label=f'{r2:3.2f}')]
+            legend_handles = [mpatches.Patch(color='lightgrey', alpha=0.5, label=f'{area:3.1f} cm$^2$ / cm'), mpatches.Patch(color='white', alpha=0.5, label=f'{r2:3.2f}')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
                        handlelength=1, handleheight=1, edgecolor='none')
 
-
+            plt.text(0.05, 0.81, 'R$^2$', fontfamily='arial', fontsize=8, transform=plt.gca().transAxes, zorder=20)
             utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None)
             utils.draw_ax_spines(ax, False, False, False, False)
             ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
@@ -119,7 +120,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             if condition_plot_index == 4 and experiment == 'exp2':
                 ax.set_ylabel('Perceived width (cm)', fontfamily='arial', fontsize=8)
             elif condition_plot_index == 7 and experiment == 'exp1':
-                ax.set_ylabel('                                              Perceived width (cm)',
+                ax.set_ylabel('                                                         Perceived width (cm)',
                                   fontfamily='arial', fontsize=8)
                 #plot condition labels (A, B, C, +/- D)
 
@@ -439,11 +440,15 @@ def figure_5(all_subject_data, experiment):
 
 
 def figure_8(all_subject_data, experiment):
-    plot = 'Area difference between conditions'
+    plot = 'Difference between conditions'
     figure = 'Figure_8'
     path = utils.create_figure_save_path(figure)
 
     utils.write_plot_header(experiment, figure, plot)
+
+    subplots = [1, 2, 3, 4]
+    measures = ['area', 'R2', 'intercept', 'slope']
+    measure_labels = ['normalised error (cm$^2$)', 'R$^2$', 'y-intercept', 'slope']
 
     x_ticks = [1.3, 1.45, 1.6]
     x_points_left = [1.3, 1.45, 1.6]
@@ -451,44 +456,70 @@ def figure_8(all_subject_data, experiment):
     x_tick_labels = ['Across hands', 'Within hand', 'Within hand']
     x_descriptors = ['Same day', '1 week apart', 'Same day']
     x_lim = [1.295, 1.63]
-    y_lim = [-2.001, 2]
-    y_ticks = list(range(-2, 3))
-    y_label = 'Difference in normalised error (cm$^2$)'
 
-    between_hands_areas, across_days_areas, within_day_areas = [], [], []
+    plt.figure(figsize=(8 / 2.4, 20 / 2.4))
 
-    plt.figure(figsize=(8 / 2.4, 8 / 2.4))
-    ax = plt.gca()
+    for subplot, measure, label in zip(subplots, measures, measure_labels):
+        between_hands, across_days, within_day = [], [], []
+        y_label = f'Difference in {label}'
 
-    for line_number, subject_data in enumerate(all_subject_data, start=1):
-        area_comparison_list = calculate_area.return_condition_comparison_areas(subject_data, experiment)
-        utils.plot_comparison_areas(ax, line_number, x_ticks, x_points_right, area_comparison_list)
+        plt.subplot(4, 1, subplot)
+        ax = plt.gca()
 
-        between_hands_areas.append(area_comparison_list[0])
-        across_days_areas.append(area_comparison_list[1])
-        within_day_areas.append(area_comparison_list[2])
+        for line_number, subject_data in enumerate(all_subject_data, start=1):
+            if measure == 'area':
+                comparison_list = calculate_area.return_condition_comparison_areas(subject_data, experiment)
+                y_ticks = list(range(-2, 3))
+                y_lim = [-2, 2]
+            elif measure == 'intercept':
+                comparison_list = utils.return_condition_comparisons(subject_data, measure)
+                y_ticks = list(range(-2, 3))
+                y_lim = [-2, 2]
+            elif measure == 'slope':
+                comparison_list = utils.return_condition_comparisons(subject_data, measure)
+                y_lim = [-0.6, 0.6]
+                y_ticks = [-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6]
+            else:
+                comparison_list = utils.return_condition_comparisons(subject_data, measure)
+                y_lim = [-0.2, 0.2]
+                y_ticks = [-0.2, -0.1, 0, 0.1, 0.2]
 
-    area_diff_list = [between_hands_areas, across_days_areas, within_day_areas]
+            utils.plot_condition_comparisons(ax, line_number, x_ticks, x_points_right, comparison_list)
 
-    for x_point, area_list, label, descriptor in zip(x_points_left, area_diff_list, x_tick_labels, x_descriptors):
-        mean, ci = utils.calculate_mean_ci(area_list)
-        plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
-                     markersize=3.5, elinewidth=1, zorder=10)
-        utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
+            between_hands.append(comparison_list[0])
+            across_days.append(comparison_list[1])
+            within_day.append(comparison_list[2])
 
-    plt.text(1.2, 0.01, 'A', fontsize=12, fontfamily='arial', color='white')
-    plt.text(0.075, 0.008, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.385, 0.008, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.text(0.75, 0.008, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
-    plt.grid(False)
+        area_diff_list = [between_hands, across_days, within_day]
 
-    plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5, zorder=5)
+        results = open(f'results_{experiment}.txt', 'a')
+        results.write(f'\n{measure}\n')
+        results.close()
 
-    utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
-    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
-    plt.grid(False)  # turn grid off for x axis
+        for x_point, area_list, label, descriptor in zip(x_points_left, area_diff_list, x_tick_labels, x_descriptors):
+            mean, ci = utils.calculate_mean_ci(area_list)
+            plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
+                         markersize=3.5, elinewidth=1, zorder=10)
+            utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
+
+        utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=False, x_offset=True, y_offset=True)
+        utils.set_ax_parameters(ax, [], y_ticks, [], y_ticks, x_lim, y_lim, None, y_label)
+        plt.grid(False)
+
+        if subplot == 4:
+            utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset=True, y_offset=True)
+            utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label)
+            #plt.text(1.2, 0.01, 'A', fontsize=12, fontfamily='arial', color='white')
+            plt.text(0.075, 0.06, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+            plt.text(0.385, 0.06, '1 week apart', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+            plt.text(0.75, 0.06, 'Same day', fontsize=8, fontfamily='arial', transform=plt.gcf().transFigure)
+
+        plt.grid(False)
+        plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5, zorder=5)
+
+          # turn grid off for x axis
 
     plt.savefig(path, dpi=300, bbox_inches='tight')
     text = colored(path, 'blue')
-    print(f'Area_difference_between_conditions saved in {text}\n')
+    print(f'difference_between_conditions saved in {text}\n')
     plt.close()
