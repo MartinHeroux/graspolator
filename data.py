@@ -2,6 +2,7 @@ from typing import NamedTuple
 from collections import namedtuple
 from pathlib import Path
 import numpy as np
+from dataclasses import dataclass
 
 import utils
 from utils import get_directory_list, create_general_constants
@@ -261,7 +262,7 @@ class Blocks(NamedTuple):
 ############################################
 # EXP2
 ############################################
-
+# TODO this is what you will base your code off
 def get_exp2_data(data_folder):
     all_subject_blocked_data, subjects = _store_raw_blocked_data(data_folder)
     all_subject_data = []
@@ -394,3 +395,19 @@ class Blocks_exp2(NamedTuple):
     WIDTH_WIDTH: Block_exp2
     LINE_WIDTH: Block_exp2
     WIDTH_LINE: Block_exp2
+
+
+# TODO use these instead
+@dataclass
+class Condition:
+    ACTUAL: list
+    PERCEIVED: list
+
+@dataclass
+class Block:
+    SUBJECT_ID: object
+    WIDTH_WIDTH: Condition
+    LINE_WIDTH: Condition
+    WIDTH_LINE: Condition
+
+
