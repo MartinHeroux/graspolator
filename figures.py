@@ -261,7 +261,6 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
 
     plt.figure(figsize=(3.3, 4.3))
     for subject, subject_data in zip(subjects, all_subject_data):
-        print(subject)
         data_pairs = utils.create_data_tuples(experiment, subject_data)
         y_points_r2 = []
         y_points_area = []
