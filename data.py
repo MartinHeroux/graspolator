@@ -403,11 +403,11 @@ class Condition:
     ACTUAL: list
     PERCEIVED: list
 
-@dataclass
-class Block:
-    SUBJECT_ID: object
-    WIDTH_WIDTH: Condition
-    LINE_WIDTH: Condition
-    WIDTH_LINE: Condition
+#@dataclass
+#class Block:
+    #SUBJECT_ID: object
+    #WIDTH_WIDTH: Condition
+    #LINE_WIDTH: Condition
+    #WIDTH_LINE: Condition
 
 

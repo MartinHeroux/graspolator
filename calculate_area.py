@@ -243,6 +243,7 @@ def _crosser_triangle_signed(x_intersect, y_intersect, y1, y2):
 
 
 def point_of_intersection_with_reality(intercept, slope):
+    print(f'intercept: {intercept}, slope: {slope}')
     m1, b1 = 1, 0
     m2, b2 = slope, intercept
     x_intersect = (b2 - b1) / (m1 - m2)
