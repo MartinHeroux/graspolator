@@ -13,7 +13,7 @@ from calculate_area import normalised, trapezium_area, reg_line_endpoints
 mpl.get_configdir()
 import matplotlib.pyplot as plt
 
-plt.style.use('graspolator_style')
+#plt.style.use('graspolator_style')
 
 # Create figure
 fig = plt.figure()

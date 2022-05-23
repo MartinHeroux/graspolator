@@ -1,4 +1,5 @@
 from collections import namedtuple
+from pathlib import Path
 
 import data
 import figures
@@ -11,16 +12,17 @@ plot_dispatch = namedtuple('plot_dispatch', 'PLOT COMMAND')
 # TODO change string below to match experiment
 #  either 'exp1' or 'exp2' (Kathy and Lovisa respectively)
 #experiments = ['exp1', 'exp2']
-experiments = ['exp1', 'exp2']
-experiment = 'exp2'
-for experiment in experiments:
+experiments = ['exp2', 'exp1']
+data_folders = [Path('./data/exp2'), Path('./data/exp1')]
+
+for experiment, data_folder in zip(experiments, data_folders):
     # import data and subject list for experiment
-    all_subject_data, subjects = data.get_data_and_subjects(experiment)
+    all_subject_data, subjects = data.get_data_and_subjects(experiment, data_folder)
 
     # make plot dispatcher keys
     # TODO change 'skip' to 'skip' to alter which plots are made
     A = plot_dispatch._make([plot.individual_regressions, 'run'])
-    B = plot_dispatch._make([plot.individual_areas_to_reality, 'skip'])
+    B = plot_dispatch._make([plot.individual_areas_to_reality, 'run'])
     C = plot_dispatch._make([plot.individual_areas_between_conditions, 'skip'])
     D = plot_dispatch._make([plot.group_regression_lines_per_condition, 'run'])
     E = plot_dispatch._make([plot.group_areas_per_conditions, 'skip'])
@@ -38,6 +40,3 @@ for experiment in experiments:
     plot_summary = process.create_plot_dispatcher(experiment, A, B, C, D, E, F, G, H, I, J, K)
     process.plot_by_dispatcher_key(plot_summary, all_subject_data, experiment, subjects)
 
-for experiment in experiments:
-    all_subject_data, subjects = data.get_data_and_subjects(experiment)
-    figures.figure_2_and_6(all_subject_data, subjects, experiment)
