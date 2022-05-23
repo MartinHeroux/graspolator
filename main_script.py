@@ -13,7 +13,7 @@ for experiment, data_folder, results_file in zip(experiments, data_folders, resu
         os.remove(results_file)
         print(f'Previous results_{experiment}.txt removed\n')
 
-    data.write_participant_demographics(experiment, data_folder)
+    #data.write_participant_demographics(experiment, data_folder)
 
     all_subject_data, subject_IDs = data.get_data_and_subjects(experiment, data_folder)
     # TODO this is what you will need to make, lives in data

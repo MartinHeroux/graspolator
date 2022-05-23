@@ -331,7 +331,7 @@ def x_tick_labels_group_plot(experiment):
     if experiment == 'exp1':
         x_ticks = ['Dominant', 'Non-dominant', 'Dominant', 'Dominant']
     else:
-        x_ticks = ['Line-to-width', 'Width-to-line', 'Width-to-width']
+        x_ticks = ['Line-to-grasp', 'Grasp-to-line', 'Grasp-to-grasp']
     return x_ticks
 
 
@@ -345,8 +345,8 @@ def r2_area_constants():
                                   y_lims=[[0.6, 1.01], [0, 4]], subplot_indices=[2, 1], r2_mean=0.946,
                                   r2_ci_lower=0.9306, r2_ci_upper=0.9613,
                                   area_mean=0.22, area_ci_lower=0.16, area_ci_upper=0.28,
-                                  exp_1_colors=['indigo', 'mediumorchid'],
-                                  exp_2_colors=['darkgreen', 'limegreen'], exp_1_subjects=['SUB03L', 'SUB11R'],
+                                  exp_1_colors=['darkorchid', 'fuchsia'],
+                                  exp_2_colors=['green', 'lime'], exp_1_subjects=['SUB18R', 'SUB02R'],
                                   exp_2_subjects=['sub02', 'sub29'],
                                   font='arial')
 
@@ -377,16 +377,18 @@ def get_directory_list(directory):
 # PLOT APPEARANCE
 ##################################################################
 
-def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims, y_lims, x_label, y_label):
+def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims, y_lims, x_label, y_label, fontsize,
+                      gridlines):
     ax.set_xticks(x_ticks)
-    ax.set_xticklabels(x_tick_labels, fontsize=8, fontfamily='arial')
+    ax.set_xticklabels(x_tick_labels, fontsize=fontsize, fontfamily='arial')
     ax.set_yticks(y_ticks)
-    ax.set_yticklabels(y_tick_labels, fontsize=8, fontfamily='arial')
+    ax.set_yticklabels(y_tick_labels, fontsize=fontsize, fontfamily='arial')
     ax.set_xlim(x_lims)
     ax.set_ylim(y_lims)
-    ax.set_xlabel(x_label, fontsize=8, fontfamily='arial')
-    ax.set_ylabel(y_label, fontsize=8, fontfamily='arial')
-    ax.grid(axis='both', linewidth=0.5, color='lightgrey')
+    ax.set_xlabel(x_label, fontsize=fontsize, fontfamily='arial')
+    ax.set_ylabel(y_label, fontsize=fontsize, fontfamily='arial')
+    if gridlines:
+        ax.grid(axis='both', linewidth=0.5, color='lightgrey')
 
 
 def draw_ax_spines(ax, left, right, top, bottom, x_offset = False, y_offset = False):
@@ -407,8 +409,8 @@ def draw_ax_spines(ax, left, right, top, bottom, x_offset = False, y_offset = Fa
 
 def add_plot_text(ax, subplot, experiment):
     if subplot == 2 and experiment == 'exp1':
-        ax.text(0.1, -0.25, 'Day 1', fontsize=8, fontfamily='arial', transform=ax.transAxes)
-        ax.text(0.75, -0.25, 'Day 2', fontsize=8, fontfamily='arial', transform=ax.transAxes)
+        ax.text(0.1, -0.25, 'Day 1', fontsize=10, fontfamily='FreeSans', transform=ax.transAxes)
+        ax.text(0.75, -0.25, 'Day 2', fontsize=10, fontfamily='FreeSans', transform=ax.transAxes)
         ax.annotate('', xy=(0, -0.17), xycoords='axes fraction', xytext=(0.45, -0.17),
                     arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
         ax.annotate('', xy=(0.6, -0.17), xycoords='axes fraction', xytext=(0.99, -0.17),
