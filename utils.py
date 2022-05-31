@@ -79,9 +79,16 @@ def regression_summary(x, y):
     return t_vals, t_test, f_test
 
 
+#def calculate_r2(actual, perceived):
+    #r_score, p_value = scp.pearsonr(actual, perceived)
+    #r_squared = r_score ** 2
+    #return r_squared
+
 def calculate_r2(actual, perceived):
-    r_score, p_value = scp.pearsonr(actual, perceived)
-    r_squared = r_score ** 2
+    actual = sm.add_constant(actual)
+    model = sm.OLS(perceived, actual).fit()
+
+    r_squared = model.rsquared
     return r_squared
 
 
@@ -348,7 +355,7 @@ def r2_area_constants():
                                   exp_1_colors=['darkorchid', 'fuchsia'],
                                   exp_2_colors=['green', 'lime'], exp_1_subjects=['SUB18R', 'SUB02R'],
                                   exp_2_subjects=['sub02', 'sub29'],
-                                  font='arial')
+                                  font='FreeSans')
 
     return r2_area_constants
 
@@ -380,13 +387,13 @@ def get_directory_list(directory):
 def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims, y_lims, x_label, y_label, fontsize,
                       gridlines):
     ax.set_xticks(x_ticks)
-    ax.set_xticklabels(x_tick_labels, fontsize=fontsize, fontfamily='arial')
+    ax.set_xticklabels(x_tick_labels, fontsize=fontsize, fontfamily='FreeSans')
     ax.set_yticks(y_ticks)
-    ax.set_yticklabels(y_tick_labels, fontsize=fontsize, fontfamily='arial')
+    ax.set_yticklabels(y_tick_labels, fontsize=fontsize, fontfamily='FreeSans')
     ax.set_xlim(x_lims)
     ax.set_ylim(y_lims)
-    ax.set_xlabel(x_label, fontsize=fontsize, fontfamily='arial')
-    ax.set_ylabel(y_label, fontsize=fontsize, fontfamily='arial')
+    ax.set_xlabel(x_label, fontsize=fontsize, fontfamily='FreeSans')
+    ax.set_ylabel(y_label, fontsize=fontsize, fontfamily='FreeSans')
     if gridlines:
         ax.grid(axis='both', linewidth=0.5, color='lightgrey')
 
