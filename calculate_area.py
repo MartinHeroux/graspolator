@@ -18,23 +18,25 @@ def triangle_area(b, h):
 def normalised(actual, perceived, experiment):
     intercept, slope = utils.calculate_regression_general(actual, perceived)
     x_intersect, y_intersect = point_of_intersection_with_reality(intercept, slope)
-    x2, x10, y_at_x2, y_at_x10 = reg_line_endpoints(actual, perceived, experiment)
-    group = _subject_group(x_intersect, y_at_x2, experiment)
+    x1, x2, y_at_x1, y_at_x2 = reg_line_endpoints(actual, perceived, experiment)
+    group = _subject_group(x_intersect, y_at_x1, experiment)
 
     if group == 'crosser':
-        area_left, area_right, area_total = _crosser_area_calc(x_intersect, y_intersect, y_at_x2, y_at_x10, experiment)
+        area_left, area_right, area_total = _crosser_area_calc(x_intersect, y_intersect, y_at_x1, y_at_x2, experiment)
     elif group == 'crosser_triangle':
-        area_left, area_right, area_total = _crosser_triangle_area_calc(x_intersect, y_intersect, y_at_x2, y_at_x10,
+        area_left, area_right, area_total = _crosser_triangle_area_calc(x_intersect, y_intersect, y_at_x1, y_at_x2,
                                                                         experiment)
     elif group == 'minimiser':
-        area_total = _minimiser_area_calc(y_at_x2, y_at_x10, experiment)
+        area_total = _minimiser_area_calc(y_at_x1, y_at_x2, experiment)
     else:
-        area_total = _maximiser_area_calc(y_at_x2, y_at_x10, experiment)
+        area_total = _maximiser_area_calc(y_at_x1, y_at_x2, experiment)
 
     if experiment == 'exp1':
-        normalised_area = (abs(area_total) / 8)
+        #normalised_area = (abs(area_total) / 8)
+        normalised_area = (abs(area_total) / 0.57)
     elif experiment == 'exp2':
-        normalised_area = (abs(area_total) / 6)
+        #normalised_area = (abs(area_total) / 6)
+        normalised_area = (abs(area_total) / 0.42)
 
     return normalised_area
 
@@ -55,9 +57,11 @@ def normalised_signed(actual, perceived, experiment):
         area_total = _maximiser_signed(y_at_x2, y_at_x10)
 
     if experiment == 'exp1':
-        normalised_area_signed = ((area_total) / 8)
+        #normalised_area_signed = ((area_total) / 8)
+        normalised_area_signed = ((area_total) / 0.57)
     elif experiment == 'exp2':
-        normalised_area_signed = ((area_total) / 6)
+        #normalised_area_signed = ((area_total) / 6)
+        normalised_area_signed = ((area_total) / 0.42)
 
     return normalised_area_signed
 
@@ -245,6 +249,9 @@ def _crosser_triangle_signed(x_intersect, y_intersect, y1, y2):
 def point_of_intersection_with_reality(intercept, slope):
     m1, b1 = 1, 0
     m2, b2 = slope, intercept
+
+    if m1 - m2 == 0:
+        print('zero gradient difference')
     x_intersect = (b2 - b1) / (m1 - m2)
     y_intersect = (x_intersect * slope) + intercept
     return x_intersect, y_intersect
