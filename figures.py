@@ -10,15 +10,15 @@ import calculate_area
 
 def generate(all_subject_data, subjects, experiment):
 
-    figure_2_and_6(all_subject_data, subjects, experiment)
+    #figure_2_and_6(all_subject_data, subjects, experiment)
     figure_3_and_7(all_subject_data, subjects, experiment)
 
-    if experiment == 'exp2':
-        figure_4(all_subject_data, experiment)
-        figure_5(all_subject_data, experiment)
+    #if experiment == 'exp2':
+        #figure_4(all_subject_data, experiment)
+        #figure_5(all_subject_data, experiment)
 
-    if experiment == 'exp1':
-        figure_8(all_subject_data, experiment)
+    #if experiment == 'exp1':
+        #figure_8(all_subject_data, experiment)
 
 
 def figure_2_and_6(all_subject_data, subjects, experiment):
@@ -98,6 +98,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
 
             plt.plot(x_lims, x_lims, 'k--', linewidth=1) # plot line of 'reality'
             utils.plot_data_scatter(ax, condition_data.ACTUAL, condition_data.PERCEIVED, color)
+            print(f'{condition_name}: {len(condition_data.ACTUAL)} data points')
             utils.plot_regression_line(ax, intercept, slope, color, x_data_lims[0], x_data_lims[1])
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
             utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
@@ -216,12 +217,12 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         plt.gca().spines['right'].set_visible(False)
 
     plt.tight_layout(h_pad=0.4, w_pad=0.4, rect=(0.1, 0, 1, 1))
-    plt.savefig(path, dpi=300)
-    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
-    plt.savefig(path_svg)
-    print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
-    text = colored(path, 'blue')
-    print(f'{experiment} example subjects and group regressions saved in in {text}\n')
+    #plt.savefig(path, dpi=300)
+    #path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    #plt.savefig(path_svg)
+    #print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
+    #text = colored(path, 'blue')
+    #print(f'{experiment} example subjects and group regressions saved in in {text}\n')
     plt.close()
 
 
@@ -281,7 +282,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                                                                    params.y_labels,
                                                                    params.y_ticks, y_lims, plot_text):
             plt.subplot(2, 1, subplot)
-            plt.plot(x_points, y_points, color=line_color, alpha=0.5, linewidth=line_width, zorder=order)
+            plt.plot(x_points, y_points, color=line_color, alpha=alpha, linewidth=line_width, zorder=order)
             ax = plt.gca()
             if subplot == 1:
                 ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
@@ -293,7 +294,8 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                 utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
                 plt.gcf().text(0.00001, 0.49, text, fontsize=12, fontfamily='FreeSans')
 
-            utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8, False)
+            # TODO CHANGE HERE
+            # utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8, False)
 
             if experiment == 'exp1' and subplot == 2:
                 plt.ylim(0.70, 1)
@@ -311,6 +313,8 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     plt.grid(False)
     plt.tight_layout(h_pad=0.6, w_pad=0.9)
     plt.savefig(path, dpi=300)
+    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    plt.savefig(path_svg)
     text = colored(f'{path}', 'blue')
     print(f'R2 and area per condition plots saved in {text}\n')
     plt.close()
@@ -341,6 +345,8 @@ def figure_4(all_subject_data, experiment):
     plt.figure(figsize=(3.3, 7))
     for subplot_index, condition_r2_data, condition_area_data, condition_name, text in zip(subplot_indices, r2_lists,
                                                                                      area_lists, x_labels, text_labels):
+        #condition_area_data.pop(20)
+        #condition_r2_data.pop(20)
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
 
         plt.subplot(subplot_indices[-1], subplot_indices[0], subplot_index)
@@ -378,6 +384,8 @@ def figure_4(all_subject_data, experiment):
 
     plt.tight_layout(h_pad=0.9)
     plt.savefig(path, dpi=300, bbox_inches='tight')
+    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    plt.savefig(path_svg)
     text = colored(f'{path}', 'blue')
     print(f'{experiment} area vs r2 plots saved in {text}\n')
     plt.close()
@@ -398,12 +406,13 @@ def figure_5(all_subject_data, experiment):
     x_ticks, y_ticks = [0.4, 0.8, 1.2, 1.6, 2], [0.4, 0.8, 1.2, 1.6, 2]
     x_label, y_label = 'Line-to-grasp regression slope', 'Grasp-to-line regression slope'
 
-    for subject_data in all_subject_data:
+    for count, subject_data in enumerate(all_subject_data, start=1):
         intercept_line_width, slope_line_width = utils.calculate_regression_general(subject_data.LINE_WIDTH.ACTUAL,
                                                                                     subject_data.LINE_WIDTH.PERCEIVED)
         intercept_width_line, slope_width_line = utils.calculate_regression_general(subject_data.WIDTH_LINE.ACTUAL,
                                                                                     subject_data.WIDTH_LINE.PERCEIVED)
-
+        if slope_width_line > 1.7:
+            print(f'SUB{count} is the outlier')
         slopes_line_width.append(slope_line_width)
         slopes_width_line.append(slope_width_line)
 
@@ -441,6 +450,8 @@ def figure_5(all_subject_data, experiment):
     plt.tight_layout()
 
     plt.savefig(path, dpi=300)
+    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    plt.savefig(path_svg)
     text = colored(f'{path}', 'blue')
     print(f'slope comparison saved in {text}\n')
     plt.close()
@@ -527,6 +538,8 @@ def figure_8(all_subject_data, experiment):
           # turn grid off for x axis
 
     plt.savefig(path, dpi=300, bbox_inches='tight')
+    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    plt.savefig(path_svg)
     text = colored(path, 'blue')
     print(f'difference_between_conditions saved in {text}\n')
     plt.close()
