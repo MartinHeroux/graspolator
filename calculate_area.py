@@ -32,11 +32,9 @@ def normalised(actual, perceived, experiment):
         area_total = _maximiser_area_calc(y_at_x1, y_at_x2, experiment)
 
     if experiment == 'exp1':
-        #normalised_area = (abs(area_total) / 8)
-        normalised_area = (abs(area_total) / 0.57)
+        normalised_area = (abs(area_total) / 8)
     elif experiment == 'exp2':
-        #normalised_area = (abs(area_total) / 6)
-        normalised_area = (abs(area_total) / 0.42)
+        normalised_area = (abs(area_total) / 6)
 
     return normalised_area
 
@@ -57,11 +55,9 @@ def normalised_signed(actual, perceived, experiment):
         area_total = _maximiser_signed(y_at_x2, y_at_x10)
 
     if experiment == 'exp1':
-        #normalised_area_signed = ((area_total) / 8)
-        normalised_area_signed = ((area_total) / 0.57)
+        normalised_area_signed = ((area_total) / 8)
     elif experiment == 'exp2':
-        #normalised_area_signed = ((area_total) / 6)
-        normalised_area_signed = ((area_total) / 0.42)
+        normalised_area_signed = ((area_total) / 6)
 
     return normalised_area_signed
 
