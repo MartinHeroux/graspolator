@@ -295,7 +295,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                 plt.gcf().text(0.00001, 0.49, text, fontsize=12, fontfamily='FreeSans')
 
             # TODO CHANGE HERE
-            # utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8, False)
+            utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8, False)
 
             if experiment == 'exp1' and subplot == 2:
                 plt.ylim(0.70, 1)
