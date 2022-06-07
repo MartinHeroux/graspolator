@@ -562,3 +562,27 @@ def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
     results.close()
 
 
+def return_perceived_by_actual(all_subject_data):
+    three, four, five, six, seven, eight, nine = [], [], [], [], [], [], []
+
+    for subject in all_subject_data:
+        line_width = subject.LINE_WIDTH
+        for count, (actual, perceived) in enumerate(zip(line_width.ACTUAL, line_width.PERCEIVED)):
+            if actual == 3.0:
+                three.append(abs(perceived-3))
+            elif actual == 4.0:
+                four.append(abs(perceived-4))
+            elif actual == 5.0:
+                five.append(abs(perceived-5))
+            elif actual == 6.0:
+                six.append(abs(perceived-6))
+            elif actual == 7.0:
+                seven.append(abs(perceived-7))
+            elif actual == 8.0:
+                eight.append(abs(perceived-8))
+            elif actual == 9.0:
+                nine.append(abs(perceived-9))
+            else:
+                print(subject.SUBJECT_ID, count)
+
+    return three, four, five, six, seven, eight, nine

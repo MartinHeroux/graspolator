@@ -3,6 +3,7 @@ import matplotlib.patches as mpatches
 import numpy as np
 from termcolor import colored
 from pathlib import Path
+from random import random
 
 import utils
 import calculate_area
@@ -10,15 +11,15 @@ import calculate_area
 
 def generate(all_subject_data, subjects, experiment):
 
-    #figure_2_and_6(all_subject_data, subjects, experiment)
+    figure_2_and_6(all_subject_data, subjects, experiment)
     figure_3_and_7(all_subject_data, subjects, experiment)
 
-    #if experiment == 'exp2':
-        #figure_4(all_subject_data, experiment)
-        #figure_5(all_subject_data, experiment)
+    if experiment == 'exp2':
+        figure_4(all_subject_data, experiment)
+        figure_5(all_subject_data, experiment)
 
-    #if experiment == 'exp1':
-        #figure_8(all_subject_data, experiment)
+    if experiment == 'exp1':
+        figure_8(all_subject_data, experiment)
 
 
 def figure_2_and_6(all_subject_data, subjects, experiment):
@@ -217,12 +218,12 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         plt.gca().spines['right'].set_visible(False)
 
     plt.tight_layout(h_pad=0.4, w_pad=0.4, rect=(0.1, 0, 1, 1))
-    #plt.savefig(path, dpi=300)
-    #path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
-    #plt.savefig(path_svg)
-    #print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
-    #text = colored(path, 'blue')
-    #print(f'{experiment} example subjects and group regressions saved in in {text}\n')
+    plt.savefig(path, dpi=300)
+    path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
+    plt.savefig(path_svg)
+    print(f'{experiment} example subjects and group regressions saved in in {path_svg}\n')
+    text = colored(path, 'blue')
+    print(f'{experiment} example subjects and group regressions saved in in {text}\n')
     plt.close()
 
 
@@ -543,3 +544,30 @@ def figure_8(all_subject_data, experiment):
     text = colored(path, 'blue')
     print(f'difference_between_conditions saved in {text}\n')
     plt.close()
+
+
+def error_by_actual_width(all_subject_data):
+    plot = 'Error by actual width'
+    figure = 'Figure_9'
+    path = utils.create_figure_save_path(figure)
+
+    three, four, five, six, seven, eight, nine = utils.return_perceived_by_actual(all_subject_data)
+    plot_data = [three, four, five, six, seven, eight, nine]
+    x_points = [3, 4, 5, 6, 7, 8, 9]
+
+    plt.figure()
+    for count, (x_point, data) in enumerate(zip(x_points, plot_data)):
+        x_points_new = [x_point for _ in range(len(data))]
+        jitter_values = [random() / 3 if _ % 2 == 0 else random() / -3 for _ in range(len(data))]
+        x_points_jitter = np.array(x_points_new) - np.array(jitter_values)
+        #y_points_jitter = np.array(data) - np.array(jitter_values)
+        plt.plot(x_points_jitter, data, color='gray', marker='o', markersize=1, linestyle="")
+
+        mean, ci = utils.calculate_mean_ci(data)
+        plt.errorbar(x_point, mean, yerr=ci, color='black', marker='o', markersize=3)
+    plt.xlabel('Actual width (cm)')
+    plt.ylabel('Error (perceived - actual) (cm)')
+    plt.xticks([3, 4, 5, 6, 7, 8, 9])
+
+    plt.savefig(path, dpi=200)
+
