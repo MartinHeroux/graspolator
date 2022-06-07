@@ -365,10 +365,10 @@ def r2_area_constants():
 ####################################################################
 
 def create_figure_save_path(plot):
-    path = Path(f'./plots/article_plots/')
+    path = Path(f'./plots/figures/')
     if not os.path.exists(path):
         os.makedirs(path)
-    savepath = Path(f'./plots/article_plots/{plot}.png')
+    savepath = Path(f'./plots/figures/{plot}.png')
     return savepath
 
 
