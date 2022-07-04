@@ -104,3 +104,60 @@ def correlate_low_and_high_r2(all_subject_data):
 
     print(f'Width-width vs. Line-width r: {low_high_1[0]} 95%CI: {low_high_1[1]}')
     print(f'Width-width vs. Width-line r: {low_high_2[0]} 95%CI: {low_high_2[1]}')
+
+
+def between_condition_r2_mean_difference(all_subject_data):
+    width_to_width_r2 = []
+    line_to_width_r2 = []
+    width_to_line_r2 = []
+
+    for participant in all_subject_data:
+        width_to_width = utils.calculate_r2(participant.WIDTH_WIDTH.ACTUAL, participant.WIDTH_WIDTH.PERCEIVED)
+        line_to_width = utils.calculate_r2(participant.LINE_WIDTH.ACTUAL, participant.LINE_WIDTH.PERCEIVED)
+        width_to_line = utils.calculate_r2(participant.WIDTH_LINE.ACTUAL, participant.WIDTH_LINE.PERCEIVED)
+
+        width_to_width_r2.append(width_to_width)
+        line_to_width_r2.append(line_to_width)
+        width_to_line_r2.append(width_to_line)
+
+    line_to_width_vs_width_to_line = [abs(x - y) for x, y in zip(line_to_width_r2, width_to_line_r2)]
+    line_to_width_vs_width_to_width = [abs(x - y) for x, y in zip(line_to_width_r2, width_to_width_r2)]
+    width_to_line_vs_width_to_width = [abs(x - y) for x, y in zip(width_to_line_r2, width_to_width_r2)]
+
+    lw_wl_mean, lw_wl_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_line)
+    lw_ww_mean, lw_ww_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_width)
+    wl_ww_mean, wl_ww_ci = utils.calculate_mean_ci(width_to_line_vs_width_to_width)
+
+    print(f'Line-to-width vs width-to-line R2\nMean difference: {lw_wl_mean:4.2f}[{lw_wl_mean - lw_wl_ci:4.2f} to {lw_wl_mean + lw_wl_ci:4.2f}]\n\n')
+    print(f'Line to width vs width_to_width R2\nMean difference: {lw_ww_mean:4.2f}[{lw_ww_mean - lw_ww_ci:4.2f} to {lw_ww_mean + lw_ww_ci:4.2f}]\n')
+    print(f'Width to line vs width-to-width R2\nMean difference: {wl_ww_mean:4.2f}[{wl_ww_mean - wl_ww_ci:4.2f} to {wl_ww_mean + wl_ww_ci:4.2f}]\n')
+
+
+def between_condition_area_mean_difference(all_subject_data):
+    width_to_width_areas = []
+    line_to_width_areas = []
+    width_to_line_areas = []
+
+    for participant in all_subject_data:
+        width_to_width = calculate_area.normalised(participant.WIDTH_WIDTH.ACTUAL, participant.WIDTH_WIDTH.PERCEIVED, 'exp2')
+        line_to_width = calculate_area.normalised(participant.LINE_WIDTH.ACTUAL, participant.LINE_WIDTH.PERCEIVED, 'exp2')
+        width_to_line = calculate_area.normalised(participant.WIDTH_LINE.ACTUAL, participant.WIDTH_LINE.PERCEIVED, 'exp2')
+
+        width_to_width_areas.append(width_to_width)
+        line_to_width_areas.append(line_to_width)
+        width_to_line_areas.append(width_to_line)
+
+    line_to_width_vs_width_to_line = [abs(x - y) for x, y in zip(line_to_width_areas, width_to_line_areas)]
+    line_to_width_vs_width_to_width = [abs(x - y) for x, y in zip(line_to_width_areas, width_to_width_areas)]
+    width_to_line_vs_width_to_width = [abs(x - y) for x, y in zip(width_to_line_areas, width_to_width_areas)]
+
+    lw_wl_mean, lw_wl_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_line)
+    lw_ww_mean, lw_ww_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_width)
+    wl_ww_mean, wl_ww_ci = utils.calculate_mean_ci(width_to_line_vs_width_to_width)
+
+    print(
+        f'Line-to-width vs width-to-line Area\nMean difference: {lw_wl_mean:4.2f}[{lw_wl_mean - lw_wl_ci:4.2f} to {lw_wl_mean + lw_wl_ci:4.2f}]\n\n')
+    print(
+        f'Line to width vs width_to_width Area\nMean difference: {lw_ww_mean:4.2f}[{lw_ww_mean - lw_ww_ci:4.2f} to {lw_ww_mean + lw_ww_ci:4.2f}]\n')
+    print(
+        f'Width to line vs width-to-width Area\nMean difference: {wl_ww_mean:4.2f}[{wl_ww_mean - wl_ww_ci:4.2f} to {wl_ww_mean + wl_ww_ci:4.2f}]\n')
