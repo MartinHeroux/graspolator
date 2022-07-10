@@ -85,13 +85,15 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
         x1, x2, y1, y2 = calculate_area.reg_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
-                                                           experiment)
+                                                           'comparison')
+        print(x1)
         if y2 < 15:
             y_max = 14
         else:
             y_max = y2
 
         area = calculate_area.normalised(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, experiment)
+        #area = calculate_area.normalised(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, 'comparison')
         color = old_python_files.old_functions.color_manip(condition_tuple.PLOT_INDEX)
 
         x_colour_points, y_points_reality, y_points_reg = np.array([x1, x2]), np.array([x1, x2]), np.array([y1, y2])
