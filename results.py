@@ -14,9 +14,9 @@ def write_icc_results(all_subject_data):
     area_d2_dom = []
 
     for subject in all_subject_data:
-        d1_dom_r2 = utils.calculate_r2(subject.day2_dominant_2.ACTUAL, subject.day2_dominant_2.PERCEIVED)
+        d1_dom_r2 = utils.calculate_r2(subject.day1_dominant.ACTUAL, subject.day1_dominant.PERCEIVED)
         d2_dom_r2 = utils.calculate_r2(subject.day2_dominant_1.ACTUAL, subject.day2_dominant_1.PERCEIVED)
-        d1_dom_area = calculate_area.normalised(subject.day2_dominant_2.ACTUAL, subject.day2_dominant_2.PERCEIVED, 'exp1')
+        d1_dom_area = calculate_area.normalised(subject.day1_dominant.ACTUAL, subject.day1_dominant.PERCEIVED, 'exp1')
         d2_dom_area = calculate_area.normalised(subject.day2_dominant_1.ACTUAL, subject.day2_dominant_1.PERCEIVED, 'exp1')
 
         r2_d1_dom.append(d1_dom_r2)
