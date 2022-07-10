@@ -8,6 +8,8 @@ from random import random
 import utils
 import calculate_area
 
+font = 'FreeSans'
+
 
 def generate(all_subject_data, subjects, experiment):
 
@@ -24,6 +26,7 @@ def generate(all_subject_data, subjects, experiment):
 
 def figure_2_and_6(all_subject_data, subjects, experiment):
     plot = 'Example participants and group regression summary'
+    font = 'arial'
     
     if experiment == 'exp1':
         figure = 'Figure_6'
@@ -77,7 +80,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         text_coordinates = (-0.5, 13)
 
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
-    plt.rcParams.update({'font.family': 'FreeSans'})
+    plt.rcParams.update({'font.family': font})
     # plot example subjects in left and centre subplot cols
     for column, (example_subject_data, color, plot_indices, example_subject) in enumerate(zip(data_list, colors,
                                                                                               plot_indices_list,
@@ -87,9 +90,9 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         for condition_data, condition_plot_index, condition_name, label in zip(example_subject_data, plot_indices, condition_names, label_list):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
             if condition_plot_index == 1:
-                plt.title(example_subject_labels[0], loc='center', size=11, fontfamily='FreeSans')
+                plt.title(example_subject_labels[0], loc='center', size=10, fontfamily=font)
             if condition_plot_index == 2:
-                plt.title(example_subject_labels[1], loc='center', size=11, fontfamily='FreeSans')
+                plt.title(example_subject_labels[1], loc='center', size=10, fontfamily=font)
 
             intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL, condition_data.PERCEIVED)
             area = calculate_area.normalised(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
@@ -104,11 +107,11 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
             utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
 
-            legend_handles = [mpatches.Rectangle((6.0, 6.0), width=5, height=1, color='white', alpha=0.5, label=f'{area:3.1f}'), mpatches.Patch(color='white', alpha=0.5, label=f'{r2:3.2f}')]
+            legend_handles = [mpatches.Rectangle((6.0, 6.0), width=8, height=1, color='white', alpha=0.5, label=f'{r2:3.2f}'), mpatches.Rectangle((6.0, 6.0), width=8, height=1, color='white', alpha=0.5, label=f'{area:3.1f}')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
                        handlelength=1, handleheight=1, edgecolor='none')
 
-            plt.text(0.05, 0.81, 'R$^2$', fontfamily='FreeSans', fontsize=8, transform=plt.gca().transAxes, zorder=20)
+            plt.text(0.05, 0.81, 'Variability', fontfamily=font, fontsize=8, transform=plt.gca().transAxes, zorder=20)
             utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None, 10, True)
             utils.draw_ax_spines(ax, False, False, False, False)
             ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
@@ -118,19 +121,17 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             if condition_plot_index in subplot_left_col:
                 ax.tick_params(axis='y', which='both', left=True, labelleft=True)
                 ax.spines['left'].set_visible(True)
-                plt.text(text_coordinates[0], text_coordinates[1], label, fontsize=14, fontfamily='FreeSans')
-            #if condition_plot_index == 4 and experiment == 'exp2':
-                #ax.set_ylabel('Perceived\nwidth (cm)', fontfamily='arial', fontsize=11, rotation=0)
-            #elif condition_plot_index == 7 and experiment == 'exp1':
-                #ax.set_ylabel('Perceived\nwidth (cm)', fontfamily='arial', fontsize=11, rotation=0)
-                #plot condition labels (A, B, C, +/- D)
-
+                plt.text(text_coordinates[0], text_coordinates[1], label, fontsize=14, fontfamily=font)
+            if condition_plot_index == 4 and experiment == 'exp2':
+                ax.set_ylabel('Response\nwidth (cm)', fontfamily='arial', fontsize=10, rotation=0)
+            elif condition_plot_index == 7 and experiment == 'exp1':
+                ax.set_ylabel('Response\nwidth (cm)', fontfamily='arial', fontsize=10, rotation=0)
 
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
                 ax.spines['bottom'].set_visible(True)
             if condition_plot_index == 11:
-                plt.xlabel('Stimulus width (cm)', fontsize=14, fontfamily='FreeSans')
+                plt.xlabel('Reference width (cm)', fontsize=10, fontfamily=font)
 
     # plot group regression lines in the right subplot column
     if experiment == 'exp1':
@@ -145,7 +146,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
 
             if condition_plot_index == 3:
-                plt.title('All participants', loc='center', size=11, fontfamily='FreeSans')
+                plt.title('All participants', loc='center', size=11, fontfamily=font)
 
             if subject_ID == example_subjects[0]:
                 line_color = colors[0]
@@ -209,7 +210,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     if experiment == 'exp2':
         plt.subplot(subplot_rows, subplot_cols, 12)
         plt.plot([4, 6], [6, 8])
-        plt.xticks(x_ticks, fontfamily='FreeSans', fontsize=8)
+        plt.xticks(x_ticks, fontfamily=font, fontsize=8)
         plt.xlim([x_lims[0], x_lims[1]])
         plt.gca().tick_params(axis='both', which='both', bottom=True, top=False, left=False, right=False,
                               labelbottom=True,
@@ -289,11 +290,11 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                 ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                                labelbottom=False, labeltop=False, labelleft=True, labelright=False)
                 utils.draw_ax_spines(ax, True, False, False, False, y_offset=True)
-                plt.gcf().text(0.00001, 0.94, text, fontsize=12, fontfamily='FreeSans')
+                plt.gcf().text(0.00001, 0.94, text, fontsize=12, fontfamily=font)
             else:
                 ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
                 utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
-                plt.gcf().text(0.00001, 0.49, text, fontsize=12, fontfamily='FreeSans')
+                plt.gcf().text(0.00001, 0.49, text, fontsize=12, fontfamily=font)
 
             # TODO CHANGE HERE
             utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8, False)
