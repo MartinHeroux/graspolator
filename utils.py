@@ -392,8 +392,8 @@ def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims
     ax.set_yticklabels(y_tick_labels, fontsize=fontsize, fontfamily=font)
     ax.set_xlim(x_lims)
     ax.set_ylim(y_lims)
-    ax.set_xlabel(x_label, fontsize=fontsize, fontfamily=font)
-    ax.set_ylabel(y_label, fontsize=fontsize, fontfamily=font)
+    ax.set_xlabel(x_label, fontsize=10, fontfamily=font)
+    ax.set_ylabel(y_label, fontsize=10, fontfamily=font)
     if gridlines:
         ax.grid(axis='both', linewidth=0.5, color='lightgray')
 
@@ -414,10 +414,10 @@ def draw_ax_spines(ax, left, right, top, bottom, x_offset = False, y_offset = Fa
         ax.spines['bottom'].set_position(('outward', 5))
 
 
-def add_plot_text(ax, subplot, experiment):
+def add_plot_text(ax, subplot, experiment, font='arial'):
     if subplot == 2 and experiment == 'exp1':
-        ax.text(0.1, -0.25, 'Day 1', fontsize=10, fontfamily='FreeSans', transform=ax.transAxes)
-        ax.text(0.75, -0.25, 'Day 2', fontsize=10, fontfamily='FreeSans', transform=ax.transAxes)
+        ax.text(0.1, -0.25, 'Day 1', fontsize=8, fontfamily=font, transform=ax.transAxes)
+        ax.text(0.75, -0.25, 'Day 2', fontsize=8, fontfamily=font, transform=ax.transAxes)
         ax.annotate('', xy=(0, -0.17), xycoords='axes fraction', xytext=(0.45, -0.17),
                     arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
         ax.annotate('', xy=(0.6, -0.17), xycoords='axes fraction', xytext=(0.99, -0.17),

@@ -4,16 +4,21 @@ import numpy as np
 from termcolor import colored
 from pathlib import Path
 from random import random
+from matplotlib.ticker import MultipleLocator
 
 import utils
 import calculate_area
 
 font = 'FreeSans'
 
+font = 'FreeSans'
+
+font = 'FreeSans'
+
 
 def generate(all_subject_data, subjects, experiment):
 
-    figure_2_and_6(all_subject_data, subjects, experiment)
+    #figure_2_and_6(all_subject_data, subjects, experiment)
     figure_3_and_7(all_subject_data, subjects, experiment)
 
     if experiment == 'exp2':
@@ -107,11 +112,11 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
             utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
 
-            legend_handles = [mpatches.Rectangle((6.0, 6.0), width=8, height=1, color='white', alpha=0.5, label=f'{r2:3.2f}'), mpatches.Rectangle((6.0, 6.0), width=8, height=1, color='white', alpha=0.5, label=f'{area:3.1f}')]
+            legend_handles = [mpatches.Rectangle((15, 6.0), width=30, height=1, color='white', alpha=0.5, label=f'{r2:3.2f}'), mpatches.Rectangle((15, 6.0), width=30, height=1, color='white', alpha=0.5, label=f'{area:3.1f}')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
                        handlelength=1, handleheight=1, edgecolor='none')
 
-            plt.text(0.05, 0.81, 'Variability', fontfamily=font, fontsize=8, transform=plt.gca().transAxes, zorder=20)
+            #plt.text(0.05, 0.89, 'Variability', fontfamily=font, fontsize=8, transform=plt.gca().transAxes, zorder=20)
             utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None, 10, True)
             utils.draw_ax_spines(ax, False, False, False, False)
             ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
@@ -229,13 +234,14 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
 
 
 def figure_3_and_7(all_subject_data, subjects, experiment):
-    plot = 'Area and R^2 Group Summary'
+    font = 'arial'
     if experiment == 'exp1':
         figure = 'Figure_7'
     else:
         figure = 'Figure_3'
     path = utils.create_figure_save_path(figure)
 
+    plot = 'Area and R^2 Group Summary'
     utils.write_plot_header(experiment, figure, plot)
 
     x_points, x_lims = utils.x_points_group_plot(experiment)
@@ -247,7 +253,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     if experiment == 'exp1':
         colors = params.exp_1_colors
         example_subjects = params.exp_1_subjects
-        y_lims = [(0.7, 1), (0, 4)]
+        y_lims = [(0.7, 1), (0, 3)]
         condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
         x_ticks = [0.95, 2, 3, 4.05]
     else:
@@ -261,7 +267,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     area_means, area_cis = calculate_area.store_condition_area_means_and_cis(all_subject_data, experiment)
     means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
 
-    plt.figure(figsize=(3.3, 4.3))
+    plt.figure(figsize=(3.3, (2.7*2)))
     for subject, subject_data in zip(subjects, all_subject_data):
         data_pairs = utils.create_data_tuples(experiment, subject_data)
         y_points_r2 = []
@@ -290,11 +296,12 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                 ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                                labelbottom=False, labeltop=False, labelleft=True, labelright=False)
                 utils.draw_ax_spines(ax, True, False, False, False, y_offset=True)
-                plt.gcf().text(0.00001, 0.94, text, fontsize=12, fontfamily=font)
+                plt.gcf().text(0.00001, 0.89, text, fontsize=14, fontfamily=font)
+
             else:
                 ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
                 utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
-                plt.gcf().text(0.00001, 0.49, text, fontsize=12, fontfamily=font)
+                plt.gcf().text(0.00001, 0.47, text, fontsize=14, fontfamily=font)
 
             # TODO CHANGE HERE
             utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8, False)
@@ -308,13 +315,21 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
             plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='black', mec='black',
                          markersize=3, linewidth=1, zorder=11)
             utils.write_mean_ci_result(experiment, mean, ci, y_label, x_label)
+        if subplot == 1:
+            plt.ylabel('Error\n(cm$^2$) / n', fontfamily=font, fontsize=10, rotation=0)
+        else:
+            plt.ylabel('Variability\n(R$^2$)', fontfamily=font, fontsize=10, rotation=0)
 
         ax = plt.gca()
-        utils.add_plot_text(ax, subplot, experiment)
+        add_plot_text(ax, subplot, experiment)
         utils.add_plot_shading(ax, subplot, experiment, params.r2_ci_lower, params.r2_ci_upper, params.area_ci_lower, params.area_ci_upper)
+
     plt.grid(False)
-    plt.tight_layout(h_pad=0.6, w_pad=0.9)
-    plt.savefig(path, dpi=300)
+    #plt.tight_layout(h_pad=0.6, w_pad=0.9)
+
+    plt.subplots_adjust(left=0.25, right=0.9)
+
+    plt.savefig(path, dpi=300, bbox_inches='tight')
     path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
     plt.savefig(path_svg)
     text = colored(f'{path}', 'blue')
@@ -323,6 +338,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
 
 
 def figure_4(all_subject_data, experiment):
+    font = 'arial'
     figure = 'Figure_4'
     plot = 'Area vs R^2 Regression'
     path = utils.create_figure_save_path(figure)
@@ -340,11 +356,12 @@ def figure_4(all_subject_data, experiment):
         subplot_indices = [1, 2, 3]
         text_labels = ['A', 'B', 'C']
 
-    x_lims, y_lims = (0, 4), (0.6, 1)
-    x_ticks, y_ticks = [0, 1, 2, 3, 4], [0.6, 0.7, 0.8, 0.9, 1]
+    x_lims, y_lims = (0, 3), (0.6, 1)
+    x_ticks, y_ticks = [0, 1, 2, 3], [0.6, 0.7, 0.8, 0.9, 1]
     x_label, y_label = None, 'R$^2$'
 
-    plt.figure(figsize=(3.3, 7))
+    plt.figure(figsize=(3.3, (2.7*3)))
+    plt.rcParams.update({'font.family': font})
     for subplot_index, condition_r2_data, condition_area_data, condition_name, text in zip(subplot_indices, r2_lists,
                                                                                      area_lists, x_labels, text_labels):
         #condition_area_data.pop(20)
@@ -359,32 +376,39 @@ def figure_4(all_subject_data, experiment):
                     zorder=10)
 
         ax = plt.gca()
-        if subplot_index == 2:
-            y_ticks = [0.7, 0.8, 0.9, 1]
-            y_lims = (0.7, 1)
-        elif subplot_index == 3:
+
+        if subplot_index in [2, 3]:
             y_ticks = [0.7, 0.8, 0.9, 1]
             y_lims = (0.7, 1)
 
-        utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, None, 10, True)
-        utils.draw_ax_spines(ax, True, False, False, False)
+        utils.draw_ax_spines(ax, True, False, False, False, x_offset=True, y_offset=True)
         ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                               labelbottom=False, labeltop=False, labelleft=True, labelright=False)
 
         # draw axes and ticks for bottom subplot
         if subplot_index == 3 and experiment == 'exp2':
-            plt.xlabel('Normalised error (cm$^2$ / n)', size=12, fontfamily='FreeSans')
+            plt.xlabel('Error (cm$^2$ / n)', size=10, fontfamily=font)
             ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True, left=True, labelleft=True)
             ax.spines['bottom'].set_visible(True)
 
+        utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, None, 8, False,
+                                font=font)
+
+        if subplot_index == 2 and experiment == 'exp2':
+            plt.ylabel('Variability\n(R$^2$)', fontsize=10, fontfamily=font, rotation=90)
+
+        if subplot_index == 3 and experiment == 'exp1':
+            spacing = ' ' * 30
+            plt.ylabel(f'{spacing}Variability (R$^2$)', fontsize=10, fontfamily=font)
+
         # label subplot letter (A, B, C, +/- D)
-        plt.text(-1, 0.98, text, fontsize = 12, fontfamily = 'FreeSans')
+        plt.text(-1, 0.98, text, fontsize=14, fontfamily=font)
 
         utils.write_regression_results(experiment, condition_area_data, condition_r2_data, intercept, slope, condition_name)
 
         #plt.tight_layout()
 
-    plt.tight_layout(h_pad=0.9)
+    plt.subplots_adjust(left=0.25, right=0.95, top=0.9, bottom=0.1)
     plt.savefig(path, dpi=300, bbox_inches='tight')
     path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
     plt.savefig(path_svg)
@@ -418,7 +442,7 @@ def figure_5(all_subject_data, experiment):
         slopes_line_width.append(slope_line_width)
         slopes_width_line.append(slope_width_line)
 
-    plt.figure(figsize=(3.3, (7 / 2.6)))
+    plt.figure(figsize=(3.3, 2.7))
 
     intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
 
@@ -440,7 +464,7 @@ def figure_5(all_subject_data, experiment):
     y_vals = intercept + slope * x_vals
 
     # plot regression line
-    plt.plot(x_vals, y_vals, color='black', linewidth=1.5, zorder=10)
+    plt.plot(x_vals, y_vals, color='black', linewidth=1, zorder=10)
     # plot individual slope values
     plt.scatter(slopes_line_width, slopes_width_line, c='gray', marker='o', alpha=0.6, s=5, zorder=5, linewidths=0)
 
@@ -448,7 +472,7 @@ def figure_5(all_subject_data, experiment):
     utils.draw_ax_spines(ax, True, False, False, True)
     ax.spines['bottom'].set(linewidth=0.75)
     ax.spines['left'].set(linewidth=0.75)
-    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, y_label, 10, True)
+    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, y_label, 8, False)
     plt.tight_layout()
 
     plt.savefig(path, dpi=300)
@@ -460,6 +484,7 @@ def figure_5(all_subject_data, experiment):
 
 
 def figure_8(all_subject_data, experiment):
+    font = 'arial'
     plot = 'Difference between conditions'
     figure = 'Figure_8'
     path = utils.create_figure_save_path(figure)
@@ -468,7 +493,7 @@ def figure_8(all_subject_data, experiment):
 
     subplots = [1, 2, 3, 4]
     measures = ['area', 'R2', 'intercept', 'slope']
-    measure_labels = ['normalised error (cm$^2$)', 'R$^2$', 'y-intercept', 'slope']
+    measure_labels = ['error\n(cm$^2$) / n', 'variability\n(R$^2$)', 'y-intercept', 'slope']
 
     x_ticks = [1.3, 1.45, 1.6]
     x_points_left = [1.3, 1.45, 1.6]
@@ -477,7 +502,7 @@ def figure_8(all_subject_data, experiment):
     x_descriptors = ['Same day', '1 week apart', 'Same day']
     x_lim = [1.295, 1.63]
 
-    plt.figure(figsize=(8 / 2.4, 20 / 2.4))
+    plt.figure(figsize=(3.3, (2.7*4)))
 
     for subplot, measure, label in zip(subplots, measures, measure_labels):
         between_hands, across_days, within_day = [], [], []
@@ -523,21 +548,28 @@ def figure_8(all_subject_data, experiment):
             utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
 
         utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=False, x_offset=True, y_offset=True)
-        utils.set_ax_parameters(ax, [], y_ticks, [], y_ticks, x_lim, y_lim, None, y_label, 10, True)
+        utils.set_ax_parameters(ax, [], y_ticks, [], y_ticks, x_lim, y_lim, None, y_label, 8, True)
         plt.grid(False)
 
         if subplot == 4:
             utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset=True, y_offset=True)
-            utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label, 10, True)
+            utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label, 8, True)
             #plt.text(1.2, 0.01, 'A', fontsize=12, fontfamily='arial', color='white')
-            plt.text(0.073, 0.055, 'Same day', fontsize=10, fontfamily='FreeSans', transform=plt.gcf().transFigure)
-            plt.text(0.383, 0.055, '1 week apart', fontsize=10, fontfamily='FreeSans', transform=plt.gcf().transFigure)
-            plt.text(0.75, 0.055, 'Same day', fontsize=10, fontfamily='FreeSans', transform=plt.gcf().transFigure)
+            plt.text(0.073, 0.065, 'Same day', fontsize=8, fontfamily=font, transform=plt.gcf().transFigure)
+            plt.text(0.383, 0.065, '1 week apart', fontsize=8, fontfamily=font, transform=plt.gcf().transFigure)
+            plt.text(0.75, 0.065, 'Same day', fontsize=8, fontfamily=font, transform=plt.gcf().transFigure)
 
         plt.grid(False)
         plt.plot([1, 3], [0, 0], color='dimgrey', linewidth=0.5, zorder=5)
 
           # turn grid off for x axis
+
+    plt.text(0.01, 0.89, 'A', fontfamily='arial', fontsize=14, transform=plt.gcf().transFigure)
+    plt.text(0.01, 0.68, 'B', fontfamily='arial', fontsize=14, transform=plt.gcf().transFigure)
+    plt.text(0.01, 0.49, 'C', fontfamily='arial', fontsize=14, transform=plt.gcf().transFigure)
+    plt.text(0.01, 0.28, 'D', fontfamily='arial', fontsize=14, transform=plt.gcf().transFigure)
+
+    plt.subplots_adjust(left=0.25, right=0.95, top=0.9, bottom=0.1)
 
     plt.savefig(path, dpi=300, bbox_inches='tight')
     path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
@@ -572,3 +604,16 @@ def error_by_actual_width(all_subject_data):
 
     plt.savefig(path, dpi=200)
 
+
+def add_plot_text(ax, subplot, experiment, font='arial'):
+    if subplot == 2 and experiment == 'exp1':
+        ax.text(0.1, -0.25, 'Day 1', fontsize=8, fontfamily=font, transform=ax.transAxes)
+        ax.text(0.75, -0.25, 'Day 2', fontsize=8, fontfamily=font, transform=ax.transAxes)
+        ax.annotate('', xy=(0, -0.17), xycoords='axes fraction', xytext=(0.45, -0.17),
+                    arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
+        ax.annotate('', xy=(0.6, -0.17), xycoords='axes fraction', xytext=(0.99, -0.17),
+                    arrowprops=dict(arrowstyle='-', color='black', linewidth=0.5))
+
+    elif subplot == 1:
+        ax.xaxis.set_major_locator(MultipleLocator(1))
+        ax.xaxis.set_major_formatter('{x:.0f}')
