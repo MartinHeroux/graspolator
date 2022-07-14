@@ -7,6 +7,47 @@ import calculate_area
 import utils
 
 
+def write_intercept_slope_summary(all_subject_data, experiment):
+    if experiment == 'exp1':
+        intercept_lists = [[], [], [], []]
+        slope_lists = [[], [], [], []]
+        condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
+    else:
+        intercept_lists = [[], [], []]
+        slope_lists = [[], [], []]
+        condition_names = ['line to width', 'width to line', 'width to width']
+
+    for subject_data in all_subject_data:
+        data_list = utils.create_data_tuples(experiment, subject_data)
+        for condition_data, label, condition_name, intercept_list, slope_list in zip(data_list, condition_names, intercept_lists, slope_lists):
+            intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL, condition_data.PERCEIVED)
+            intercept_list.append(intercept)
+            slope_list.append(slope)
+
+    intercept_means = []
+    intercept_cis = []
+    slope_means = []
+    slope_cis = []
+
+    for intercept_list in intercept_lists:
+        intercept_means.append(np.mean(intercept_list))
+        intercept_cis.append(utils.calculate_ci(intercept_list))
+
+    for slope_list in slope_lists:
+        slope_means.append(np.mean(slope_list))
+        slope_cis.append(utils.calculate_ci(slope_list))
+
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write('\n')
+    results.close()
+
+    for condition_name, intercept_mean, intercept_ci, slope_mean, slope_ci in zip(condition_names, intercept_means, intercept_cis, slope_means, slope_cis):
+        utils.write_mean_ci_result(experiment, intercept_mean, intercept_ci, 'intercept', condition_name)
+        utils.write_mean_ci_result(experiment, slope_mean, slope_ci, 'slope', condition_name)
+
+    print(f'Intercept and slope summary results written to results_{experiment}.txt')
+
+
 def write_icc_results(all_subject_data):
     r2_d1_dom = []
     r2_d2_dom = []

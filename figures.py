@@ -48,9 +48,6 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     utils.write_plot_header(experiment, figure, plot)
     path = utils.create_figure_save_path(figure)
 
-    subplot_rows = 4
-    subplot_cols = 3
-    plot_indices_list = [[1, 4, 7, 10], [2, 5, 8, 11]]
     y_ticks = list(range(0, 17, 2))
 
     # set up experiment specific parameters
@@ -68,21 +65,27 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         y_lim = [0, 16]
         example_subject_labels = ['Participant 1', 'Participant 2']
         text_coordinates = (-3, 15)
+        subplot_rows = 4
+        subplot_cols = 3
+        plot_indices_list = [[1, 4, 7, 10], [2, 5, 8, 11]]
 
     else:
-        condition_names = ['line to width', 'width to line', 'width to width', 'dummy_data']
+        condition_names = ['line to width', 'width to line', 'width to width']
         x_lims = [2, 10]
         x_data_lims = [3, 9]
-        subplot_left_col = [1, 4, 7, 10]
-        subplot_bottom_row = [10, 11, 12]
+        subplot_left_col = [1, 4, 7]
+        subplot_bottom_row = [7, 8, 9]
         group_plot_indices = [3, 6, 9]
         colors = ['green', 'lime']
         example_subjects = [subject_1_ID, subject_2_ID]
         x_ticks = list(range(2, 12, 2))
-        label_list = ['A', 'B', 'C', 'D']
+        label_list = ['A', 'B', 'C']
         y_lim = [0, 14]
         example_subject_labels = ['Participant 1', 'Participant 2']
         text_coordinates = (-0.5, 13)
+        subplot_rows = 3
+        subplot_cols = 3
+        plot_indices_list = [[1, 4, 7], [2, 5, 8]]
 
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
     plt.rcParams.update({'font.family': font})
@@ -135,19 +138,16 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis='x', which='both', bottom=True, labelbottom=True)
                 ax.spines['bottom'].set_visible(True)
-            if condition_plot_index == 11:
+            if condition_plot_index == 11 and experiment == 'exp1':
+                plt.xlabel('Reference width (cm)', fontsize=10, fontfamily=font)
+            if condition_plot_index == 8 and experiment == 'exp2':
                 plt.xlabel('Reference width (cm)', fontsize=10, fontfamily=font)
 
     # plot group regression lines in the right subplot column
-    if experiment == 'exp1':
-        intercept_lists = [[], [], [], []]
-        slope_lists = [[], [], [], []]
-    else:
-        intercept_lists = [[], [], []]
-        slope_lists = [[], [], []]
+
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         data_list = utils.create_data_tuples(experiment, subject_data)
-        for condition_tuple, condition_plot_index, label, condition_name, intercept_list, slope_list in zip(data_list, group_plot_indices, label_list, condition_names, intercept_lists, slope_lists):
+        for condition_tuple, condition_plot_index, label, condition_name in zip(data_list, group_plot_indices, label_list, condition_names):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
 
             if condition_plot_index == 3:
@@ -167,8 +167,6 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 order = 5
 
             intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
-            intercept_list.append(intercept)
-            slope_list.append(slope)
             alpha = 0.7
 
             ax = plt.gca()
@@ -189,29 +187,8 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 plt.gca().spines['bottom'].set_visible(True)
                 plt.gca().tick_params(axis='x', which='both', bottom=True, labelbottom=True)
 
-    intercept_means = []
-    intercept_cis = []
-    slope_means = []
-    slope_cis = []
 
-    for intercept_list in intercept_lists:
-        intercept_means.append(np.mean(intercept_list))
-        intercept_cis.append(utils.calculate_ci(intercept_list))
-
-    for slope_list in slope_lists:
-        slope_means.append(np.mean(slope_list))
-        slope_cis.append(utils.calculate_ci(slope_list))
-
-    results = open(f'results_{experiment}.txt', 'a')
-    results.write('\n')
-    results.close()
-
-    for condition_name, intercept_mean, intercept_ci, slope_mean, slope_ci in zip(condition_names, intercept_means, intercept_cis, slope_means, slope_cis):
-        utils.write_mean_ci_result(experiment, intercept_mean, intercept_ci, 'intercept', condition_name)
-        utils.write_mean_ci_result(experiment, slope_mean, slope_ci, 'slope', condition_name)
-
-    # plot dummy data + axis labels for cropping
-    # TODO remove for final version
+    """
     if experiment == 'exp2':
         plt.subplot(subplot_rows, subplot_cols, 12)
         plt.plot([4, 6], [6, 8])
@@ -222,8 +199,13 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                               labeltop=False, labelleft=False, labelright=False)
         plt.gca().spines['left'].set_visible(False)
         plt.gca().spines['right'].set_visible(False)
+    """
 
-    plt.tight_layout(h_pad=0.4, w_pad=0.4, rect=(0.1, 0, 1, 1))
+    if experiment == 'exp2':
+        plt.subplots_adjust(left=0.15, bottom=0.25, right=0.95, top=0.95)
+    else:
+        plt.subplots_adjust(left=0.15, right=0.95, top=0.95, bottom=0.1)
+
     plt.savefig(path, dpi=300)
     path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
     plt.savefig(path_svg)
@@ -247,7 +229,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     x_points, x_lims = utils.x_points_group_plot(experiment)
     x_labels = utils.x_tick_labels_group_plot(experiment)
     plot_text = ['B', 'A']
-    results_headers = ['R^2', 'Error (cm2)']
+    results_headers = ['R^2', 'Error (cm2 / cm)']
     params = utils.r2_area_constants()
 
     if experiment == 'exp1':
@@ -296,14 +278,13 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                 ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                                labelbottom=False, labeltop=False, labelleft=True, labelright=False)
                 utils.draw_ax_spines(ax, True, False, False, False, y_offset=True)
-                plt.gcf().text(0.00001, 0.89, text, fontsize=14, fontfamily=font)
+                plt.gca().text(0.5, 4.1, text, fontsize=14, fontfamily=font)
 
             else:
                 ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True)
                 utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=True, x_offset = True, y_offset=True)
-                plt.gcf().text(0.00001, 0.47, text, fontsize=14, fontfamily=font)
+                plt.gca().text(0.5, 1.01, text, fontsize=14, fontfamily=font)
 
-            # TODO CHANGE HERE
             utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8, False)
 
             if experiment == 'exp1' and subplot == 2:
@@ -316,7 +297,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                          markersize=3, linewidth=1, zorder=11)
             utils.write_mean_ci_result(experiment, mean, ci, y_label, x_label)
         if subplot == 1:
-            plt.ylabel('Error\n(cm$^2$) / n', fontfamily=font, fontsize=10, rotation=0)
+            plt.ylabel('Error\n(cm$^2$) / cm', fontfamily=font, fontsize=10, rotation=0)
         else:
             plt.ylabel('Variability\n(R$^2$)', fontfamily=font, fontsize=10, rotation=0)
 
@@ -385,14 +366,14 @@ def figure_4(all_subject_data, experiment):
         ax.tick_params(axis='both', which='both', bottom=False, top=False, left=True, right=False,
                               labelbottom=False, labeltop=False, labelleft=True, labelright=False)
 
-        # draw axes and ticks for bottom subplot
-        if subplot_index == 3 and experiment == 'exp2':
-            plt.xlabel('Error (cm$^2$ / n)', size=10, fontfamily=font)
-            ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True, left=True, labelleft=True)
-            ax.spines['bottom'].set_visible(True)
-
         utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, None, 8, False,
                                 font=font)
+
+        # draw axes and ticks for bottom subplot
+        if subplot_index == 3 and experiment == 'exp2':
+            plt.xlabel('Error (cm$^2$ / cm)', size=10, fontfamily=font)
+            ax.tick_params(axis='both', which='both', bottom=True, labelbottom=True, left=True, labelleft=True)
+            ax.spines['bottom'].set_visible(True)
 
         if subplot_index == 2 and experiment == 'exp2':
             plt.ylabel('Variability\n(R$^2$)', fontsize=10, fontfamily=font, rotation=90)
@@ -402,7 +383,7 @@ def figure_4(all_subject_data, experiment):
             plt.ylabel(f'{spacing}Variability (R$^2$)', fontsize=10, fontfamily=font)
 
         # label subplot letter (A, B, C, +/- D)
-        plt.text(-1, 0.98, text, fontsize=14, fontfamily=font)
+        plt.gca().text(-0.5, 1.01, text, fontsize=14, fontfamily=font)
 
         utils.write_regression_results(experiment, condition_area_data, condition_r2_data, intercept, slope, condition_name)
 
@@ -430,7 +411,7 @@ def figure_5(all_subject_data, experiment):
 
     x_lims, y_lims = (0.4, 1.6), (0.4, 2.0)
     x_ticks, y_ticks = [0.4, 0.8, 1.2, 1.6, 2], [0.4, 0.8, 1.2, 1.6, 2]
-    x_label, y_label = 'Line-to-grasp regression slope', 'Grasp-to-line regression slope'
+    x_label, y_label = 'Vision-to-grasp regression slope', 'Grasp-to-vision regression slope'
 
     for count, subject_data in enumerate(all_subject_data, start=1):
         intercept_line_width, slope_line_width = utils.calculate_regression_general(subject_data.LINE_WIDTH.ACTUAL,
@@ -493,7 +474,7 @@ def figure_8(all_subject_data, experiment):
 
     subplots = [1, 2, 3, 4]
     measures = ['area', 'R2', 'intercept', 'slope']
-    measure_labels = ['error\n(cm$^2$) / n', 'variability\n(R$^2$)', 'y-intercept', 'slope']
+    measure_labels = ['error\n(cm$^2$) / cm', 'variability\n(R$^2$)', 'y-intercept', 'slope']
 
     x_ticks = [1.3, 1.45, 1.6]
     x_points_left = [1.3, 1.45, 1.6]
