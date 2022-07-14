@@ -7,6 +7,25 @@ import calculate_area
 import utils
 
 
+def write_all(all_subject_data, subjects, experiment):
+
+    write_intercept_slope_summary(all_subject_data, experiment)
+    write_example_subject_data(all_subject_data, subjects, experiment)
+    write_error_and_variability_summary(all_subject_data, experiment)
+    write_error_vs_variability_regression(all_subject_data, experiment)
+
+    if experiment == 'exp2':
+        write_condition_vs_condition_regression(all_subject_data, experiment)
+        write_low_vs_high_area_correlation(all_subject_data)
+        write_low_vs_high_r2_correlation(all_subject_data)
+        write_between_condition_r2_mean_difference(all_subject_data)
+        write_between_condition_area_mean_difference(all_subject_data)
+
+    if experiment == 'exp1':
+        write_difference_between_conditions_exp1(all_subject_data)
+        write_icc_results_exp1(all_subject_data)
+
+
 def write_intercept_slope_summary(all_subject_data, experiment):
     if experiment == 'exp1':
         intercept_lists = [[], [], [], []]
@@ -37,6 +56,8 @@ def write_intercept_slope_summary(all_subject_data, experiment):
         slope_means.append(np.mean(slope_list))
         slope_cis.append(utils.calculate_ci(slope_list))
 
+    utils.write_result_header(experiment, 'Group summary: Intercept and slope')
+
     results = open(f'results_{experiment}.txt', 'a')
     results.write('\n')
     results.close()
@@ -48,6 +69,31 @@ def write_intercept_slope_summary(all_subject_data, experiment):
     print(f'Intercept and slope summary results written to results_{experiment}.txt')
 
 
+def write_example_subject_data(all_subject_data, subjects, experiment):
+    example = utils.example_participant_IDs
+    if experiment == 'exp1':
+         subject_1_ID = example.exp1_participant_1
+         subject_2_ID = example.exp1_participant_2
+         condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
+         data_list = utils.store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID)
+    else:
+        subject_1_ID = example.exp2_participant_1
+        subject_2_ID = example.exp2_participant_2
+        condition_names = ['line to width', 'width to line', 'width to width']
+        data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
+
+    example_subject_names = [subject_1_ID, subject_2_ID]
+
+    for example_subject_data, example_subject_name in zip(data_list, example_subject_names):
+        utils.write_example_subject_name(experiment, example_subject_name)
+        for condition_data, condition_name in zip(example_subject_data, condition_names):
+            intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL, condition_data.PERCEIVED)
+            area = calculate_area.normalised(condition_data.ACTUAL, condition_data.PERCEIVED, experiment)
+            r2 = utils.calculate_r2(condition_data.ACTUAL, condition_data.PERCEIVED)
+            utils.write_example_subject_results(experiment, condition_name, intercept, slope, area, r2)
+            print(f'{example_subject_name} {condition_name} summary written to results_{experiment}.txt\n')
+
+
 def write_error_and_variability_summary(all_subject_data, experiment):
     r2_means, r2_cis = utils.store_condition_r2_means_and_cis(all_subject_data, experiment)
     area_means, area_cis = calculate_area.store_condition_area_means_and_cis(all_subject_data, experiment)
@@ -56,13 +102,13 @@ def write_error_and_variability_summary(all_subject_data, experiment):
     results_headers = ['R^2', 'Error (cm2 / cm)']
     params = utils.r2_area_constants()
 
-    plot = 'Area and R^2 Group Summary'
-    utils.write_plot_header(experiment, plot)
+    result_title = 'Group summary: Error and Variability'
+    utils.write_result_header(experiment, result_title)
 
     if experiment == 'exp2':
         condition_names = ['Line-to-grasp', 'Grasp-to-line', 'Grasp-to-grasp']
     else:
-        condition_names = condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
+        condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
 
     for mean_list, ci_list, subplot, y_label in zip(means_lists, ci_lists, params.subplot_indices, results_headers):
         for mean, ci, condition_name in zip(mean_list, ci_list, condition_names):
@@ -71,7 +117,93 @@ def write_error_and_variability_summary(all_subject_data, experiment):
     print(f'Error and variability summary written to results_{experiment}.txt')
 
 
-def write_icc_results(all_subject_data):
+def write_error_vs_variability_regression(all_subject_data, experiment):
+    error_lists = calculate_area.area_per_exp_condition(all_subject_data, experiment)
+    variability_lists = utils.store_r2_lists(all_subject_data, experiment)
+    condition_names = utils.x_tick_labels_group_plot(experiment)
+
+    utils.write_result_header('exp2', 'Regression: Error vs. variability')
+
+    for condition_r2_data, condition_error_data, condition_name in zip(variability_lists, error_lists, condition_names):
+        intercept, slope = utils.calculate_regression_general(condition_error_data, condition_r2_data)
+        utils.write_regression_results(experiment, condition_error_data, condition_r2_data, intercept, slope,
+                                       condition_name)
+        print(f'Error vs. variability regression written for {condition_name}')
+
+
+def write_condition_vs_condition_regression(all_subject_data, experiment):
+    result_title = 'Slope regression: Line-to-width vs. width-to-line'
+    condition_name = 'line-to-width vs width-to-line'
+    utils.write_result_header(experiment, result_title)
+
+    slopes_line_width = []
+    slopes_width_line = []
+
+    for count, subject_data in enumerate(all_subject_data, start=1):
+        intercept_line_width, slope_line_width = utils.calculate_regression_general(subject_data.LINE_WIDTH.ACTUAL,
+                                                                                    subject_data.LINE_WIDTH.PERCEIVED)
+        intercept_width_line, slope_width_line = utils.calculate_regression_general(subject_data.WIDTH_LINE.ACTUAL,
+                                                                                    subject_data.WIDTH_LINE.PERCEIVED)
+        slopes_line_width.append(slope_line_width)
+        slopes_width_line.append(slope_width_line)
+
+    intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
+
+    for slope_1, slope_2 in zip(slopes_line_width, slopes_width_line):
+        if slope_2 > 1.7:
+            index = slopes_width_line.index(slope_2)
+            slope_line_width_2 = slopes_line_width
+            slope_width_line_2 = slopes_width_line
+            slope_line_width_2.pop(index)
+            slope_width_line_2.pop(index)
+            intercept_2, slope_2 = utils.calculate_regression_general(slope_line_width_2, slope_width_line_2)
+
+    utils.write_regression_results(experiment, slopes_line_width, slopes_width_line, intercept, slope, condition_name)
+    utils.write_regression_results(experiment, slope_line_width_2, slope_width_line_2, intercept_2, slope_2, 'Outlier removed')
+
+
+def write_difference_between_conditions_exp1(all_subject_data):
+    result_title = 'Difference between conditions'
+    experiment = 'exp1'
+    utils.write_result_header(experiment, result_title)
+    measures = ['Error', 'Variability', 'intercept', 'slope']
+    comparison_names = ['Between hands', 'Within hand', 'Within hand']
+    comparison_times = ['Same day', '1 week apart', 'Same day']
+
+    for measure in measures:
+        between_hands, across_days, within_day = [], [], []
+        for subject_data in all_subject_data:
+            if measure == 'area':
+                dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = calculate_area.return_condition_comparison_areas(
+                    subject_data, experiment)
+            elif measure == 'intercept':
+                dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = utils.return_subject_between_condition_comparisons_exp1(
+                    subject_data, measure)
+            elif measure == 'slope':
+                dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = utils.return_subject_between_condition_comparisons_exp1(
+                    subject_data, measure)
+            else:
+                dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = utils.return_subject_between_condition_comparisons_exp1(
+                    subject_data, measure)
+
+            between_hands.append(dom_vs_non_dom)
+            across_days.append(dom_d1_vs_d2)
+            within_day.append(dom_d2_vs_d2)
+
+        all_difference_data = [between_hands, across_days, within_day]
+
+        results = open(f'results_exp1.txt', 'a')
+        results.write(f'\n{measure}\n')
+        results.close()
+
+        for data_list, name, time_period in zip(all_difference_data, comparison_names, comparison_times):
+            mean, ci = utils.calculate_mean_ci(data_list)
+            utils.write_mean_ci_result(experiment, mean, ci, name, time_period)
+
+        print(f'Difference in {measure} written for Exp. 1 in results_exp1.txt\n')
+
+
+def write_icc_results_exp1(all_subject_data):
     r2_d1_dom = []
     r2_d2_dom = []
     area_d1_dom = []
@@ -102,6 +234,12 @@ def write_icc_results(all_subject_data):
     high_r2_icc = pg.intraclass_corr(data=high_r2_df, targets='targets', raters='rater', ratings='score')
     high_area_icc = pg.intraclass_corr(data=high_area_df, targets='targets', raters='rater', ratings='score')
 
+    high_area_icc['Outcome'] = ['Error', 'Error', 'Error', 'Error', 'Error', 'Error']
+    high_r2_icc['Outcome'] = ['Variability', 'Variability', 'Variability', 'Variability', 'Variability', 'Variability']
+
+    all_ICC_values = pd.concat((high_r2_icc, high_area_icc))
+    all_ICC_values.to_csv('./ICC_results_exp2.csv')
+
 
 def _make_target_list(n_participants):
     targets = np.concatenate((np.arange(1, n_participants + 1, 1), np.arange(1, n_participants + 1, 1)), axis=0)
@@ -122,15 +260,17 @@ def _make_test_session_list(n_participants):
     return test_session
 
 
-def correlate_low_and_high_areas(all_subject_data):
+def write_low_vs_high_area_correlation(all_subject_data):
+    experiment = 'exp2'
+    utils.write_result_header(experiment, 'Low-level vs. High-level correlations: Error')
     width_to_width_areas = []
     line_to_width_areas = []
     width_to_line_areas = []
 
     for participant in all_subject_data:
-        width_to_width = calculate_area.normalised(participant.WIDTH_WIDTH.ACTUAL, participant.WIDTH_WIDTH.PERCEIVED, 'exp2')
-        line_to_width = calculate_area.normalised(participant.LINE_WIDTH.ACTUAL, participant.LINE_WIDTH.PERCEIVED, 'exp2')
-        width_to_line = calculate_area.normalised(participant.WIDTH_LINE.ACTUAL, participant.WIDTH_LINE.PERCEIVED, 'exp2')
+        width_to_width = calculate_area.normalised(participant.WIDTH_WIDTH.ACTUAL, participant.WIDTH_WIDTH.PERCEIVED, experiment)
+        line_to_width = calculate_area.normalised(participant.LINE_WIDTH.ACTUAL, participant.LINE_WIDTH.PERCEIVED, experiment)
+        width_to_line = calculate_area.normalised(participant.WIDTH_LINE.ACTUAL, participant.WIDTH_LINE.PERCEIVED, experiment)
 
         width_to_width_areas.append(width_to_width)
         line_to_width_areas.append(line_to_width)
@@ -139,17 +279,16 @@ def correlate_low_and_high_areas(all_subject_data):
     if len(width_to_line_areas) + len(line_to_width_areas) + len(width_to_width_areas) != 90:
         print('Uneven lists')
 
-    low_high_1 = utils.pearson_r_ci(width_to_width_areas, line_to_width_areas)
-    low_high_2 = utils.pearson_r_ci(width_to_width_areas, width_to_line_areas)
-
-    print(f'Width-width vs. Line-width r: {low_high_1[0]} 95%CI: {low_high_1[1]}')
-    print(f'Width-width vs. Width-line r: {low_high_2[0]} 95%CI: {low_high_2[1]}')
+    utils.write_correlation(experiment, width_to_width_areas, line_to_width_areas, 'Grasp-to-grasp vs Vision-to-grasp')
+    utils.write_correlation(experiment, width_to_width_areas, width_to_line_areas, 'Grasp-to-grasp vs Grasp-to-vision')
 
 
-def correlate_low_and_high_r2(all_subject_data):
+def write_low_vs_high_r2_correlation(all_subject_data):
     width_to_width_r2 = []
     line_to_width_r2 = []
     width_to_line_r2 = []
+
+    utils.write_result_header('exp2', 'Low-level vs. High-level correlations: Variability')
 
     for participant in all_subject_data:
         width_to_width = utils.calculate_r2(participant.WIDTH_WIDTH.ACTUAL, participant.WIDTH_WIDTH.PERCEIVED)
@@ -163,17 +302,16 @@ def correlate_low_and_high_r2(all_subject_data):
     if len(width_to_line_r2) + len(line_to_width_r2) + len(width_to_width_r2) != 90:
         print('Uneven lists')
 
-    low_high_1 = utils.pearson_r_ci(width_to_width_r2, line_to_width_r2)
-    low_high_2 = utils.pearson_r_ci(width_to_width_r2, width_to_line_r2)
-
-    print(f'Width-width vs. Line-width r: {low_high_1[0]} 95%CI: {low_high_1[1]}')
-    print(f'Width-width vs. Width-line r: {low_high_2[0]} 95%CI: {low_high_2[1]}')
+    utils.write_correlation('exp2', width_to_width_r2, line_to_width_r2, 'Grasp-to-grasp vs Vision-to-grasp')
+    utils.write_correlation('exp2', width_to_width_r2, width_to_line_r2, 'Grasp-to-grasp vs Grasp-to-vision')
 
 
-def between_condition_r2_mean_difference(all_subject_data):
+def write_between_condition_r2_mean_difference(all_subject_data):
     width_to_width_r2 = []
     line_to_width_r2 = []
     width_to_line_r2 = []
+
+    utils.write_result_header('exp2', 'Between condition mean differences: Variability')
 
     for participant in all_subject_data:
         width_to_width = utils.calculate_r2(participant.WIDTH_WIDTH.ACTUAL, participant.WIDTH_WIDTH.PERCEIVED)
@@ -192,15 +330,17 @@ def between_condition_r2_mean_difference(all_subject_data):
     lw_ww_mean, lw_ww_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_width)
     wl_ww_mean, wl_ww_ci = utils.calculate_mean_ci(width_to_line_vs_width_to_width)
 
-    print(f'Line-to-width vs width-to-line R2\nMean difference: {lw_wl_mean:4.2f}[{lw_wl_mean - lw_wl_ci:4.2f} to {lw_wl_mean + lw_wl_ci:4.2f}]\n\n')
-    print(f'Line to width vs width_to_width R2\nMean difference: {lw_ww_mean:4.2f}[{lw_ww_mean - lw_ww_ci:4.2f} to {lw_ww_mean + lw_ww_ci:4.2f}]\n')
-    print(f'Width to line vs width-to-width R2\nMean difference: {wl_ww_mean:4.2f}[{wl_ww_mean - wl_ww_ci:4.2f} to {wl_ww_mean + wl_ww_ci:4.2f}]\n')
+    utils.write_mean_ci_result('exp2', lw_wl_mean, lw_wl_ci, f'Vision-to-grasp - Grasp-to-vision{" "*5}', 'Difference')
+    utils.write_mean_ci_result('exp2', lw_ww_mean, lw_ww_ci, f'Vision-to-grasp - Grasp-to-grasp{" "*5}', 'Difference')
+    utils.write_mean_ci_result('exp2', wl_ww_mean, wl_ww_ci, f'Grasp-to-vision - Grasp-to-grasp{" "*5}', 'Difference')
 
 
-def between_condition_area_mean_difference(all_subject_data):
+def write_between_condition_area_mean_difference(all_subject_data):
     width_to_width_areas = []
     line_to_width_areas = []
     width_to_line_areas = []
+
+    utils.write_result_header('exp2', 'Between condition mean differences: Error')
 
     for participant in all_subject_data:
         width_to_width = calculate_area.normalised(participant.WIDTH_WIDTH.ACTUAL, participant.WIDTH_WIDTH.PERCEIVED, 'exp2')
@@ -219,9 +359,7 @@ def between_condition_area_mean_difference(all_subject_data):
     lw_ww_mean, lw_ww_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_width)
     wl_ww_mean, wl_ww_ci = utils.calculate_mean_ci(width_to_line_vs_width_to_width)
 
-    print(
-        f'Line-to-width vs width-to-line Area\nMean difference: {lw_wl_mean:4.2f}[{lw_wl_mean - lw_wl_ci:4.2f} to {lw_wl_mean + lw_wl_ci:4.2f}]\n\n')
-    print(
-        f'Line to width vs width_to_width Area\nMean difference: {lw_ww_mean:4.2f}[{lw_ww_mean - lw_ww_ci:4.2f} to {lw_ww_mean + lw_ww_ci:4.2f}]\n')
-    print(
-        f'Width to line vs width-to-width Area\nMean difference: {wl_ww_mean:4.2f}[{wl_ww_mean - wl_ww_ci:4.2f} to {wl_ww_mean + wl_ww_ci:4.2f}]\n')
+    utils.write_mean_ci_result('exp2', lw_wl_mean, lw_wl_ci, 'Vision-to-grasp - Grasp-to-vision', 'Difference')
+    utils.write_mean_ci_result('exp2', lw_ww_mean, lw_ww_ci, 'Vision-to-grasp - Grasp-to-grasp', 'Difference')
+    utils.write_mean_ci_result('exp2', wl_ww_mean, wl_ww_ci, 'Grasp-to-vision - Grasp-to-grasp', 'Difference')
+

@@ -3,6 +3,7 @@ import os
 
 import data
 import figures
+import results
 
 experiments = ['exp2', 'exp1']
 data_folders = [Path('./data/exp2'), Path('./data/exp1')]
@@ -16,7 +17,7 @@ for experiment, data_folder, results_file in zip(experiments, data_folders, resu
     data.write_participant_demographics(experiment, data_folder)
 
     all_subject_data, subjects = data.get_data_and_subjects(experiment, data_folder)
-    # TODO this is what you will need to make, lives in data
+    results.write_all(all_subject_data, subjects, experiment)
 
     # text files of numerical results generated simultaneous with figures
     figures.generate(all_subject_data, subjects, experiment)

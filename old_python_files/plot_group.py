@@ -184,7 +184,7 @@ def area_vs_r2_plot(all_subject_data, experiment):
     plot = 'area_r2_regression'
     path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
 
-    area_lists = calculate_area.group_areas(all_subject_data, experiment)
+    area_lists = calculate_area.area_per_exp_condition(all_subject_data, experiment)
     r2_lists = utils.store_r2_lists(all_subject_data, experiment)
     x_labels = utils.x_tick_labels_group_plot(experiment)
     subplot_indices = utils.x_points_group_plot(experiment)
@@ -270,7 +270,7 @@ def lovisa_between_condition_regression(all_subject_data, experiment):
     path = old_python_files.old_functions.create_group_plot_save_path(experiment, plot)
 
     r2_tuple = utils.store_r2_lists(all_subject_data, experiment)
-    area_tuple = calculate_area.group_areas(all_subject_data, experiment)
+    area_tuple = calculate_area.area_per_exp_condition(all_subject_data, experiment)
 
     subplot_indices = [1, 2]
     line_width_data = [r2_tuple.line_width_r2_list, area_tuple.line_width_area_list]

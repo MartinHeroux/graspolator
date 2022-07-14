@@ -10,6 +10,7 @@ from collections import namedtuple
 import math
 from matplotlib.ticker import MultipleLocator
 from random import random
+from dataclasses import dataclass
 import pandas as pd
 import pingouin as pg
 import matplotlib.text as mpl_text
@@ -360,6 +361,14 @@ def r2_area_constants():
     return r2_area_constants
 
 
+@dataclass
+class example_participant_IDs():
+    exp1_participant_1: str = 'SUB18R'
+    exp1_participant_2: str = 'SUB02R'
+    exp2_participant_1: str = 'sub02'
+    exp2_participant_2: str = 'sub29'
+
+
 ####################################################################
 # PATHS AND DIRECTORIES
 ####################################################################
@@ -480,7 +489,7 @@ def shade_area(ax, intercept, slope, x_1, x_2):
                     color='lightgrey', alpha=0.5, interpolate=True)
 
 
-def plot_condition_comparisons(ax, line_number, x_points_base, x_points_right, y_points):
+def plot_subject_condition_comparison(ax, line_number, x_points_base, x_points_right, y_points):
     jitter_values = [random() / 200 for _ in range(len(x_points_base))]
     if line_number < 15:
         x_points_jitter = np.array(x_points_right) + np.array(jitter_values)
@@ -490,7 +499,7 @@ def plot_condition_comparisons(ax, line_number, x_points_base, x_points_right, y
     ax.plot(x_points_jitter, y_points, mfc='gray', marker='^', alpha=0.6, markersize=3, linestyle='', mec='none')
 
 
-def return_condition_comparisons(subject_data, measure):
+def return_subject_between_condition_comparisons_exp1(subject_data, measure):
     if measure == 'R2':
         func = calculate_r2
     elif measure == 'intercept':
@@ -509,17 +518,17 @@ def return_condition_comparisons(subject_data, measure):
 
     dom_d2_vs_d2 = (d2_dom_1 - d2_dom_2)
 
-    return [dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2]
+    return dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2
 
 #########################################################################
 # RESULT WRITING
 ##########################################################################
 
-def write_plot_header(experiment, plot):
+def write_result_header(experiment, result_name):
     results = open(f'results_{experiment}.txt', 'a')
     results.write('\n')
     results.write('#####' * 20)
-    results.write(f'\n\n{plot}\n')
+    results.write(f'\n\n{result_name}\n')
     results.close()
 
 
@@ -536,20 +545,31 @@ def write_regression_results(experiment, x, y, intercept, slope, condition_name)
     results.close()
 
 
+def write_correlation(experiment, x, y, condition_name):
+    results = open(f'results_{experiment}.txt', 'a')
+    r, ci = pearson_r_ci(x, y)
+    pearson = 'Pearsons'
+    condition_name = condition_name
+    results.write(
+        f'\n****{condition_name:^20s}****\n{pearson:20s}: r         = {r:10s}{ci}\n')
+    results.close()
+
+
 def write_example_subject_name(experiment, example_subject):
     results = open(f'results_{experiment}.txt', 'a')
     results.write(f'{example_subject}\n')
     results.close()
 
 
-def write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area):
+def write_example_subject_results(experiment, condition_name, intercept, slope, area, R2):
     results = open(f'results_{experiment}.txt', 'a')
     intercept_text = f'{intercept:4.2f}'
     slope_text = f'{slope:4.2f}'
     area_text = f'{area:4.2f}'
+    R2_text = f'{R2:4.2f}'
 
     results.write(
-        f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}\n')
+        f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}     R^2) = {R2_text:10s}\n\n')
     results.close()
 
 

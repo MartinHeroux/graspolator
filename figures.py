@@ -32,26 +32,14 @@ def generate(all_subject_data, subjects, experiment):
 def figure_2_and_6(all_subject_data, subjects, experiment):
     plot = 'Example participants and group regression summary'
     font = 'arial'
+    example = utils.example_participant_IDs
     
     if experiment == 'exp1':
         figure = 'Figure_6'
-        subject_1_ID = 'SUB18R'
-        subject_2_ID = 'SUB02R'
+        subject_1_ID = example.exp1_participant_1
+        subject_2_ID = example.exp1_participant_2
         data_list = utils.store_example_subject_data_exp1(all_subject_data, subjects, subject_1_ID, subject_2_ID)
 
-    else:
-        figure = 'Figure_2'
-        subject_1_ID = 'sub02'
-        subject_2_ID = 'sub29'
-        data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
-
-    utils.write_plot_header(experiment, plot)
-    path = utils.create_figure_save_path(figure)
-
-    y_ticks = list(range(0, 17, 2))
-
-    # set up experiment specific parameters
-    if experiment == 'exp1':
         condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
         x_lims = [0, 12]
         x_data_lims = [2, 10]
@@ -70,6 +58,10 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         plot_indices_list = [[1, 4, 7, 10], [2, 5, 8, 11]]
 
     else:
+        figure = 'Figure_2'
+        subject_1_ID = example.exp2_participant_1
+        subject_2_ID = example.exp2_participant_2
+        data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
         condition_names = ['line to width', 'width to line', 'width to width']
         x_lims = [2, 10]
         x_data_lims = [3, 9]
@@ -87,13 +79,15 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         subplot_cols = 3
         plot_indices_list = [[1, 4, 7], [2, 5, 8]]
 
+    path = utils.create_figure_save_path(figure)
+    y_ticks = list(range(0, 17, 2))
+
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
     plt.rcParams.update({'font.family': font})
     # plot example subjects in left and centre subplot cols
     for column, (example_subject_data, color, plot_indices, example_subject) in enumerate(zip(data_list, colors,
                                                                                               plot_indices_list,
                                                                                               example_subjects), start=1):
-        utils.write_example_subject_name(experiment, example_subject)
         # plot each condition data
         for condition_data, condition_plot_index, condition_name, label in zip(example_subject_data, plot_indices, condition_names, label_list):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
@@ -113,7 +107,6 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             print(f'{condition_name}: {len(condition_data.ACTUAL)} data points')
             utils.plot_regression_line(ax, intercept, slope, color, x_data_lims[0], x_data_lims[1])
             utils.shade_area(ax, intercept, slope, x_data_lims[0], x_data_lims[1])
-            utils.write_example_subject_results(experiment, example_subject, condition_name, intercept, slope, area)
 
             legend_handles = [mpatches.Rectangle((15, 6.0), width=30, height=1, color='white', alpha=0.5, label=f'{r2:3.2f}'), mpatches.Rectangle((15, 6.0), width=30, height=1, color='white', alpha=0.5, label=f'{area:3.1f}')]
             plt.legend(handles=legend_handles, loc='upper left', facecolor='white', framealpha=1, fontsize=8,
@@ -315,22 +308,20 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
 
 def figure_4(all_subject_data, experiment):
     font = 'arial'
-    figure = 'Figure_4'
-    plot = 'Area vs R^2 Regression'
-    path = utils.create_figure_save_path(figure)
+    figure_name = 'Figure_4'
+    path = utils.create_figure_save_path(figure_name)
 
-    utils.write_plot_header(experiment, plot)
+    # store data for plot
+    error_lists = calculate_area.area_per_exp_condition(all_subject_data, experiment)
+    variability_lists = utils.store_r2_lists(all_subject_data, experiment)
 
-    area_lists = calculate_area.group_areas(all_subject_data, experiment)
-    r2_lists = utils.store_r2_lists(all_subject_data, experiment)
     x_labels = utils.x_tick_labels_group_plot(experiment)
-
     if experiment == 'exp1':
         subplot_indices = [1, 2, 3, 4]
-        text_labels = ['A', 'B', 'C', 'D']
+        subplot_labels = ['A', 'B', 'C', 'D']
     else:
         subplot_indices = [1, 2, 3]
-        text_labels = ['A', 'B', 'C']
+        subplot_labels = ['A', 'B', 'C']
 
     x_lims, y_lims = (0, 3), (0.6, 1)
     x_ticks, y_ticks = [0, 1, 2, 3], [0.6, 0.7, 0.8, 0.9, 1]
@@ -338,8 +329,8 @@ def figure_4(all_subject_data, experiment):
 
     plt.figure(figsize=(3.3, (2.7*3)))
     plt.rcParams.update({'font.family': font})
-    for subplot_index, condition_r2_data, condition_area_data, condition_name, text in zip(subplot_indices, r2_lists,
-                                                                                     area_lists, x_labels, text_labels):
+    for subplot_index, condition_r2_data, condition_area_data, condition_name, text in zip(subplot_indices, variability_lists,
+                                                                                     error_lists, x_labels, subplot_labels):
         #condition_area_data.pop(20)
         #condition_r2_data.pop(20)
         intercept, slope = utils.calculate_regression_general(condition_area_data, condition_r2_data)
@@ -380,26 +371,18 @@ def figure_4(all_subject_data, experiment):
         # label subplot letter (A, B, C, +/- D)
         plt.gca().text(-0.5, 1.01, text, fontsize=14, fontfamily=font)
 
-        utils.write_regression_results(experiment, condition_area_data, condition_r2_data, intercept, slope, condition_name)
-
-        #plt.tight_layout()
-
     plt.subplots_adjust(left=0.25, right=0.95, top=0.9, bottom=0.1)
     plt.savefig(path, dpi=300, bbox_inches='tight')
     path_svg = Path(path.parts[0], path.parts[1], path.stem + '.svg')
     plt.savefig(path_svg)
     text = colored(f'{path}', 'blue')
-    print(f'{experiment} area vs r2 plots saved in {text}\n')
+    print(f'{experiment} Figure 4 saved in {text}\n')
     plt.close()
 
 
-def figure_5(all_subject_data, experiment):
+def figure_5(all_subject_data):
     figure = 'Figure_5'
-    plot = 'Slope regression: Line-to-width vs. width-to-line'
     path = utils.create_figure_save_path(figure)
-    condition_name = 'line-to-width vs width-to-line'
-
-    utils.write_plot_header(experiment, plot)
 
     slopes_line_width = []
     slopes_width_line = []
@@ -408,33 +391,21 @@ def figure_5(all_subject_data, experiment):
     x_ticks, y_ticks = [0.4, 0.8, 1.2, 1.6, 2], [0.4, 0.8, 1.2, 1.6, 2]
     x_label, y_label = 'Vision-to-grasp regression slope', 'Grasp-to-vision regression slope'
 
-    for count, subject_data in enumerate(all_subject_data, start=1):
+    for subject_data in all_subject_data:
         intercept_line_width, slope_line_width = utils.calculate_regression_general(subject_data.LINE_WIDTH.ACTUAL,
                                                                                     subject_data.LINE_WIDTH.PERCEIVED)
         intercept_width_line, slope_width_line = utils.calculate_regression_general(subject_data.WIDTH_LINE.ACTUAL,
                                                                                     subject_data.WIDTH_LINE.PERCEIVED)
-        if slope_width_line > 1.7:
-            print(f'SUB{count} is the outlier')
         slopes_line_width.append(slope_line_width)
         slopes_width_line.append(slope_width_line)
 
     plt.figure(figsize=(3.3, 2.7))
-
     intercept, slope = utils.calculate_regression_general(slopes_line_width, slopes_width_line)
 
     # print and plot results without outlier
     for slope_1, slope_2 in zip(slopes_line_width, slopes_width_line):
         if slope_2 > 1.7:
             plt.plot(slope_1, slope_2, marker='o', color='white', markeredgecolor='gray', markersize=2, markeredgewidth=0.5)
-            index = slopes_width_line.index(slope_2)
-            slope_line_width_2 = slopes_line_width
-            slope_width_line_2 = slopes_width_line
-            slope_line_width_2.pop(index)
-            slope_width_line_2.pop(index)
-            intercept_2, slope_2 = utils.calculate_regression_general(slope_line_width_2, slope_width_line_2)
-
-    utils.write_regression_results(experiment, slopes_line_width, slopes_width_line, intercept, slope, condition_name)
-    utils.write_regression_results(experiment, slope_line_width_2, slope_width_line_2, intercept_2, slope_2, 'Outlier removed')
 
     x_vals = np.array([min(slopes_line_width) - 0.25, max(slopes_line_width) + 0.25])
     y_vals = intercept + slope * x_vals
@@ -461,11 +432,8 @@ def figure_5(all_subject_data, experiment):
 
 def figure_8(all_subject_data, experiment):
     font = 'arial'
-    plot = 'Difference between conditions'
     figure = 'Figure_8'
     path = utils.create_figure_save_path(figure)
-
-    utils.write_plot_header(experiment, plot)
 
     subplots = [1, 2, 3, 4]
     measures = ['area', 'R2', 'intercept', 'slope']
@@ -489,39 +457,34 @@ def figure_8(all_subject_data, experiment):
 
         for line_number, subject_data in enumerate(all_subject_data, start=1):
             if measure == 'area':
-                comparison_list = calculate_area.return_condition_comparison_areas(subject_data, experiment)
+                dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = calculate_area.return_condition_comparison_areas(subject_data, experiment)
                 y_ticks = list(range(-2, 3))
                 y_lim = [-2, 2]
             elif measure == 'intercept':
-                comparison_list = utils.return_condition_comparisons(subject_data, measure)
+                dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = utils.return_subject_between_condition_comparisons_exp1(subject_data, measure)
                 y_ticks = list(range(-2, 3))
                 y_lim = [-2, 2]
             elif measure == 'slope':
-                comparison_list = utils.return_condition_comparisons(subject_data, measure)
+                dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = utils.return_subject_between_condition_comparisons_exp1(subject_data, measure)
                 y_lim = [-0.6, 0.6]
                 y_ticks = [-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6]
             else:
-                comparison_list = utils.return_condition_comparisons(subject_data, measure)
+                dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2 = utils.return_subject_between_condition_comparisons_exp1(subject_data, measure)
                 y_lim = [-0.2, 0.2]
                 y_ticks = [-0.2, -0.1, 0, 0.1, 0.2]
 
-            utils.plot_condition_comparisons(ax, line_number, x_ticks, x_points_right, comparison_list)
+            utils.plot_subject_condition_comparison(ax, line_number, x_ticks, x_points_right, [dom_vs_non_dom, dom_d1_vs_d2, dom_d2_vs_d2])
 
-            between_hands.append(comparison_list[0])
-            across_days.append(comparison_list[1])
-            within_day.append(comparison_list[2])
+            between_hands.append(dom_vs_non_dom)
+            across_days.append(dom_d1_vs_d2)
+            within_day.append(dom_d2_vs_d2)
 
-        area_diff_list = [between_hands, across_days, within_day]
+        all_differences = [between_hands, across_days, within_day]
 
-        results = open(f'results_{experiment}.txt', 'a')
-        results.write(f'\n{measure}\n')
-        results.close()
-
-        for x_point, area_list, label, descriptor in zip(x_points_left, area_diff_list, x_tick_labels, x_descriptors):
+        for x_point, area_list, label, descriptor in zip(x_points_left, all_differences, x_tick_labels, x_descriptors):
             mean, ci = utils.calculate_mean_ci(area_list)
             plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="^", markerfacecolor='black', mec='black',
                          markersize=3.5, elinewidth=1, zorder=10)
-            utils.write_mean_ci_result(experiment, mean, ci, label, descriptor)
 
         utils.draw_ax_spines(ax, left=True, right=False, top=False, bottom=False, x_offset=True, y_offset=True)
         utils.set_ax_parameters(ax, [], y_ticks, [], y_ticks, x_lim, y_lim, None, y_label, 8, True)
@@ -554,31 +517,6 @@ def figure_8(all_subject_data, experiment):
     print(f'difference_between_conditions saved in {text}\n')
     plt.close()
 
-
-def error_by_actual_width(all_subject_data):
-    plot = 'Error by actual width'
-    figure = 'Figure_9'
-    path = utils.create_figure_save_path(figure)
-
-    three, four, five, six, seven, eight, nine = utils.return_perceived_by_actual(all_subject_data)
-    plot_data = [three, four, five, six, seven, eight, nine]
-    x_points = [3, 4, 5, 6, 7, 8, 9]
-
-    plt.figure()
-    for count, (x_point, data) in enumerate(zip(x_points, plot_data)):
-        x_points_new = [x_point for _ in range(len(data))]
-        jitter_values = [random() / 3 if _ % 2 == 0 else random() / -3 for _ in range(len(data))]
-        x_points_jitter = np.array(x_points_new) - np.array(jitter_values)
-        #y_points_jitter = np.array(data) - np.array(jitter_values)
-        plt.plot(x_points_jitter, data, color='gray', marker='o', markersize=1, linestyle="")
-
-        mean, ci = utils.calculate_mean_ci(data)
-        plt.errorbar(x_point, mean, yerr=ci, color='black', marker='o', markersize=3)
-    plt.xlabel('Actual width (cm)')
-    plt.ylabel('Error (perceived - actual) (cm)')
-    plt.xticks([3, 4, 5, 6, 7, 8, 9])
-
-    plt.savefig(path, dpi=200)
 
 
 def add_plot_text(ax, subplot, experiment, font='arial'):

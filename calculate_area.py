@@ -253,7 +253,7 @@ def point_of_intersection_with_reality(intercept, slope):
     return x_intersect, y_intersect
 
 
-def group_areas(all_subject_data, experiment):
+def area_per_exp_condition(all_subject_data, experiment):
     if experiment == 'exp1':
         area_lists_per_condition = _group_areas_exp1(all_subject_data)
     else:
