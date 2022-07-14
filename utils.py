@@ -528,7 +528,7 @@ def write_result_header(experiment, result_name):
     results = open(f'results_{experiment}.txt', 'a')
     results.write('\n')
     results.write('#####' * 20)
-    results.write(f'\n\n{result_name}\n')
+    results.write(f'\n\n{result_name}\n\n')
     results.close()
 
 
@@ -536,12 +536,12 @@ def write_regression_results(experiment, x, y, intercept, slope, condition_name)
     results = open(f'results_{experiment}.txt', 'a')
     t_vals, t_test, f_test = regression_summary(x, y)
     r, ci = pearson_r_ci(x, y)
-    pearson, ols = 'Pearsons', 'OLS'
+    pearson, ols = "Pearson's", 'OLS'
     intercept_text, slope_text = f'{intercept:4.2f}', f'{slope:4.2f}'
-    condition_name = condition_name
+    condition_name = condition_name.upper()
     results.write(
-        f'\n****{condition_name:^20s}****\n{pearson:20s}: r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}')
-    results.write(f'\n\nOLS Model Summary\n t values:{t_vals}\n t_test\n: {t_test}\n f_test\n: {f_test} \n')
+        f'\n##### {condition_name:20s}\n\n{pearson:20s}r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}')
+    results.write(f'\n\n##### OLS Model Summary\nt VALUES: {t_vals}\n\nt TEST:\n: {t_test}\n\nf TEST\n: {f_test} \n')
     results.close()
 
 
@@ -561,6 +561,12 @@ def write_example_subject_name(experiment, example_subject):
     results.close()
 
 
+def write_example_subject_header(experiment):
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write(f'{"CONDITION":20s}{"INTERCEPT":20s}{"SLOPE":20s}{"ERROR (cm^2 / cm)":20s}{"VARIABILITY (R^2)":20s}\n')
+    results.close()
+
+
 def write_example_subject_results(experiment, condition_name, intercept, slope, area, R2):
     results = open(f'results_{experiment}.txt', 'a')
     intercept_text = f'{intercept:4.2f}'
@@ -569,7 +575,13 @@ def write_example_subject_results(experiment, condition_name, intercept, slope, 
     R2_text = f'{R2:4.2f}'
 
     results.write(
-        f'{condition_name:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}     area (cm^2) = {area_text:10s}     R^2) = {R2_text:10s}\n\n')
+        f'{condition_name:20s}{intercept_text:20s}{slope_text:20s}{area_text:20s}{R2_text:20s}\n')
+    results.close()
+
+
+def write_mean_ci_header(experiment):
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write(f'{"CONDITION":20s}{"MEASURE":27s}{"MEAN":10s}95%CI\n')
     results.close()
 
 
@@ -578,7 +590,13 @@ def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
     mean_text = f'{mean:4.2f}'
     ci_lower = f'{mean - ci:4.2f}'
     ci_upper = f'{mean + ci:4.2f}'
-    results.write(f'{x_label:20s}: {y_label:27s}mean = {mean_text:10s}     ci = [{ci_lower} - {ci_upper}]\n')
+    results.write(f'{x_label:20s}{y_label:27s}{mean_text:10s}[{ci_lower} - {ci_upper}]\n')
+    results.close()
+
+
+def write_measure_header(experiment, measure):
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write(f'\n{measure.upper()}\n')
     results.close()
 
 
