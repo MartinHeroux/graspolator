@@ -19,7 +19,7 @@ def write_intercept_slope_summary(all_subject_data, experiment):
 
     for subject_data in all_subject_data:
         data_list = utils.create_data_tuples(experiment, subject_data)
-        for condition_data, label, condition_name, intercept_list, slope_list in zip(data_list, condition_names, intercept_lists, slope_lists):
+        for condition_data, condition_name, intercept_list, slope_list in zip(data_list, condition_names, intercept_lists, slope_lists):
             intercept, slope = utils.calculate_regression_general(condition_data.ACTUAL, condition_data.PERCEIVED)
             intercept_list.append(intercept)
             slope_list.append(slope)
@@ -46,6 +46,29 @@ def write_intercept_slope_summary(all_subject_data, experiment):
         utils.write_mean_ci_result(experiment, slope_mean, slope_ci, 'slope', condition_name)
 
     print(f'Intercept and slope summary results written to results_{experiment}.txt')
+
+
+def write_error_and_variability_summary(all_subject_data, experiment):
+    r2_means, r2_cis = utils.store_condition_r2_means_and_cis(all_subject_data, experiment)
+    area_means, area_cis = calculate_area.store_condition_area_means_and_cis(all_subject_data, experiment)
+    means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
+
+    results_headers = ['R^2', 'Error (cm2 / cm)']
+    params = utils.r2_area_constants()
+
+    plot = 'Area and R^2 Group Summary'
+    utils.write_plot_header(experiment, plot)
+
+    if experiment == 'exp2':
+        condition_names = ['Line-to-grasp', 'Grasp-to-line', 'Grasp-to-grasp']
+    else:
+        condition_names = condition_names = ['day 1 dominant', 'day 1 non-dominant', 'day 2 dominant 1', 'day 2 dominant 2']
+
+    for mean_list, ci_list, subplot, y_label in zip(means_lists, ci_lists, params.subplot_indices, results_headers):
+        for mean, ci, condition_name in zip(mean_list, ci_list, condition_names):
+            utils.write_mean_ci_result(experiment, mean, ci, y_label, condition_name)
+
+    print(f'Error and variability summary written to results_{experiment}.txt')
 
 
 def write_icc_results(all_subject_data):

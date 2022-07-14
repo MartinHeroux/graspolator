@@ -45,7 +45,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
         subject_2_ID = 'sub29'
         data_list = utils.store_example_subject_data_exp2(all_subject_data, subjects, subject_1_ID, subject_2_ID)
 
-    utils.write_plot_header(experiment, figure, plot)
+    utils.write_plot_header(experiment, plot)
     path = utils.create_figure_save_path(figure)
 
     y_ticks = list(range(0, 17, 2))
@@ -223,9 +223,6 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
         figure = 'Figure_3'
     path = utils.create_figure_save_path(figure)
 
-    plot = 'Area and R^2 Group Summary'
-    utils.write_plot_header(experiment, figure, plot)
-
     x_points, x_lims = utils.x_points_group_plot(experiment)
     x_labels = utils.x_tick_labels_group_plot(experiment)
     plot_text = ['B', 'A']
@@ -295,7 +292,6 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
         for mean, ci, x_point, x_label in zip(mean_list, ci_list, x_points, condition_names):
             plt.errorbar(x_point, mean, yerr=ci, ecolor='black', marker="o", markerfacecolor='black', mec='black',
                          markersize=3, linewidth=1, zorder=11)
-            utils.write_mean_ci_result(experiment, mean, ci, y_label, x_label)
         if subplot == 1:
             plt.ylabel('Error\n(cm$^2$) / cm', fontfamily=font, fontsize=10, rotation=0)
         else:
@@ -307,7 +303,6 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
 
     plt.grid(False)
     #plt.tight_layout(h_pad=0.6, w_pad=0.9)
-
     plt.subplots_adjust(left=0.25, right=0.9)
 
     plt.savefig(path, dpi=300, bbox_inches='tight')
@@ -324,7 +319,7 @@ def figure_4(all_subject_data, experiment):
     plot = 'Area vs R^2 Regression'
     path = utils.create_figure_save_path(figure)
 
-    utils.write_plot_header(experiment, figure, plot)
+    utils.write_plot_header(experiment, plot)
 
     area_lists = calculate_area.group_areas(all_subject_data, experiment)
     r2_lists = utils.store_r2_lists(all_subject_data, experiment)
@@ -404,7 +399,7 @@ def figure_5(all_subject_data, experiment):
     path = utils.create_figure_save_path(figure)
     condition_name = 'line-to-width vs width-to-line'
 
-    utils.write_plot_header(experiment, figure, plot)
+    utils.write_plot_header(experiment, plot)
 
     slopes_line_width = []
     slopes_width_line = []
@@ -470,7 +465,7 @@ def figure_8(all_subject_data, experiment):
     figure = 'Figure_8'
     path = utils.create_figure_save_path(figure)
 
-    utils.write_plot_header(experiment, figure, plot)
+    utils.write_plot_header(experiment, plot)
 
     subplots = [1, 2, 3, 4]
     measures = ['area', 'R2', 'intercept', 'slope']

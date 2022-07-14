@@ -515,11 +515,11 @@ def return_condition_comparisons(subject_data, measure):
 # RESULT WRITING
 ##########################################################################
 
-def write_plot_header(experiment, figure, plot):
+def write_plot_header(experiment, plot):
     results = open(f'results_{experiment}.txt', 'a')
     results.write('\n')
     results.write('#####' * 20)
-    results.write(f'\n\n{figure}: {plot}\n')
+    results.write(f'\n\n{plot}\n')
     results.close()
 
 
