@@ -75,8 +75,6 @@ def regression_summary(x, y):
     t_test = model.t_test([1, 0])
     f_test = model.f_test(np.identity(2))
 
-    print(model.summary())
-
     return t_vals, t_test, f_test
 
 
@@ -540,18 +538,18 @@ def write_regression_results(experiment, x, y, intercept, slope, condition_name)
     intercept_text, slope_text = f'{intercept:4.2f}', f'{slope:4.2f}'
     condition_name = condition_name.upper()
     results.write(
-        f'\n##### {condition_name:20s}\n\n{pearson:20s}r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}: intercept = {intercept_text:10s}     slope = {slope_text:10s}')
-    results.write(f'\n\n##### OLS Model Summary\nt VALUES: {t_vals}\n\nt TEST:\n: {t_test}\n\nf TEST\n: {f_test} \n')
+        f'\n##### {condition_name:20s}\n{pearson:20s}r         = {r:10s}     ci    = {ci:10s}\n{ols:20s}intercept = {intercept_text:10s}     slope = {slope_text:10s}')
+    results.write(f'\n\nOLS Model Summary:\nt VALUES: {t_vals}\n\nt TEST:\n {t_test}\n\nf TEST:\n {f_test} \n')
     results.close()
 
 
 def write_correlation(experiment, x, y, condition_name):
     results = open(f'results_{experiment}.txt', 'a')
     r, ci = pearson_r_ci(x, y)
-    pearson = 'Pearsons'
+    pearson = "Pearson's r [95%CI]:"
     condition_name = condition_name
     results.write(
-        f'\n****{condition_name:^20s}****\n{pearson:20s}: r         = {r:10s}{ci}\n')
+        f'\n{condition_name:^20s}\n{pearson:25s}{r:5s} {ci}\n')
     results.close()
 
 
@@ -585,6 +583,12 @@ def write_mean_ci_header(experiment):
     results.close()
 
 
+def write_difference_mean_ci_header(experiment):
+    results = open(f'results_{experiment}.txt', 'a')
+    results.write(f'{"DIFFERENCE":47s}{"MEAN":10s}95%CI\n')
+    results.close()
+
+
 def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
     results = open(f'results_{experiment}.txt', 'a')
     mean_text = f'{mean:4.2f}'
@@ -599,28 +603,3 @@ def write_measure_header(experiment, measure):
     results.write(f'\n{measure.upper()}\n')
     results.close()
 
-
-def return_perceived_by_actual(all_subject_data):
-    three, four, five, six, seven, eight, nine = [], [], [], [], [], [], []
-
-    for subject in all_subject_data:
-        line_width = subject.LINE_WIDTH
-        for count, (actual, perceived) in enumerate(zip(line_width.ACTUAL, line_width.PERCEIVED)):
-            if actual == 3.0:
-                three.append(abs(perceived-3))
-            elif actual == 4.0:
-                four.append(abs(perceived-4))
-            elif actual == 5.0:
-                five.append(abs(perceived-5))
-            elif actual == 6.0:
-                six.append(abs(perceived-6))
-            elif actual == 7.0:
-                seven.append(abs(perceived-7))
-            elif actual == 8.0:
-                eight.append(abs(perceived-8))
-            elif actual == 9.0:
-                nine.append(abs(perceived-9))
-            else:
-                print(subject.SUBJECT_ID, count)
-
-    return three, four, five, six, seven, eight, nine

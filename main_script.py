@@ -10,6 +10,7 @@ data_folders = [Path('./data/exp2'), Path('./data/exp1')]
 results_files = [Path('./results_exp2.txt'), Path('./results_exp1.txt')]
 
 for experiment, data_folder, results_file in zip(experiments, data_folders, results_files):
+    print(f'\n\n\nStarting {experiment} results.....\n')
     if results_file.exists():
         os.remove(results_file)
         print(f'Previous results_{experiment}.txt removed\n')
