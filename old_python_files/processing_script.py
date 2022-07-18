@@ -17,7 +17,7 @@ data_folders = [Path('./data/exp2'), Path('./data/exp1')]
 
 for experiment, data_folder in zip(experiments, data_folders):
     # import data and subject list for experiment
-    all_subject_data, subjects = data.get_data_and_subjects(experiment, data_folder)
+    all_subject_data, subjects = data.return_all_subject_data(experiment, data_folder)
 
     # make plot dispatcher keys
     # TODO change 'skip' to 'skip' to alter which plots are made

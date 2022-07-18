@@ -5,22 +5,40 @@ import data
 import figures
 import results
 
-experiments = ['exp2', 'exp1']
-data_folders = [Path('./data/exp2'), Path('./data/exp1')]
-results_files = [Path('./results_exp2.txt'), Path('./results_exp1.txt')]
+#####################
+#   EXPERIMENT 1
+#####################
+exp_1 = "exp2"
+exp_1_data_directory = Path("./data/exp2")
 
-for experiment, data_folder, results_file in zip(experiments, data_folders, results_files):
-    print(f'\n\n\nStarting {experiment} results.....\n')
-    if results_file.exists():
-        os.remove(results_file)
-        print(f'Previous results_{experiment}.txt removed\n')
+#   Store all subject data and subject names
+all_subject_data_exp1 = data.return_all_subject_data(
+    exp_1, exp_1_data_directory
+)
+all_subject_names_exp1 = data.return_all_subject_IDs(exp_1, exp_1_data_directory)
 
-    data.write_participant_demographics(experiment, data_folder)
+#   Write all results to text file
+results.write_all(all_subject_data_exp1, all_subject_names_exp1, exp_1, exp_1_data_directory)
 
-    all_subject_data, subjects = data.get_data_and_subjects(experiment, data_folder)
-    results.write_all(all_subject_data, subjects, experiment)
-
-    # text files of numerical results generated simultaneous with figures
-    figures.generate(all_subject_data, subjects, experiment)
+#   Generate all figures
+figures.generate_all(all_subject_data_exp1, all_subject_names_exp1, exp_1)
 
 
+#####################
+#   EXPERIMENT 2
+#####################
+exp_2 = "exp1"
+exp_2_data_directory = Path("./data/exp1")
+exp_2_result_filepath = Path("./results_exp1.txt")
+
+#   Store all subject data and subject names
+all_subject_data_exp2 = data.return_all_subject_data(
+    exp_2, exp_2_data_directory
+)
+all_subject_names_exp2 = data.return_all_subject_IDs(exp_2, exp_2_data_directory)
+
+#   Write all results to text file
+results.write_all(all_subject_data_exp2, all_subject_names_exp2, exp_2, exp_2_data_directory)
+
+#   Generate all figures
+figures.generate_all(all_subject_data_exp2, all_subject_names_exp2, exp_2)

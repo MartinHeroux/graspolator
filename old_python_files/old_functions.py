@@ -92,7 +92,7 @@ def store_r2_and_area_tuples_exp1(all_subject_data, subject_IDs):
     r2_area_tuples = []
 
     for subject_data, subject_ID in zip(all_subject_data, subject_IDs):
-        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = utils.store_index_condition_data_tuple(
+        d1_dom_tuple, d1_non_dom_tuple, d2_dom_1_tuple, d2_dom_2_tuple = utils.store_condition_data_tuples_exp1(
             subject_data)
 
         r2s_areas_tuple = r2s_areas(subject_ID=subject_ID,
