@@ -61,8 +61,9 @@ def return_all_subject_IDs(experiment, data_folder):
         subjects = get_directory_list(data_folder)
 
     else:
-        print("no experiment name defined")
+        SystemExit('Incorrect experiment string provided')
 
+    return subjects
 
 ###########################################
 # DEMOGRAPHICS

@@ -5,6 +5,7 @@ from pathlib import Path
 import os
 
 import calculate_area
+import summarise
 import utils
 import data
 
@@ -160,7 +161,7 @@ def write_example_subject_data(all_subject_data, subjects, experiment):
             intercept, slope = utils.calculate_regression_general(
                 condition_data.ACTUAL, condition_data.PERCEIVED
             )
-            area = calculate_area.normalised(
+            area = calculate_area.between_regression_and_reality_absolute(
                 condition_data.ACTUAL, condition_data.PERCEIVED, experiment
             )
             r2 = utils.calculate_r2(condition_data.ACTUAL, condition_data.PERCEIVED)
@@ -171,10 +172,10 @@ def write_example_subject_data(all_subject_data, subjects, experiment):
 
 
 def write_error_and_variability_summary(all_subject_data, experiment):
-    r2_means, r2_cis = utils.store_condition_r2_means_and_cis(
+    r2_means, r2_cis = summarise.r2_mean_and_ci_by_condition(
         all_subject_data, experiment
     )
-    area_means, area_cis = calculate_area.store_condition_area_means_and_cis(
+    area_means, area_cis = summarise.area_mean_and_ci_by_condition(
         all_subject_data, experiment
     )
     means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
@@ -206,8 +207,8 @@ def write_error_and_variability_summary(all_subject_data, experiment):
 
 
 def write_error_vs_variability_regression(all_subject_data, experiment):
-    error_lists = calculate_area.area_per_exp_condition(all_subject_data, experiment)
-    variability_lists = utils.store_r2_lists(all_subject_data, experiment)
+    error_lists = summarise.errors_per_condition(all_subject_data, experiment)
+    variability_lists = summarise.r2_data_by_condition(all_subject_data, experiment)
     if experiment == "exp1":
         condition_names = [
             "Day 1 dominant",
@@ -296,11 +297,12 @@ def write_difference_between_conditions_exp1(all_subject_data):
     result_title = "Difference between conditions"
     experiment = "exp1"
     utils.write_result_header(experiment, result_title)
-    measures = ["Error (cm^2)", "Variability (R^2)", "intercept", "slope"]
+    measures = ["area", "R2", "intercept", "slope"]
+    measure_labels = ["Error (cm^2)", "Variability (R^2)", "intercept", "slope"]
     comparison_names = ["Between hands", "Within hand", "Within hand"]
     comparison_times = ["Same day", "1 week apart", "Same day"]
 
-    for measure in measures:
+    for measure, measure_label in zip(measures, measure_labels):
         between_hands, across_days, within_day = [], [], []
         for subject_data in all_subject_data:
             if measure == "area":
@@ -308,7 +310,7 @@ def write_difference_between_conditions_exp1(all_subject_data):
                     dom_vs_non_dom,
                     dom_d1_vs_d2,
                     dom_d2_vs_d2,
-                ) = calculate_area.return_condition_comparison_areas(
+                ) = summarise.absolute_condition_comparison_areas(
                     subject_data, experiment
                 )
             elif measure == "intercept":
@@ -342,7 +344,7 @@ def write_difference_between_conditions_exp1(all_subject_data):
 
         all_difference_data = [between_hands, across_days, within_day]
 
-        utils.write_measure_header(experiment, measure)
+        utils.write_measure_header(experiment, measure_label)
         utils.write_mean_ci_header("exp1")
 
         for data_list, name, time_period in zip(
@@ -367,10 +369,10 @@ def write_icc_results_exp1(all_subject_data):
         d2_dom_r2 = utils.calculate_r2(
             subject.day2_dominant_1.ACTUAL, subject.day2_dominant_1.PERCEIVED
         )
-        d1_dom_area = calculate_area.normalised(
+        d1_dom_area = calculate_area.between_regression_and_reality_absolute(
             subject.day1_dominant.ACTUAL, subject.day1_dominant.PERCEIVED, "exp1"
         )
-        d2_dom_area = calculate_area.normalised(
+        d2_dom_area = calculate_area.between_regression_and_reality_absolute(
             subject.day2_dominant_1.ACTUAL, subject.day2_dominant_1.PERCEIVED, "exp1"
         )
 
@@ -449,15 +451,15 @@ def write_low_vs_high_area_correlation(all_subject_data):
     width_to_line_areas = []
 
     for participant in all_subject_data:
-        width_to_width = calculate_area.normalised(
+        width_to_width = calculate_area.between_regression_and_reality_absolute(
             participant.WIDTH_WIDTH.ACTUAL,
             participant.WIDTH_WIDTH.PERCEIVED,
             experiment,
         )
-        line_to_width = calculate_area.normalised(
+        line_to_width = calculate_area.between_regression_and_reality_absolute(
             participant.LINE_WIDTH.ACTUAL, participant.LINE_WIDTH.PERCEIVED, experiment
         )
-        width_to_line = calculate_area.normalised(
+        width_to_line = calculate_area.between_regression_and_reality_absolute(
             participant.WIDTH_LINE.ACTUAL, participant.WIDTH_LINE.PERCEIVED, experiment
         )
 
@@ -596,15 +598,15 @@ def write_between_condition_area_mean_difference(all_subject_data):
     utils.write_result_header(experiment, "Between condition mean differences: Error")
 
     for participant in all_subject_data:
-        width_to_width = calculate_area.normalised(
+        width_to_width = calculate_area.between_regression_and_reality_absolute(
             participant.WIDTH_WIDTH.ACTUAL,
             participant.WIDTH_WIDTH.PERCEIVED,
             experiment,
         )
-        line_to_width = calculate_area.normalised(
+        line_to_width = calculate_area.between_regression_and_reality_absolute(
             participant.LINE_WIDTH.ACTUAL, participant.LINE_WIDTH.PERCEIVED, experiment
         )
-        width_to_line = calculate_area.normalised(
+        width_to_line = calculate_area.between_regression_and_reality_absolute(
             participant.WIDTH_LINE.ACTUAL, participant.WIDTH_LINE.PERCEIVED, experiment
         )
 

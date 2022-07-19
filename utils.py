@@ -11,9 +11,7 @@ import math
 from matplotlib.ticker import MultipleLocator
 from random import random
 from dataclasses import dataclass
-import pandas as pd
-import pingouin as pg
-import matplotlib.text as mpl_text
+
 
 #######################################
 # PARSING DATA
@@ -146,85 +144,6 @@ def calculate_ci(data_list):
 ##########################################################
 # OBJECT STORAGE
 ##########################################################
-
-
-def store_condition_r2_means_and_cis(all_subject_data, experiment):
-    r2_lists = store_r2_lists(all_subject_data, experiment)
-    mean_list = []
-    ci_list = []
-    for r2_list in r2_lists:
-        mean_list.append(np.mean(r2_list))
-        ci_list.append(calculate_ci(r2_list))
-    return mean_list, ci_list
-
-
-def store_r2_lists(all_subject_data, experiment):
-    if experiment == "exp1":
-        r2_lists = _store_r2_tuples_exp1(all_subject_data)
-    else:
-        r2_lists = _store_r2_tuples_exp2(all_subject_data)
-    return r2_lists
-
-
-def _store_r2_tuples_exp1(all_subject_data):
-    d1_dom_r2s, d1_non_dom_r2s, d2_dom_1_r2s, d2_dom_2_r2s = [], [], [], []
-    r2_list_tuple = namedtuple(
-        "r2", "d1_dom_r2_list d1_non_dom_r2_list d2_dom_1_r2_list d2_dom_2_r2_list"
-    )
-
-    for subject_data in all_subject_data:
-        (
-            d1_dom_tuple,
-            d1_non_dom_tuple,
-            d2_dom_1_tuple,
-            d2_dom_2_tuple,
-        ) = store_condition_data_tuples_exp1(subject_data)
-
-        d1_dom_r2s.append(calculate_r2(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)),
-        d1_non_dom_r2s.append(
-            calculate_r2(d1_non_dom_tuple.ACTUAL, d1_non_dom_tuple.PERCEIVED)
-        ),
-        d2_dom_1_r2s.append(
-            calculate_r2(d2_dom_1_tuple.ACTUAL, d2_dom_1_tuple.PERCEIVED)
-        ),
-        d2_dom_2_r2s.append(
-            calculate_r2(d2_dom_2_tuple.ACTUAL, d2_dom_2_tuple.PERCEIVED)
-        )
-
-    r2_tuples = r2_list_tuple(
-        d1_dom_r2_list=d1_dom_r2s,
-        d1_non_dom_r2_list=d1_non_dom_r2s,
-        d2_dom_1_r2_list=d2_dom_1_r2s,
-        d2_dom_2_r2_list=d2_dom_2_r2s,
-    )
-    return r2_tuples
-
-
-def _store_r2_tuples_exp2(all_subject_data):
-    line_width_r2s, width_line_r2s, width_width_r2s = [], [], []
-    r2_list_tuple = namedtuple(
-        "r2s", "line_width_r2_list width_line_r2_list, width_width_r2_list"
-    )
-
-    for subject_data in all_subject_data:
-        data_tuples = condition_plot_inputs(subject_data)
-
-        line_width, width_line, width_width = (
-            data_tuples[0],
-            data_tuples[1],
-            data_tuples[2],
-        )
-
-        line_width_r2s.append(calculate_r2(line_width.ACTUAL, line_width.PERCEIVED)),
-        width_line_r2s.append(calculate_r2(width_line.ACTUAL, width_line.PERCEIVED)),
-        width_width_r2s.append(calculate_r2(width_width.ACTUAL, width_width.PERCEIVED))
-
-    r2_tuples = r2_list_tuple(
-        line_width_r2_list=line_width_r2s,
-        width_line_r2_list=width_line_r2s,
-        width_width_r2_list=width_width_r2s,
-    )
-    return r2_tuples
 
 
 def create_data_tuples(experiment, subject_data):
@@ -663,6 +582,9 @@ def plot_subject_condition_comparison(
         mec="none",
     )
 
+#############################
+# DATA SUMMARIES
+#############################
 
 def return_subject_between_condition_comparisons_exp1(subject_data, measure):
     if measure == "R2":
@@ -788,3 +710,56 @@ def write_measure_header(experiment, measure):
     results = open(f"results_{experiment}.txt", "a")
     results.write(f"\n{measure.upper()}\n")
     results.close()
+
+
+#################################
+# REGRESSION LINE CHARACTERISTICS
+#################################
+
+def return_subject_regression_line_type(x_intersect, y_at_x2, experiment):
+    if experiment == "exp1":
+        x1 = 2
+        x2 = 10
+    elif experiment == "exp2":
+        x1 = 3
+        x2 = 9
+    else:
+        print("experiment not defined - subject group function")
+
+    if x1 <= x_intersect <= x2 and y_at_x2 >= 0:
+        group = "crosser"
+    elif x1 <= x_intersect <= x2:
+        group = "crosser_triangle"
+    elif y_at_x2 >= 2:
+        group = "maximiser"
+    else:
+        group = "minimiser"
+    return group
+
+
+def return_point_of_intersection_regression_line_and_reality_line(intercept, slope):
+    m1, b1 = 1, 0
+    m2, b2 = slope, intercept
+
+    if m1 - m2 == 0:
+        print("zero gradient difference")
+    x_intersect = (b2 - b1) / (m1 - m2)
+    y_intersect = (x_intersect * slope) + intercept
+    return x_intersect, y_intersect
+
+
+def return_regression_line_endpoints(actual, perceived, experiment):
+    intercept, slope = calculate_regression_general(actual, perceived)
+    if experiment == "exp1":
+        x1 = 2
+        x2 = 10
+    elif experiment == "exp2":
+        x1 = 3
+        x2 = 9
+    else:
+        print("experiment not defined reg line endpoints")
+    y1 = slope * x1 + intercept
+    y2 = slope * x2 + intercept
+    return x1, x2, y1, y2
+
+

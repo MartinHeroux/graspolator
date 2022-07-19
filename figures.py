@@ -6,10 +6,11 @@ from pathlib import Path
 from random import random
 from matplotlib.ticker import MultipleLocator
 
+import summarise
 import utils
 import calculate_area
 
-font = "FreeSans"
+font = "arial"
 
 
 def generate_all(all_subject_data, subjects, experiment):
@@ -19,7 +20,7 @@ def generate_all(all_subject_data, subjects, experiment):
 
     if experiment == "exp2":
         figure_4(all_subject_data, experiment)
-        figure_5(all_subject_data, experiment)
+        figure_5(all_subject_data)
 
     if experiment == "exp1":
         figure_8(all_subject_data, experiment)
@@ -115,7 +116,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             intercept, slope = utils.calculate_regression_general(
                 condition_data.ACTUAL, condition_data.PERCEIVED
             )
-            area = calculate_area.normalised(
+            area = calculate_area.between_regression_and_reality_absolute(
                 condition_data.ACTUAL, condition_data.PERCEIVED, experiment
             )
             r2 = utils.calculate_r2(condition_data.ACTUAL, condition_data.PERCEIVED)
@@ -353,17 +354,19 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
             "day 2 dominant 2",
         ]
         x_ticks = [0.95, 2, 3, 4.05]
+        text_y = 3.1
     else:
         colors = params.exp_2_colors
         example_subjects = params.exp_2_subjects
         y_lims = [(0.6, 1), (0, 4)]
         condition_names = ["Line-to-grasp", "Grasp-to-line", "Grasp-to-grasp"]
         x_ticks = [0.95, 2, 3.05]
+        text_y = 4.1
 
-    r2_means, r2_cis = utils.store_condition_r2_means_and_cis(
+    r2_means, r2_cis = summarise.r2_mean_and_ci_by_condition(
         all_subject_data, experiment
     )
-    area_means, area_cis = calculate_area.store_condition_area_means_and_cis(
+    area_means, area_cis = summarise.area_mean_and_ci_by_condition(
         all_subject_data, experiment
     )
     means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
@@ -384,7 +387,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
         for pair in data_pairs:
             y_points_r2.append(utils.calculate_r2(pair.ACTUAL, pair.PERCEIVED))
             y_points_area.append(
-                calculate_area.normalised(pair.ACTUAL, pair.PERCEIVED, experiment)
+                calculate_area.between_regression_and_reality_absolute(pair.ACTUAL, pair.PERCEIVED, experiment)
             )
 
         y_point_lists = [y_points_r2, y_points_area]
@@ -421,7 +424,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                     labelright=False,
                 )
                 utils.draw_ax_spines(ax, True, False, False, False, y_offset=True)
-                plt.gca().text(0.5, 4.1, text, fontsize=14, fontfamily=font)
+                plt.gca().text(0.5, text_y, text, fontsize=14, fontfamily=font)
 
             else:
                 ax.tick_params(axis="both", which="both", bottom=True, labelbottom=True)
@@ -496,8 +499,10 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     plt.savefig(path, dpi=300, bbox_inches="tight")
     path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
     plt.savefig(path_svg)
-    text = colored(f"{path}", "blue")
-    print(f"R2 and area per condition plots saved in {text}\n")
+    text = colored(path, "blue")
+    text_svg = colored(path_svg, "blue")
+    print(f"{text} saved\n")
+    print(f"{text_svg} saved\n")
     plt.close()
 
 
@@ -507,8 +512,8 @@ def figure_4(all_subject_data, experiment):
     path = utils.create_figure_save_path(figure_name)
 
     # store data for plot
-    error_lists = calculate_area.area_per_exp_condition(all_subject_data, experiment)
-    variability_lists = utils.store_r2_lists(all_subject_data, experiment)
+    error_lists = summarise.errors_per_condition(all_subject_data, experiment)
+    variability_lists = summarise.r2_data_by_condition(all_subject_data, experiment)
 
     x_labels = utils.x_tick_labels_group_plot(experiment)
     if experiment == "exp1":
@@ -618,8 +623,10 @@ def figure_4(all_subject_data, experiment):
     plt.savefig(path, dpi=300, bbox_inches="tight")
     path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
     plt.savefig(path_svg)
-    text = colored(f"{path}", "blue")
-    print(f"{experiment} Figure 4 saved in {text}\n")
+    text = colored(path, "blue")
+    text_svg = colored(path_svg, "blue")
+    print(f"{text} saved\n")
+    print(f"{text_svg} saved\n")
     plt.close()
 
 
@@ -704,8 +711,10 @@ def figure_5(all_subject_data):
     plt.savefig(path, dpi=300)
     path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
     plt.savefig(path_svg)
-    text = colored(f"{path}", "blue")
-    print(f"slope comparison saved in {text}\n")
+    text = colored(path, "blue")
+    text_svg = colored(path_svg, "blue")
+    print(f"{text} saved\n")
+    print(f"{text_svg} saved\n")
     plt.close()
 
 
@@ -729,10 +738,12 @@ def figure_8(all_subject_data, experiment):
     x_tick_labels = ["Between hands", "Within hand", "Within hand"]
     x_descriptors = ["Same day", "1 week apart", "Same day"]
     x_lim = [1.295, 1.63]
+    text_y_points = [1.5, 0.21, 2.1, 0.55]
+    text_letters = ['A', 'B', 'C', 'D']
 
     plt.figure(figsize=(3.3, (2.7 * 4)))
 
-    for subplot, measure, label in zip(subplots, measures, measure_labels):
+    for subplot, measure, label, text_y_point, letter in zip(subplots, measures, measure_labels, text_y_points, text_letters):
         between_hands, across_days, within_day = [], [], []
         y_label = f"\u0394 {label}"
 
@@ -745,11 +756,11 @@ def figure_8(all_subject_data, experiment):
                     dom_vs_non_dom,
                     dom_d1_vs_d2,
                     dom_d2_vs_d2,
-                ) = calculate_area.return_condition_comparison_areas(
+                ) = summarise.absolute_condition_comparison_areas(
                     subject_data, experiment
                 )
-                y_ticks = list(range(-2, 3))
-                y_lim = [-2, 2]
+                y_ticks = [-1.4, -0.7, 0, 0.7, 1.4]
+                y_lim = [-1.4, 1.4]
             elif measure == "intercept":
                 (
                     dom_vs_non_dom,
@@ -768,8 +779,8 @@ def figure_8(all_subject_data, experiment):
                 ) = utils.return_subject_between_condition_comparisons_exp1(
                     subject_data, measure
                 )
-                y_lim = [-0.6, 0.6]
-                y_ticks = [-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6]
+                y_lim = [-0.5, 0.5]
+                y_ticks = [-0.5, -0.25, 0, 0.25, 0.5]
             else:
                 (
                     dom_vs_non_dom,
@@ -795,10 +806,10 @@ def figure_8(all_subject_data, experiment):
 
         all_differences = [between_hands, across_days, within_day]
 
-        for x_point, area_list, label, descriptor in zip(
+        for x_point, difference_list, label, descriptor in zip(
             x_points_left, all_differences, x_tick_labels, x_descriptors
         ):
-            mean, ci = utils.calculate_mean_ci(area_list)
+            mean, ci = utils.calculate_mean_ci(difference_list)
             plt.errorbar(
                 x_point,
                 mean,
@@ -880,38 +891,13 @@ def figure_8(all_subject_data, experiment):
 
         # turn grid off for x axis
 
-    plt.text(
-        0.01,
-        0.89,
-        "A",
-        fontfamily="arial",
-        fontsize=14,
-        transform=plt.gcf().transFigure,
-    )
-    plt.text(
-        0.01,
-        0.68,
-        "B",
-        fontfamily="arial",
-        fontsize=14,
-        transform=plt.gcf().transFigure,
-    )
-    plt.text(
-        0.01,
-        0.49,
-        "C",
-        fontfamily="arial",
-        fontsize=14,
-        transform=plt.gcf().transFigure,
-    )
-    plt.text(
-        0.01,
-        0.28,
-        "D",
-        fontfamily="arial",
-        fontsize=14,
-        transform=plt.gcf().transFigure,
-    )
+        plt.gca().text(
+            1.22,
+            text_y_point,
+            letter,
+            fontfamily="arial",
+            fontsize=14,
+        )
 
     plt.subplots_adjust(left=0.25, right=0.95, top=0.9, bottom=0.1)
 
@@ -919,7 +905,9 @@ def figure_8(all_subject_data, experiment):
     path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
     plt.savefig(path_svg)
     text = colored(path, "blue")
-    print(f"difference_between_conditions saved in {text}\n")
+    text_svg = colored(path_svg, "blue")
+    print(f"{text} saved\n")
+    print(f"{text_svg} saved\n")
     plt.close()
 
 
