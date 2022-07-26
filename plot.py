@@ -18,7 +18,7 @@ def create_individual_plot_save_path(plot, subject_ID):
     return savepath
 
 
-def individual_regressions(all_subject_data, experiment, subjects):
+def individual_scatterplots(all_subject_data, subjects, experiment):
     print('Note - this takes a while')
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         scatterplots_and_reg_lines(subject_ID, subject_data, experiment)
@@ -26,7 +26,7 @@ def individual_regressions(all_subject_data, experiment, subjects):
     print(f'All individual regression plots saved in ./plots/individual_plots\n')
 
 
-def individual_errors_per_condition(all_subject_data, experiment, subjects):
+def individual_error_plots(all_subject_data, subjects, experiment):
     print('Note - this takes a while')
     for subject_ID, current_subject_data in zip(subjects, all_subject_data):
         areas_between_regression_and_reality(subject_ID, current_subject_data, experiment)
@@ -35,7 +35,7 @@ def individual_errors_per_condition(all_subject_data, experiment, subjects):
 
 
 def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
-    plot = 'scatterplot_regression'
+    plot = f'scatterplots_{experiment}'
     path = create_individual_plot_save_path(plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
 
@@ -98,7 +98,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
 
 
 def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
-    plot = 'area_between_reg_and_reality'
+    plot = f'error_plots_{experiment}'
     path = create_individual_plot_save_path(plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
 
@@ -114,7 +114,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
         fig_size = [15, 5]
 
     plt.figure(figsize=fig_size)
-    plt.suptitle(str(subject_ID + ' Area Plots (reality vs. regression lines)'))
+    plt.suptitle(subject_ID + ' Area Plots (reality vs. regression lines)')
     for condition_tuple in data_list:
         plt.subplot(subplot_width, subplot_length, condition_tuple.PLOT_INDEX)
         plt.plot([2, 10],
@@ -123,7 +123,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
 
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
         x1, x2, y1, y2 = utils.return_regression_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
-                                                           'comparison')
+                                                           experiment)
         print(x1)
         if y2 < 15:
             y_max = 14
@@ -149,7 +149,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
         plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
         plt.xlim([x1 - 1, x2 + 1])
         plt.yticks(list(range(0, int(y_max + 1))))
-        plt.ylim(15)
+        plt.ylim(0, 15)
         plt.grid()
         plt.title(condition_tuple.NAME, loc='right')
         plt.ylabel('Perceived width (cm)')
