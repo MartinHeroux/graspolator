@@ -13,9 +13,9 @@ import calculate_area
 font = "arial"
 
 
-def generate_all(all_subject_data, subjects, experiment):
+def generate_all(all_subject_data, subjects, experiment, vertical_y_label=True):
 
-    # figure_2_and_6(all_subject_data, subjects, experiment)
+    figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label)
     figure_3_and_7(all_subject_data, subjects, experiment)
 
     if experiment == "exp2":
@@ -26,10 +26,19 @@ def generate_all(all_subject_data, subjects, experiment):
         figure_8(all_subject_data, experiment)
 
 
-def figure_2_and_6(all_subject_data, subjects, experiment):
+def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
     plot = "Example participants and group regression summary"
     font = "arial"
     example = utils.ExampleParticipantIDs
+
+    if vertical_y_label:
+        rotation = 90
+        y_label = 'Perceived width (cm)'
+        left_adjust = 0.125
+    else:
+        rotation = 0
+        y_label = 'Perceived\nwidth (cm)'
+        left_adjust = 0.15
 
     if experiment == "exp1":
         figure = "Figure_6"
@@ -157,7 +166,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 facecolor="white",
                 framealpha=1,
                 fontsize=8,
-                handlelength=1,
+                handlelength=3,
                 handleheight=1,
                 edgecolor="none",
             )
@@ -176,6 +185,16 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 10,
                 True,
             )
+
+            if experiment == 'exp2':
+                y_var = 0.8955
+                y_err = 0.815
+            else:
+                y_var = 0.885
+                y_err = 0.79
+            ax.text(0.1, y_var, 'R$^2$', fontsize=8, transform=ax.transAxes, zorder=10)
+            ax.text(0.1, y_err, 'Error', fontsize=8, transform=ax.transAxes, zorder=10)
+
             utils.draw_ax_spines(ax, False, False, False, False)
             ax.tick_params(
                 axis="both",
@@ -203,20 +222,20 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
                 )
             if condition_plot_index == 4 and experiment == "exp2":
                 ax.set_ylabel(
-                    "Response\nwidth (cm)", fontfamily="arial", fontsize=10, rotation=0
+                    y_label, fontfamily="arial", fontsize=10, rotation=rotation
                 )
             elif condition_plot_index == 7 and experiment == "exp1":
                 ax.set_ylabel(
-                    "Response\nwidth (cm)", fontfamily="arial", fontsize=10, rotation=0
+                    y_label, fontfamily="arial", fontsize=10, rotation=rotation
                 )
 
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis="x", which="both", bottom=True, labelbottom=True)
                 ax.spines["bottom"].set_visible(True)
             if condition_plot_index == 11 and experiment == "exp1":
-                plt.xlabel("Reference width (cm)", fontsize=10, fontfamily=font)
+                plt.xlabel("Actual width (cm)", fontsize=10, fontfamily=font)
             if condition_plot_index == 8 and experiment == "exp2":
-                plt.xlabel("Reference width (cm)", fontsize=10, fontfamily=font)
+                plt.xlabel("Actual width (cm)", fontsize=10, fontfamily=font)
 
     # plot group regression lines in the right subplot column
 
@@ -228,7 +247,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
             plt.subplot(subplot_rows, subplot_cols, condition_plot_index)
 
             if condition_plot_index == 3:
-                plt.title("All participants", loc="center", size=11, fontfamily=font)
+                plt.title("All participants", loc="center", size=10, fontfamily=font)
 
             if subject_ID == example_subjects[0]:
                 line_color = colors[0]
@@ -314,9 +333,9 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     """
 
     if experiment == "exp2":
-        plt.subplots_adjust(left=0.15, bottom=0.25, right=0.95, top=0.95)
+        plt.subplots_adjust(left=left_adjust, bottom=0.25, right=0.95, top=0.95)
     else:
-        plt.subplots_adjust(left=0.15, right=0.95, top=0.95, bottom=0.1)
+        plt.subplots_adjust(left=left_adjust, right=0.95, top=0.95)
 
     plt.savefig(path, dpi=300)
     path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
@@ -329,7 +348,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment):
     plt.close()
 
 
-def figure_3_and_7(all_subject_data, subjects, experiment):
+def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True):
     font = "arial"
     if experiment == "exp1":
         figure = "Figure_7"
@@ -342,6 +361,15 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     plot_text = ["B", "A"]
     results_headers = ["R^2", "Error (cm2 / cm)"]
     params = utils.r2_area_constants()
+
+    if vertical_y_label:
+        y_label_error = "Error (cm$^2$) / cm"
+        y_label_r2 = "Variability (R$^2$)"
+        rotation = 90
+    else:
+        y_label_error = "Error\n(cm$^2$) / cm"
+        y_label_r2 = "Variability\n(R$^2$)"
+        rotation = 0
 
     if experiment == "exp1":
         colors = params.exp_1_colors
@@ -449,7 +477,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                 y_lim,
                 None,
                 None,
-                8,
+                10,
                 False,
             )
 
@@ -476,9 +504,9 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
                 zorder=11,
             )
         if subplot == 1:
-            plt.ylabel("Error\n(cm$^2$) / cm", fontfamily=font, fontsize=10, rotation=0)
+            plt.ylabel(y_label_error, fontfamily=font, fontsize=10, rotation=rotation)
         else:
-            plt.ylabel("Variability\n(R$^2$)", fontfamily=font, fontsize=10, rotation=0)
+            plt.ylabel(y_label_r2, fontfamily=font, fontsize=10, rotation=rotation)
 
         ax = plt.gca()
         add_plot_text(ax, subplot, experiment)
@@ -506,7 +534,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment):
     plt.close()
 
 
-def figure_4(all_subject_data, experiment):
+def figure_4(all_subject_data, experiment, vertical_y_label=True):
     font = "arial"
     figure_name = "Figure_4"
     path = utils.create_figure_save_path(figure_name)
@@ -523,9 +551,18 @@ def figure_4(all_subject_data, experiment):
         subplot_indices = [1, 2, 3]
         subplot_labels = ["A", "B", "C"]
 
+    if vertical_y_label:
+        y_label = "Variability (R$^2$)"
+        rotation = 90
+        left_adjust = 0.125
+    else:
+        y_label = "Variability\n(R$^2$)"
+        rotation = 0
+        left_adjust = 0.25
+
     x_lims, y_lims = (0, 3), (0.6, 1)
     x_ticks, y_ticks = [0, 1, 2, 3], [0.6, 0.7, 0.8, 0.9, 1]
-    x_label, y_label = None, "R$^2$"
+    x_label = None
 
     plt.figure(figsize=(3.3, (2.7 * 3)))
     plt.rcParams.update({"font.family": font})
@@ -589,7 +626,7 @@ def figure_4(all_subject_data, experiment):
             y_lims,
             x_label,
             None,
-            8,
+            10,
             False,
             font=font,
         )
@@ -607,19 +644,15 @@ def figure_4(all_subject_data, experiment):
             )
             ax.spines["bottom"].set_visible(True)
 
-        if subplot_index == 2 and experiment == "exp2":
+        if subplot_index == 2:
             plt.ylabel(
-                "Variability\n(R$^2$)", fontsize=10, fontfamily=font, rotation=90
+                y_label, fontsize=10, fontfamily=font, rotation=rotation
             )
-
-        if subplot_index == 3 and experiment == "exp1":
-            spacing = " " * 30
-            plt.ylabel(f"{spacing}Variability (R$^2$)", fontsize=10, fontfamily=font)
 
         # label subplot letter (A, B, C, +/- D)
         plt.gca().text(-0.5, 1.01, text, fontsize=14, fontfamily=font)
 
-    plt.subplots_adjust(left=0.25, right=0.95, top=0.9, bottom=0.1)
+    plt.subplots_adjust(left=left_adjust, right=0.95, top=0.9, bottom=0.1)
     plt.savefig(path, dpi=300, bbox_inches="tight")
     path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
     plt.savefig(path_svg)
@@ -660,17 +693,20 @@ def figure_5(all_subject_data):
     )
 
     # print and plot results without outlier
-    for slope_1, slope_2 in zip(slopes_line_width, slopes_width_line):
+    for count, (slope_1, slope_2) in enumerate(zip(slopes_line_width, slopes_width_line)):
         if slope_2 > 1.7:
             plt.plot(
                 slope_1,
                 slope_2,
-                marker="o",
-                color="white",
+                marker="x",
+                color="gray",
                 markeredgecolor="gray",
-                markersize=2,
+                markersize=3,
                 markeredgewidth=0.5,
             )
+            slopes_line_width.pop(count)
+            slopes_width_line.pop(count)
+
 
     x_vals = np.array([min(slopes_line_width) - 0.25, max(slopes_line_width) + 0.25])
     y_vals = intercept + slope * x_vals
@@ -703,7 +739,7 @@ def figure_5(all_subject_data):
         y_lims,
         x_label,
         y_label,
-        8,
+        10,
         False,
     )
     plt.tight_layout()
@@ -718,19 +754,13 @@ def figure_5(all_subject_data):
     plt.close()
 
 
-def figure_8(all_subject_data, experiment):
+def figure_8(all_subject_data, experiment, vertical_y_axis=True):
     font = "arial"
     figure = "Figure_8"
     path = utils.create_figure_save_path(figure)
 
     subplots = [1, 2, 3, 4]
     measures = ["area", "R2", "intercept", "slope"]
-    measure_labels = [
-        "error\n(cm$^2$) / cm",
-        "variability\n(R$^2$)",
-        "y-intercept",
-        "slope",
-    ]
 
     x_ticks = [1.3, 1.45, 1.6]
     x_points_left = [1.3, 1.45, 1.6]
@@ -740,6 +770,23 @@ def figure_8(all_subject_data, experiment):
     x_lim = [1.295, 1.63]
     text_y_points = [1.5, 0.21, 2.1, 0.55]
     text_letters = ['A', 'B', 'C', 'D']
+
+    if vertical_y_axis:
+        measure_labels = [
+            "error (cm$^2$) / cm",
+            "variability (R$^2$)",
+            "y-intercept",
+            "slope",
+        ]
+        left_adjust = 0.125
+    else:
+        measure_labels = [
+            "error\n(cm$^2$) / cm",
+            "variability\n(R$^2$)",
+            "y-intercept",
+            "slope",
+        ]
+        left_adjust = 0.25
 
     plt.figure(figsize=(3.3, (2.7 * 4)))
 
@@ -833,7 +880,7 @@ def figure_8(all_subject_data, experiment):
             y_offset=True,
         )
         utils.set_ax_parameters(
-            ax, [], y_ticks, [], y_ticks, x_lim, y_lim, None, y_label, 8, True
+            ax, [], y_ticks, [], y_ticks, x_lim, y_lim, None, y_label, 10, True
         )
         plt.grid(False)
 
@@ -857,7 +904,7 @@ def figure_8(all_subject_data, experiment):
                 y_lim,
                 None,
                 y_label,
-                8,
+                10,
                 True,
             )
             # plt.text(1.2, 0.01, 'A', fontsize=12, fontfamily='arial', color='white')
@@ -865,7 +912,7 @@ def figure_8(all_subject_data, experiment):
                 0.073,
                 0.065,
                 "Same day",
-                fontsize=8,
+                fontsize=10,
                 fontfamily=font,
                 transform=plt.gcf().transFigure,
             )
@@ -873,7 +920,7 @@ def figure_8(all_subject_data, experiment):
                 0.383,
                 0.065,
                 "1 week apart",
-                fontsize=8,
+                fontsize=10,
                 fontfamily=font,
                 transform=plt.gcf().transFigure,
             )
@@ -881,7 +928,7 @@ def figure_8(all_subject_data, experiment):
                 0.75,
                 0.065,
                 "Same day",
-                fontsize=8,
+                fontsize=10,
                 fontfamily=font,
                 transform=plt.gcf().transFigure,
             )
@@ -899,7 +946,7 @@ def figure_8(all_subject_data, experiment):
             fontsize=14,
         )
 
-    plt.subplots_adjust(left=0.25, right=0.95, top=0.9, bottom=0.1)
+    plt.subplots_adjust(left=left_adjust, right=0.95, top=0.9, bottom=0.1)
 
     plt.savefig(path, dpi=300, bbox_inches="tight")
     path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
@@ -911,13 +958,13 @@ def figure_8(all_subject_data, experiment):
     plt.close()
 
 
-def add_plot_text(ax, subplot, experiment, font="arial"):
+def add_plot_text(ax, subplot, experiment, font="arial", fontsize=10):
     if subplot == 2 and experiment == "exp1":
         ax.text(
-            0.1, -0.25, "Day 1", fontsize=8, fontfamily=font, transform=ax.transAxes
+            0.1, -0.25, "Day 1", fontsize=fontsize, fontfamily=font, transform=ax.transAxes
         )
         ax.text(
-            0.75, -0.25, "Day 2", fontsize=8, fontfamily=font, transform=ax.transAxes
+            0.75, -0.25, "Day 2", fontsize=fontsize, fontfamily=font, transform=ax.transAxes
         )
         ax.annotate(
             "",

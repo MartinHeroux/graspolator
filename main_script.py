@@ -25,7 +25,7 @@ plot.individual_scatterplots(all_subject_data_exp1, all_subject_names_exp1, exp_
 plot.individual_error_plots(all_subject_data_exp1, all_subject_names_exp1, exp_1)
 
 #   Generate all figures
-figures.generate_all(all_subject_data_exp1, all_subject_names_exp1, exp_1)
+figures.generate_all(all_subject_data_exp1, all_subject_names_exp1, exp_1, True)
 
 
 #####################
@@ -49,4 +49,4 @@ plot.individual_scatterplots(all_subject_data_exp2, all_subject_names_exp2, exp_
 plot.individual_error_plots(all_subject_data_exp2, all_subject_names_exp2, exp_2)
 
 #   Generate all figures
-figures.generate_all(all_subject_data_exp2, all_subject_names_exp2, exp_2)
+figures.generate_all(all_subject_data_exp2, all_subject_names_exp2, exp_2, True)
