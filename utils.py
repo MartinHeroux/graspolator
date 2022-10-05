@@ -402,24 +402,12 @@ def get_directory_list(directory):
 ##################################################################
 
 
-def set_ax_parameters(
-    ax,
-    x_ticks,
-    y_ticks,
-    x_tick_labels,
-    y_tick_labels,
-    x_lims,
-    y_lims,
-    x_label,
-    y_label,
-    fontsize,
-    gridlines,
-    font="arial",
-):
+def set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_tick_labels, x_lims, y_lims, x_label, y_label,
+                      x_fontsize=10, gridlines=None, font="arial", y_fontsize=10):
     ax.set_xticks(x_ticks)
-    ax.set_xticklabels(x_tick_labels, fontsize=fontsize, fontfamily=font)
+    ax.set_xticklabels(x_tick_labels, fontsize=x_fontsize, fontfamily=font)
     ax.set_yticks(y_ticks)
-    ax.set_yticklabels(y_tick_labels, fontsize=fontsize, fontfamily=font)
+    ax.set_yticklabels(y_tick_labels, fontsize=y_fontsize, fontfamily=font)
     ax.set_xlim(x_lims)
     ax.set_ylim(y_lims)
     ax.set_xlabel(x_label, fontsize=10, fontfamily=font)
