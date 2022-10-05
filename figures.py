@@ -3,7 +3,6 @@ import matplotlib.patches as mpatches
 import numpy as np
 from termcolor import colored
 from pathlib import Path
-from random import random
 from matplotlib.ticker import MultipleLocator
 
 import summarise
@@ -172,19 +171,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
             )
 
             # plt.text(0.05, 0.89, 'Variability', fontfamily=font, fontsize=8, transform=plt.gca().transAxes, zorder=20)
-            utils.set_ax_parameters(
-                ax,
-                x_ticks,
-                y_ticks,
-                x_ticks,
-                y_ticks,
-                x_lims,
-                y_lim,
-                None,
-                None,
-                10,
-                True,
-            )
+            utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None, 10, True)
 
             if experiment == 'exp2':
                 y_var = 0.8955
@@ -282,19 +269,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
                 order,
             )
 
-            utils.set_ax_parameters(
-                ax,
-                x_ticks,
-                y_ticks,
-                x_ticks,
-                y_ticks,
-                x_lims,
-                y_lim,
-                None,
-                None,
-                10,
-                True,
-            )
+            utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None, 10, True)
             utils.draw_ax_spines(ax, False, False, False, False)
             ax.tick_params(
                 axis="both",
@@ -383,6 +358,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
         ]
         x_ticks = [0.95, 2, 3, 4.05]
         text_y = 3.1
+        x_label_size = 8
     else:
         colors = params.exp_2_colors
         example_subjects = params.exp_2_subjects
@@ -390,6 +366,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
         condition_names = ["Line-to-grasp", "Grasp-to-line", "Grasp-to-grasp"]
         x_ticks = [0.95, 2, 3.05]
         text_y = 4.1
+        x_label_size = 10
 
     r2_means, r2_cis = summarise.r2_mean_and_ci_by_condition(
         all_subject_data, experiment
@@ -467,19 +444,8 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
                 )
                 plt.gca().text(0.5, 1.01, text, fontsize=14, fontfamily=font)
 
-            utils.set_ax_parameters(
-                ax,
-                x_ticks,
-                y_tick,
-                x_labels,
-                y_tick,
-                x_lims,
-                y_lim,
-                None,
-                None,
-                10,
-                False,
-            )
+            utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8,
+                                    False, 'arial', y_fontsize=10)
 
             if experiment == "exp1" and subplot == 2:
                 plt.ylim(0.70, 1)
@@ -509,7 +475,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
             plt.ylabel(y_label_r2, fontfamily=font, fontsize=10, rotation=rotation)
 
         ax = plt.gca()
-        add_plot_text(ax, subplot, experiment)
+        add_plot_text(ax, subplot, experiment, fontsize=10)
         utils.add_plot_shading(
             ax,
             subplot,
@@ -616,20 +582,8 @@ def figure_4(all_subject_data, experiment, vertical_y_label=True):
             labelright=False,
         )
 
-        utils.set_ax_parameters(
-            ax,
-            x_ticks,
-            y_ticks,
-            x_ticks,
-            y_ticks,
-            x_lims,
-            y_lims,
-            x_label,
-            None,
-            10,
-            False,
-            font=font,
-        )
+        utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, None, 10, False,
+                                font=font)
 
         # draw axes and ticks for bottom subplot
         if subplot_index == 3 and experiment == "exp2":
@@ -729,19 +683,7 @@ def figure_5(all_subject_data):
     utils.draw_ax_spines(ax, True, False, False, True)
     ax.spines["bottom"].set(linewidth=0.75)
     ax.spines["left"].set(linewidth=0.75)
-    utils.set_ax_parameters(
-        ax,
-        x_ticks,
-        y_ticks,
-        x_ticks,
-        y_ticks,
-        x_lims,
-        y_lims,
-        x_label,
-        y_label,
-        10,
-        False,
-    )
+    utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, y_label, 10, False)
     plt.tight_layout()
 
     plt.savefig(path, dpi=300)
@@ -879,9 +821,7 @@ def figure_8(all_subject_data, experiment, vertical_y_axis=True):
             x_offset=True,
             y_offset=True,
         )
-        utils.set_ax_parameters(
-            ax, [], y_ticks, [], y_ticks, x_lim, y_lim, None, y_label, 10, True
-        )
+        utils.set_ax_parameters(ax, [], y_ticks, [], y_ticks, x_lim, y_lim, None, y_label, 10, True)
         plt.grid(False)
 
         if subplot == 4:
@@ -894,19 +834,7 @@ def figure_8(all_subject_data, experiment, vertical_y_axis=True):
                 x_offset=True,
                 y_offset=True,
             )
-            utils.set_ax_parameters(
-                ax,
-                x_ticks,
-                y_ticks,
-                x_tick_labels,
-                y_ticks,
-                x_lim,
-                y_lim,
-                None,
-                y_label,
-                10,
-                True,
-            )
+            utils.set_ax_parameters(ax, x_ticks, y_ticks, x_tick_labels, y_ticks, x_lim, y_lim, None, y_label, 10, True)
             # plt.text(1.2, 0.01, 'A', fontsize=12, fontfamily='arial', color='white')
             plt.text(
                 0.073,
