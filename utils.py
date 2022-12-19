@@ -148,13 +148,13 @@ def calculate_ci(data_list):
 
 def create_data_tuples(experiment, subject_data):
     if experiment == "exp1":
-        plot_inputs = store_condition_data_tuples_exp1(subject_data)
+        plot_inputs = store_condition_data_tuples_kathy(subject_data)
     else:
-        plot_inputs = condition_plot_inputs(subject_data)
+        plot_inputs = store_condition_data_tuples_lovisa(subject_data)
     return plot_inputs
 
 
-def condition_plot_inputs(subject_data):
+def store_condition_data_tuples_lovisa(subject_data):
     plot_inputs = namedtuple("INPUTS", "NAME ACTUAL PERCEIVED PLOT_INDEX")
     line_width_inputs = plot_inputs(
         NAME="Show Line Pick Width",
@@ -178,33 +178,33 @@ def condition_plot_inputs(subject_data):
     return tuples
 
 
-def store_example_subject_data_exp1(
+def store_example_subject_data_kathy(
     all_subject_data, subjects, subject_1_ID, subject_2_ID
 ):
     experiment = "exp1"
     for subject_data, subject_name in zip(all_subject_data, subjects):
         if subject_name == subject_1_ID:
-            condition_data_list_1 = extract_condition_data(subject_data, experiment)
+            condition_data_list_1 = extract_condition_data_with_dummy_data_kathy(subject_data, experiment)
         if subject_name == subject_2_ID:
-            condition_data_list_2 = extract_condition_data(subject_data, experiment)
+            condition_data_list_2 = extract_condition_data_with_dummy_data_kathy(subject_data, experiment)
 
     return [condition_data_list_1, condition_data_list_2]
 
 
-def store_example_subject_data_exp2(
+def store_example_subject_data_lovisa(
     all_subject_data, subjects, subject_1_ID, subject_2_ID
 ):
     experiment = "exp2"
     for subject_data, subject_name in zip(all_subject_data, subjects):
         if subject_name == subject_1_ID:
-            condition_data_list_1 = extract_condition_data(subject_data, experiment)
+            condition_data_list_1 = extract_condition_data_with_dummy_data_kathy(subject_data, experiment)
         if subject_name == subject_2_ID:
-            condition_data_list_2 = extract_condition_data(subject_data, experiment)
+            condition_data_list_2 = extract_condition_data_with_dummy_data_kathy(subject_data, experiment)
 
     return [condition_data_list_1, condition_data_list_2]
 
 
-def extract_condition_data(subject_data, experiment):
+def extract_condition_data_with_dummy_data_kathy(subject_data, experiment):
     dummy_data = namedtuple("condition", "ACTUAL PERCEIVED")
     if experiment == "exp1":
         D1_DOM = subject_data.day1_dominant
@@ -225,7 +225,7 @@ def extract_condition_data(subject_data, experiment):
     return condition_data_list
 
 
-def store_condition_data_tuples_exp1(subject_data):
+def store_condition_data_tuples_kathy(subject_data):
     index_name_data = namedtuple(
         "index_name_data", "PLOT_INDEX DATA_INDEX NAME ACTUAL PERCEIVED"
     )
@@ -264,6 +264,11 @@ def store_condition_data_tuples_exp1(subject_data):
 #########################################################
 # CONSTANTS
 #########################################################
+
+@dataclass
+class ExpCodes:
+    EXP_1 = 'exp2'
+    EXP_2 = 'exp1'
 
 
 def create_general_constants():
@@ -329,7 +334,7 @@ def x_tick_labels_group_plot(experiment):
     if experiment == "exp1":
         x_ticks = ["Dominant", "Non-dominant", "Dominant", "Dominant"]
     else:
-        x_ticks = ["Line-to-grasp", "Grasp-to-line", "Grasp-to-grasp"]
+        x_ticks = ["Grasp-to-grasp", "Grasp-to-vision", "Vision-to-grasp"]
     return x_ticks
 
 
@@ -366,7 +371,7 @@ def r2_area_constants():
 class ExampleParticipantIDs:
     exp1_participant_1: str = "SUB18R"
     exp1_participant_2: str = "SUB02R"
-    exp2_participant_1: str = "sub02"
+    exp2_participant_1: str = "sub17"
     exp2_participant_2: str = "sub29"
 
 
@@ -574,7 +579,7 @@ def plot_subject_condition_comparison(
 # DATA SUMMARIES
 #############################
 
-def return_subject_between_condition_comparisons_exp1(subject_data, measure):
+def return_subject_between_condition_comparisons_kathy(subject_data, measure):
     if measure == "R2":
         func = calculate_r2
     elif measure == "intercept":
