@@ -1,11 +1,14 @@
 from collections import namedtuple
 import pandas as pd
-
+from pathlib import Path
 import numpy as np
 
+import utils
 from calculate_area import between_regression_and_reality_absolute, between_regression_and_reality_signed
 from utils import store_condition_data_tuples_kathy, store_condition_data_tuples_lovisa, calculate_mean_ci, calculate_ci, \
     calculate_r2, calculate_regression_general
+
+raw_data_savepath = utils.create_data_save_path()
 
 
 def errors_per_condition(all_subject_data, experiment):
@@ -276,7 +279,8 @@ def write_raw_data_summary_exp1(all_subject_data):
     row_data = [individual_participant_data_exp1(subject_data) for subject_data in all_subject_data]
 
     df = pd.DataFrame(row_data, columns=column_names)
-    df.to_csv('participant_data_summary_exp1.csv')
+    savepath = Path(raw_data_savepath, 'participant_data_summary_exp1.csv')
+    df.to_csv(savepath)
 
 
 def individual_participant_data_exp1(subject_data):
@@ -317,7 +321,8 @@ def write_raw_data_summary_exp2(all_subject_data, all_subject_ids):
     row_data = [individual_participant_data_exp2(subject_data, subject_id) for subject_data, subject_id in zip(all_subject_data, all_subject_ids)]
 
     df = pd.DataFrame(row_data, columns=column_names)
-    df.to_csv('participant_data_summary_exp2.csv')
+    savepath = Path(raw_data_savepath, 'participant_data_summary_exp2.csv')
+    df.to_csv(savepath)
 
 
 def individual_participant_data_exp2(subject_data, sub_id):
