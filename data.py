@@ -27,10 +27,10 @@ def return_all_subject_data(experiment, data_folder):
         all subject data, one tuple per subject
     """
     if experiment == "exp1":
-        all_subject_data = get_exp1_data(data_folder)
+        all_subject_data = get_kathy_data(data_folder)
 
     elif experiment == "exp2":
-        all_subject_data = return_exp2_data(data_folder)
+        all_subject_data = return_lovisa_data(data_folder)
 
     else:
         SystemExit('Incorrect experiment string provided')
@@ -140,7 +140,7 @@ def _extract_age_gender_handedness(experiment, demographic_txt):
 ############################################
 
 
-def get_exp1_data(data_folder):
+def get_kathy_data(data_folder):
     all_subject_data = []
     subjects = general_constants.SUBJECT_IDS
     for subject in subjects:
@@ -256,11 +256,11 @@ def _swap_order(list_of_lists):
 
 
 def _extract_blocks(actual_widths, perceived_widths):
-    day1_dominant = Block(ACTUAL=actual_widths[0], PERCEIVED=perceived_widths[0])
-    day1_non_dominant = Block(ACTUAL=actual_widths[1], PERCEIVED=perceived_widths[1])
-    day2_dominant_1 = Block(ACTUAL=actual_widths[2], PERCEIVED=perceived_widths[2])
-    day2_dominant_2 = Block(ACTUAL=actual_widths[3], PERCEIVED=perceived_widths[3])
-    return Blocks(
+    day1_dominant = Block_kathy(ACTUAL=actual_widths[0], PERCEIVED=perceived_widths[0])
+    day1_non_dominant = Block_kathy(ACTUAL=actual_widths[1], PERCEIVED=perceived_widths[1])
+    day2_dominant_1 = Block_kathy(ACTUAL=actual_widths[2], PERCEIVED=perceived_widths[2])
+    day2_dominant_2 = Block_kathy(ACTUAL=actual_widths[3], PERCEIVED=perceived_widths[3])
+    return Blocks_kathy(
         day1_dominant=day1_dominant,
         day1_non_dominant=day1_non_dominant,
         day2_dominant_1=day2_dominant_1,
@@ -268,23 +268,23 @@ def _extract_blocks(actual_widths, perceived_widths):
     )
 
 
-class Block(NamedTuple):
+class Block_kathy(NamedTuple):
     ACTUAL: list
     PERCEIVED: list
 
 
-class Blocks(NamedTuple):
-    day1_dominant: Block
-    day1_non_dominant: Block
-    day2_dominant_1: Block
-    day2_dominant_2: Block
+class Blocks_kathy(NamedTuple):
+    day1_dominant: Block_kathy
+    day1_non_dominant: Block_kathy
+    day2_dominant_1: Block_kathy
+    day2_dominant_2: Block_kathy
 
 
 ############################################
 # EXP2
 ############################################
 
-def return_exp2_data(data_folder):
+def return_lovisa_data(data_folder):
     all_subject_blocked_data, subjects = _store_raw_blocked_data(data_folder)
     all_subject_data = []
     for subject_tuple, subject_ID in zip(all_subject_blocked_data, subjects):
@@ -297,7 +297,7 @@ def return_exp2_data(data_folder):
         width_line_tuple = _parse_grasp_to_grasp(
             subject_tuple.KATHY_EXPERIMENT_BLOCK, subject_ID
         )
-        parsed_subject_data = Blocks_exp2(
+        parsed_subject_data = Blocks_lovisa(
             SUBJECT_ID=subject_ID,
             LINE_WIDTH=line_width_tuple,
             WIDTH_WIDTH=width_width_tuple,
@@ -328,7 +328,7 @@ def _parse_vision_to_grasp(show_line_pick_width_block, subject_ID):
     )
     actuals = [float(i) for i in actual_list]
     perceived_widths = [float(i) for i in perceived_list]
-    line_width_tuple = Block_exp2(
+    line_width_tuple = Block_lovisa(
         ACTUAL=actuals, PERCEIVED=perceived_widths, PLOT_INDEX=1
     )
     return line_width_tuple
@@ -354,7 +354,7 @@ def _parse_grasp_to_vision(present_width_pick_width_block, subject_ID):
     )
     actual_widths = [float(i) for i in actual_list]
     perceived_widths = [float(i) for i in perceived_list]
-    width_width_tuple = Block_exp2(
+    width_width_tuple = Block_lovisa(
         ACTUAL=actual_widths, PERCEIVED=perceived_widths, PLOT_INDEX=3
     )
     return width_width_tuple
@@ -380,7 +380,7 @@ def _parse_grasp_to_grasp(kathy_experiment_block, subject_ID):
     )
     actual_widths = [float(i) for i in actual_list]
     perceived_widths = [float(i) for i in perceived_list]
-    width_line_tuple = Block_exp2(
+    width_line_tuple = Block_lovisa(
         ACTUAL=actual_widths, PERCEIVED=perceived_widths, PLOT_INDEX=2
     )
     return width_line_tuple
@@ -445,17 +445,17 @@ def _named_blocked_raw_data(unordered_blocked_data, block_order_names):
     return subject_tuple
 
 
-class Block_exp2(NamedTuple):
+class Block_lovisa(NamedTuple):
     ACTUAL: object
     PERCEIVED: object
     PLOT_INDEX: object
 
 
-class Blocks_exp2(NamedTuple):
+class Blocks_lovisa(NamedTuple):
     SUBJECT_ID: object
-    WIDTH_WIDTH: Block_exp2
-    LINE_WIDTH: Block_exp2
-    WIDTH_LINE: Block_exp2
+    WIDTH_WIDTH: Block_lovisa
+    LINE_WIDTH: Block_lovisa
+    WIDTH_LINE: Block_lovisa
 
 
 
