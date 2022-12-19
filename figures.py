@@ -9,20 +9,24 @@ import summarise
 import utils
 import calculate_area
 
+LOVISA = 'exp2'
+
+KATHY = "exp1"
+
 font = "arial"
 
 
 def generate_all(all_subject_data, subjects, experiment, vertical_y_label=True):
 
     figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label)
-    figure_3_and_7(all_subject_data, subjects, experiment)
+    figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label)
 
     if experiment == "exp2":
-        figure_4(all_subject_data, experiment)
+        figure_4(all_subject_data, experiment, vertical_y_label)
         figure_5(all_subject_data)
 
     if experiment == "exp1":
-        figure_8(all_subject_data, experiment)
+        figure_8(all_subject_data, experiment, vertical_y_label)
 
 
 def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
@@ -39,11 +43,11 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
         y_label = 'Perceived\nwidth (cm)'
         left_adjust = 0.15
 
-    if experiment == "exp1":
+    if experiment == KATHY:
         figure = "Figure_6"
         subject_1_ID = example.exp1_participant_1
         subject_2_ID = example.exp1_participant_2
-        data_list = utils.store_example_subject_data_exp1(
+        data_list = utils.store_example_subject_data_kathy(
             all_subject_data, subjects, subject_1_ID, subject_2_ID
         )
 
@@ -58,13 +62,13 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
         subplot_left_col = [1, 4, 7, 10]
         subplot_bottom_row = [10, 11, 12]
         group_plot_indices = [3, 6, 9, 12]
-        colors = ["darkorchid", "fuchsia"]
+        colors = ["darkgray", "dimgrey"]
         example_subjects = [subject_1_ID, subject_2_ID]
         x_ticks = list(range(0, 13, 2))
         label_list = ["A", "B", "C", "D"]
         y_lim = [0, 16]
         example_subject_labels = ["Participant 1", "Participant 2"]
-        text_coordinates = (-3, 15)
+        text_coordinates = (-4, 16)
         subplot_rows = 4
         subplot_cols = 3
         plot_indices_list = [[1, 4, 7, 10], [2, 5, 8, 11]]
@@ -73,7 +77,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
         figure = "Figure_2"
         subject_1_ID = example.exp2_participant_1
         subject_2_ID = example.exp2_participant_2
-        data_list = utils.store_example_subject_data_exp2(
+        data_list = utils.store_example_subject_data_lovisa(
             all_subject_data, subjects, subject_1_ID, subject_2_ID
         )
         condition_names = ["line to width", "width to line", "width to width"]
@@ -82,16 +86,19 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
         subplot_left_col = [1, 4, 7]
         subplot_bottom_row = [7, 8, 9]
         group_plot_indices = [3, 6, 9]
-        colors = ["green", "lime"]
+        colors = ["darkgray", "dimgrey"]
         example_subjects = [subject_1_ID, subject_2_ID]
         x_ticks = list(range(2, 12, 2))
         label_list = ["A", "B", "C"]
         y_lim = [0, 14]
         example_subject_labels = ["Participant 1", "Participant 2"]
-        text_coordinates = (-0.5, 13)
+        text_coordinates = (-1, 14)
         subplot_rows = 3
         subplot_cols = 3
         plot_indices_list = [[1, 4, 7], [2, 5, 8]]
+
+    if not vertical_y_label:
+        figure = figure + '_horizontal'
 
     path = utils.create_figure_save_path(figure)
     y_ticks = list(range(0, 17, 2))
@@ -173,7 +180,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
             # plt.text(0.05, 0.89, 'Variability', fontfamily=font, fontsize=8, transform=plt.gca().transAxes, zorder=20)
             utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lim, None, None, 10, True)
 
-            if experiment == 'exp2':
+            if experiment == LOVISA:
                 y_var = 0.8955
                 y_err = 0.815
             else:
@@ -211,7 +218,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
                 ax.set_ylabel(
                     y_label, fontfamily="arial", fontsize=10, rotation=rotation
                 )
-            elif condition_plot_index == 7 and experiment == "exp1":
+            elif condition_plot_index == 7 and experiment == KATHY:
                 ax.set_ylabel(
                     y_label, fontfamily="arial", fontsize=10, rotation=rotation
                 )
@@ -219,7 +226,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
             if condition_plot_index in subplot_bottom_row:
                 ax.tick_params(axis="x", which="both", bottom=True, labelbottom=True)
                 ax.spines["bottom"].set_visible(True)
-            if condition_plot_index == 11 and experiment == "exp1":
+            if condition_plot_index == 11 and experiment == KATHY:
                 plt.xlabel("Actual width (cm)", fontsize=10, fontfamily=font)
             if condition_plot_index == 8 and experiment == "exp2":
                 plt.xlabel("Actual width (cm)", fontsize=10, fontfamily=font)
@@ -237,12 +244,12 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
                 plt.title("All participants", loc="center", size=10, fontfamily=font)
 
             if subject_ID == example_subjects[0]:
-                line_color = colors[0]
-                line_width = 1
+                line_color = "darkgrey"
+                line_width = 0.5
                 order = 10
             elif subject_ID == example_subjects[1]:
-                line_color = colors[1]
-                line_width = 1
+                line_color = "darkgrey"
+                line_width = 0.5
                 order = 10
             else:
                 line_color = "darkgrey"
@@ -325,10 +332,13 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
 
 def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True):
     font = "arial"
-    if experiment == "exp1":
+    if experiment == KATHY:
         figure = "Figure_7"
     else:
         figure = "Figure_3"
+
+    if not vertical_y_label:
+        figure = figure + '_horizontal'
     path = utils.create_figure_save_path(figure)
 
     x_points, x_lims = utils.x_points_group_plot(experiment)
@@ -338,15 +348,15 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
     params = utils.r2_area_constants()
 
     if vertical_y_label:
-        y_label_error = "Error (cm$^2$) / cm"
+        y_label_error = "Error (cm$^2$ / cm)"
         y_label_r2 = "Variability (R$^2$)"
         rotation = 90
     else:
-        y_label_error = "Error\n(cm$^2$) / cm"
+        y_label_error = "Error\n(cm$^2$ / cm)"
         y_label_r2 = "Variability\n(R$^2$)"
         rotation = 0
 
-    if experiment == "exp1":
+    if experiment == KATHY:
         colors = params.exp_1_colors
         example_subjects = params.exp_1_subjects
         y_lims = [(0.7, 1), (0, 3)]
@@ -363,7 +373,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
         colors = params.exp_2_colors
         example_subjects = params.exp_2_subjects
         y_lims = [(0.6, 1), (0, 4)]
-        condition_names = ["Line-to-grasp", "Grasp-to-line", "Grasp-to-grasp"]
+        condition_names = ["Grasp-to-grasp", "Grasp-to-vision", "Vision-to-grasp"]
         x_ticks = [0.95, 2, 3.05]
         text_y = 4.1
         x_label_size = 10
@@ -374,18 +384,29 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
     area_means, area_cis = summarise.area_mean_and_ci_by_condition(
         all_subject_data, experiment
     )
+
+    vision_to_grasp = 0
+    grasp_to_vision = 1
+    grasp_to_grasp = -1
+
+    r2_means = [r2_means[grasp_to_grasp], r2_means[grasp_to_vision], r2_means[vision_to_grasp]]
+    r2_cis = [r2_cis[grasp_to_grasp], r2_cis[grasp_to_vision], r2_cis[vision_to_grasp]]
+    area_means = [area_means[grasp_to_grasp], area_means[grasp_to_vision], area_means[vision_to_grasp]]
+    area_cis = [area_cis[grasp_to_grasp], area_cis[grasp_to_vision], area_cis[vision_to_grasp]]
+
     means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
 
     plt.figure(figsize=(3.3, (2.7 * 2)))
     for subject, subject_data in zip(subjects, all_subject_data):
         data_pairs = utils.create_data_tuples(experiment, subject_data)
+        data_pairs = [data_pairs[grasp_to_grasp], data_pairs[grasp_to_vision], data_pairs[vision_to_grasp]]
         y_points_r2 = []
         y_points_area = []
 
         if subject == example_subjects[0]:
-            line_color, line_width, order, alpha = colors[0], 0.75, 10, 0.5
+            line_color, line_width, order, alpha = "grey", 0.5, 5, 0.3
         elif subject == example_subjects[1]:
-            line_color, line_width, order, alpha = colors[1], 0.75, 10, 0.5
+            line_color, line_width, order, alpha = "grey", 0.5, 5, 0.3
         else:
             line_color, line_width, order, alpha = "grey", 0.5, 5, 0.3
 
@@ -444,10 +465,14 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
                 )
                 plt.gca().text(0.5, 1.01, text, fontsize=14, fontfamily=font)
 
-            utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, 8,
+            if experiment == 'exp1':
+                x_ticks_fontsize = 8
+            else:
+                x_ticks_fontsize = 10
+            utils.set_ax_parameters(ax, x_ticks, y_tick, x_labels, y_tick, x_lims, y_lim, None, None, x_ticks_fontsize,
                                     False, 'arial', y_fontsize=10)
 
-            if experiment == "exp1" and subplot == 2:
+            if experiment == KATHY and subplot == 2:
                 plt.ylim(0.70, 1)
 
     for mean_list, ci_list, subplot, y_label in zip(
@@ -503,6 +528,8 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
 def figure_4(all_subject_data, experiment, vertical_y_label=True):
     font = "arial"
     figure_name = "Figure_4"
+    if not vertical_y_label:
+        figure_name = figure_name + '_horizontal'
     path = utils.create_figure_save_path(figure_name)
 
     # store data for plot
@@ -510,7 +537,7 @@ def figure_4(all_subject_data, experiment, vertical_y_label=True):
     variability_lists = summarise.r2_data_by_condition(all_subject_data, experiment)
 
     x_labels = utils.x_tick_labels_group_plot(experiment)
-    if experiment == "exp1":
+    if experiment == KATHY:
         subplot_indices = [1, 2, 3, 4]
         subplot_labels = ["A", "B", "C", "D"]
     else:
@@ -619,6 +646,7 @@ def figure_4(all_subject_data, experiment, vertical_y_label=True):
 
 def figure_5(all_subject_data):
     figure = "Figure_5"
+
     path = utils.create_figure_save_path(figure)
 
     slopes_line_width = []
@@ -699,6 +727,8 @@ def figure_5(all_subject_data):
 def figure_8(all_subject_data, experiment, vertical_y_axis=True):
     font = "arial"
     figure = "Figure_8"
+    if not vertical_y_axis:
+        figure = figure + '_horizontal'
     path = utils.create_figure_save_path(figure)
 
     subplots = [1, 2, 3, 4]
@@ -755,7 +785,7 @@ def figure_8(all_subject_data, experiment, vertical_y_axis=True):
                     dom_vs_non_dom,
                     dom_d1_vs_d2,
                     dom_d2_vs_d2,
-                ) = utils.return_subject_between_condition_comparisons_exp1(
+                ) = utils.return_subject_between_condition_comparisons_kathy(
                     subject_data, measure
                 )
                 y_ticks = list(range(-2, 3))
@@ -765,7 +795,7 @@ def figure_8(all_subject_data, experiment, vertical_y_axis=True):
                     dom_vs_non_dom,
                     dom_d1_vs_d2,
                     dom_d2_vs_d2,
-                ) = utils.return_subject_between_condition_comparisons_exp1(
+                ) = utils.return_subject_between_condition_comparisons_kathy(
                     subject_data, measure
                 )
                 y_lim = [-0.5, 0.5]
@@ -775,7 +805,7 @@ def figure_8(all_subject_data, experiment, vertical_y_axis=True):
                     dom_vs_non_dom,
                     dom_d1_vs_d2,
                     dom_d2_vs_d2,
-                ) = utils.return_subject_between_condition_comparisons_exp1(
+                ) = utils.return_subject_between_condition_comparisons_kathy(
                     subject_data, measure
                 )
                 y_lim = [-0.2, 0.2]
@@ -887,7 +917,7 @@ def figure_8(all_subject_data, experiment, vertical_y_axis=True):
 
 
 def add_plot_text(ax, subplot, experiment, font="arial", fontsize=10):
-    if subplot == 2 and experiment == "exp1":
+    if subplot == 2 and experiment == KATHY:
         ax.text(
             0.1, -0.25, "Day 1", fontsize=fontsize, fontfamily=font, transform=ax.transAxes
         )
