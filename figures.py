@@ -100,7 +100,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
     if not vertical_y_label:
         figure = figure + '_horizontal'
 
-    path = utils.create_figure_save_path(figure)
+    save_path = utils.create_figure_save_path(figure)
     y_ticks = list(range(0, 17, 2))
 
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
@@ -319,13 +319,13 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
     else:
         plt.subplots_adjust(left=left_adjust, right=0.95, top=0.95)
 
-    plt.savefig(path, dpi=300)
-    path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
+    plt.savefig(save_path, dpi=300)
+    path_svg = Path(save_path.parts[0], save_path.parts[1], save_path.stem + ".svg")
     plt.savefig(path_svg)
     print(
         f"{experiment} example subjects and group regressions saved in in {path_svg}\n"
     )
-    text = colored(path, "blue")
+    text = colored(save_path, "blue")
     print(f"{experiment} example subjects and group regressions saved in in {text}\n")
     plt.close()
 
@@ -339,7 +339,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
 
     if not vertical_y_label:
         figure = figure + '_horizontal'
-    path = utils.create_figure_save_path(figure)
+    save_path = utils.create_figure_save_path(figure)
 
     x_points, x_lims = utils.x_points_group_plot(experiment)
     x_labels = utils.x_tick_labels_group_plot(experiment)
@@ -515,10 +515,10 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
     # plt.tight_layout(h_pad=0.6, w_pad=0.9)
     plt.subplots_adjust(left=0.25, right=0.9)
 
-    plt.savefig(path, dpi=300, bbox_inches="tight")
-    path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
+    path_svg = Path(save_path.parts[0], save_path.parts[1], save_path.stem + ".svg")
     plt.savefig(path_svg)
-    text = colored(path, "blue")
+    text = colored(save_path, "blue")
     text_svg = colored(path_svg, "blue")
     print(f"{text} saved\n")
     print(f"{text_svg} saved\n")
@@ -530,7 +530,7 @@ def figure_4(all_subject_data, experiment, vertical_y_label=True):
     figure_name = "Figure_4"
     if not vertical_y_label:
         figure_name = figure_name + '_horizontal'
-    path = utils.create_figure_save_path(figure_name)
+    save_path = utils.create_figure_save_path(figure_name)
 
     # store data for plot
     error_lists = summarise.errors_per_condition(all_subject_data, experiment)
@@ -634,10 +634,10 @@ def figure_4(all_subject_data, experiment, vertical_y_label=True):
         plt.gca().text(-0.5, 1.01, text, fontsize=14, fontfamily=font)
 
     plt.subplots_adjust(left=left_adjust, right=0.95, top=0.9, bottom=0.1)
-    plt.savefig(path, dpi=300, bbox_inches="tight")
-    path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
+    path_svg = Path(save_path.parts[0], save_path.parts[1], save_path.stem + ".svg")
     plt.savefig(path_svg)
-    text = colored(path, "blue")
+    text = colored(save_path, "blue")
     text_svg = colored(path_svg, "blue")
     print(f"{text} saved\n")
     print(f"{text_svg} saved\n")
@@ -647,7 +647,7 @@ def figure_4(all_subject_data, experiment, vertical_y_label=True):
 def figure_5(all_subject_data):
     figure = "Figure_5"
 
-    path = utils.create_figure_save_path(figure)
+    save_path = utils.create_figure_save_path(figure)
 
     slopes_line_width = []
     slopes_width_line = []
@@ -714,10 +714,10 @@ def figure_5(all_subject_data):
     utils.set_ax_parameters(ax, x_ticks, y_ticks, x_ticks, y_ticks, x_lims, y_lims, x_label, y_label, 10, False)
     plt.tight_layout()
 
-    plt.savefig(path, dpi=300)
-    path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
+    plt.savefig(save_path, dpi=300)
+    path_svg = Path(save_path.parts[0], save_path.parts[1], save_path.stem + ".svg")
     plt.savefig(path_svg)
-    text = colored(path, "blue")
+    text = colored(save_path, "blue")
     text_svg = colored(path_svg, "blue")
     print(f"{text} saved\n")
     print(f"{text_svg} saved\n")
@@ -729,7 +729,7 @@ def figure_8(all_subject_data, experiment, vertical_y_axis=True):
     figure = "Figure_8"
     if not vertical_y_axis:
         figure = figure + '_horizontal'
-    path = utils.create_figure_save_path(figure)
+    save_path = utils.create_figure_save_path(figure)
 
     subplots = [1, 2, 3, 4]
     measures = ["area", "R2", "intercept", "slope"]
@@ -906,10 +906,10 @@ def figure_8(all_subject_data, experiment, vertical_y_axis=True):
 
     plt.subplots_adjust(left=left_adjust, right=0.95, top=0.9, bottom=0.1)
 
-    plt.savefig(path, dpi=300, bbox_inches="tight")
-    path_svg = Path(path.parts[0], path.parts[1], path.stem + ".svg")
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
+    path_svg = Path(save_path.parts[0], save_path.parts[1], save_path.stem + ".svg")
     plt.savefig(path_svg)
-    text = colored(path, "blue")
+    text = colored(save_path, "blue")
     text_svg = colored(path_svg, "blue")
     print(f"{text} saved\n")
     print(f"{text_svg} saved\n")
