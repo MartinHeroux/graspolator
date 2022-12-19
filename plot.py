@@ -9,6 +9,8 @@ from matplotlib.lines import Line2D
 import calculate_area
 import utils
 
+KATHY = 'exp1'
+
 
 def create_individual_plot_save_path(plot, subject_ID):
     path = Path(f'./plots/individual_plots/{plot}')
@@ -39,7 +41,7 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
     path = create_individual_plot_save_path(plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
 
-    if experiment == 'exp1':
+    if experiment == KATHY:
         subplot_width = 4
         subplot_length = 1
         x_lims = [2, 10]
@@ -102,7 +104,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
     path = create_individual_plot_save_path(plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
 
-    if experiment == 'exp1':
+    if experiment == KATHY:
         subplot_width = 4
         subplot_length = 1
         x_lims = [2, 10]
