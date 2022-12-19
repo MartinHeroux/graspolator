@@ -394,6 +394,22 @@ def create_figure_save_path(plot):
     return savepath
 
 
+def create_results_save_path():
+    results_path = Path(f"./results/")
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
+
+    return results_path
+
+
+def create_data_save_path():
+    results_path = Path(f"./data/")
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
+
+    return results_path
+
+
 def get_directory_list(directory):
     directories = []
     for root, dirs, files in os.walk(directory):
