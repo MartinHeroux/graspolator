@@ -13,6 +13,8 @@ LOVISA = "exp2"
 
 KATHY = "exp1"
 
+results_savepath = utils.create_results_save_path()
+
 
 def write_all(all_subject_data, subjects, experiment, data_directory):
     """
@@ -32,8 +34,12 @@ def write_all(all_subject_data, subjects, experiment, data_directory):
     """
 
     print(f"\n\n\nStarting {experiment} results.....\n")
+    if experiment == 'exp1':
+        experiment_name = 'exp2'
+    else:
+        experiment_name = 'exp1'
 
-    exp_result_filepath = Path(f"./results_{experiment}.txt")
+    exp_result_filepath = Path(results_savepath, f"./results_{experiment_name}.txt")
 
     #   Remove results file if already exists
     if exp_result_filepath.exists():
