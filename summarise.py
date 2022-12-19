@@ -1,10 +1,11 @@
 from collections import namedtuple
+import pandas as pd
 
 import numpy as np
 
 from calculate_area import between_regression_and_reality_absolute, between_regression_and_reality_signed
-from utils import store_condition_data_tuples_exp1, condition_plot_inputs, calculate_mean_ci, calculate_ci, \
-    calculate_r2
+from utils import store_condition_data_tuples_kathy, store_condition_data_tuples_lovisa, calculate_mean_ci, calculate_ci, \
+    calculate_r2, calculate_regression_general
 
 
 def errors_per_condition(all_subject_data, experiment):
@@ -30,7 +31,7 @@ def all_subject_errors_exp1(all_subject_data):
             d1_non_dom_tuple,
             d2_dom_1_tuple,
             d2_dom_2_tuple,
-        ) = store_condition_data_tuples_exp1(subject_data)
+        ) = store_condition_data_tuples_kathy(subject_data)
 
         d1_dom_areas.append(
             between_regression_and_reality_absolute(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED, experiment)
@@ -62,7 +63,7 @@ def all_subject_errors_exp2(all_subject_data):
     )
 
     for subject_data in all_subject_data:
-        data_tuples = condition_plot_inputs(subject_data)
+        data_tuples = store_condition_data_tuples_lovisa(subject_data)
 
         line_width, width_line, width_width = (
             data_tuples[0],
@@ -214,7 +215,7 @@ def _store_r2_tuples_exp1(all_subject_data):
             d1_non_dom_tuple,
             d2_dom_1_tuple,
             d2_dom_2_tuple,
-        ) = store_condition_data_tuples_exp1(subject_data)
+        ) = store_condition_data_tuples_kathy(subject_data)
 
         d1_dom_r2s.append(calculate_r2(d1_dom_tuple.ACTUAL, d1_dom_tuple.PERCEIVED)),
         d1_non_dom_r2s.append(
@@ -243,7 +244,7 @@ def _store_r2_tuples_exp2(all_subject_data):
     )
 
     for subject_data in all_subject_data:
-        data_tuples = condition_plot_inputs(subject_data)
+        data_tuples = store_condition_data_tuples_lovisa(subject_data)
 
         line_width, width_line, width_width = (
             data_tuples[0],
@@ -261,3 +262,88 @@ def _store_r2_tuples_exp2(all_subject_data):
         width_width_r2_list=width_width_r2s,
     )
     return r2_tuples
+
+
+def write_raw_data_summary_exp1(all_subject_data):
+    column_names = ['sub_id']
+    condition_names = ['vision_grasp_', 'grasp_vision_', 'grasp_grasp_']
+    outcome_names = ['R2', 'error', 'intercept', 'slope']
+
+    for outcome in outcome_names:
+        name_subset = [condition_name + outcome for condition_name in condition_names]
+        column_names.extend(name_subset)
+
+    row_data = [individual_participant_data_exp1(subject_data) for subject_data in all_subject_data]
+
+    df = pd.DataFrame(row_data, columns=column_names)
+    df.to_csv('participant_data_summary_exp1.csv')
+
+
+def individual_participant_data_exp1(subject_data):
+    row_data = [subject_data.SUBJECT_ID]
+
+    vision_to_grasp, grasp_to_vision, grasp_to_grasp = store_condition_data_tuples_lovisa(subject_data)
+
+    # append r2 values to row data
+    row_data.append(calculate_r2(vision_to_grasp.ACTUAL, vision_to_grasp.PERCEIVED))
+    row_data.append(calculate_r2(grasp_to_vision.ACTUAL, grasp_to_vision.PERCEIVED))
+    row_data.append(calculate_r2(grasp_to_grasp.ACTUAL, grasp_to_grasp.PERCEIVED))
+
+    # append error values to row data
+    row_data.append(between_regression_and_reality_absolute(vision_to_grasp.ACTUAL, vision_to_grasp.PERCEIVED, 'exp2'))
+    row_data.append(between_regression_and_reality_absolute(grasp_to_vision.ACTUAL, grasp_to_vision.PERCEIVED, 'exp2'))
+    row_data.append(between_regression_and_reality_absolute(grasp_to_grasp.ACTUAL, grasp_to_grasp.PERCEIVED, 'exp2'))
+
+    # append intercept and slope values to row data
+    vision_to_grasp_intercept, vision_to_grasp_slope = calculate_regression_general(vision_to_grasp.ACTUAL, vision_to_grasp.PERCEIVED)
+    grasp_to_vision_intercept, grasp_to_vision_slope = calculate_regression_general(grasp_to_vision.ACTUAL, grasp_to_vision.PERCEIVED)
+    grasp_to_grasp_intercept, grasp_to_grasp_slope = calculate_regression_general(grasp_to_grasp.ACTUAL, grasp_to_grasp.PERCEIVED)
+
+    row_data.extend([vision_to_grasp_intercept, grasp_to_vision_intercept, grasp_to_grasp_intercept])
+    row_data.extend([vision_to_grasp_slope, grasp_to_vision_slope, grasp_to_grasp_slope])
+
+    return row_data
+
+
+def write_raw_data_summary_exp2(all_subject_data, all_subject_ids):
+    column_names = ['sub_id']
+    condition_names = ['d1_dom_', 'd1_non_dom_', 'd2_dom_1_', 'd2_dom_2_']
+    outcome_names = ['R2', 'error', 'intercept', 'slope']
+
+    for outcome in outcome_names:
+        name_subset = [condition_name + outcome for condition_name in condition_names]
+        column_names.extend(name_subset)
+
+    row_data = [individual_participant_data_exp2(subject_data, subject_id) for subject_data, subject_id in zip(all_subject_data, all_subject_ids)]
+
+    df = pd.DataFrame(row_data, columns=column_names)
+    df.to_csv('participant_data_summary_exp2.csv')
+
+
+def individual_participant_data_exp2(subject_data, sub_id):
+    row_data = [sub_id]
+
+    d1_dom, d1_non_dom, d2_dom_1, d2_dom_2 = store_condition_data_tuples_kathy(subject_data)
+
+    #   append r2 values to row data
+    row_data.append(calculate_r2(d1_dom.ACTUAL, d1_dom.PERCEIVED))
+    row_data.append(calculate_r2(d1_non_dom.ACTUAL, d1_non_dom.PERCEIVED))
+    row_data.append(calculate_r2(d2_dom_1.ACTUAL, d2_dom_1.PERCEIVED))
+    row_data.append(calculate_r2(d2_dom_2.ACTUAL, d2_dom_2.PERCEIVED))
+
+    #   append area values to row data
+    row_data.append(between_regression_and_reality_absolute(d1_dom.ACTUAL, d1_dom.PERCEIVED, 'exp1'))
+    row_data.append(between_regression_and_reality_absolute(d1_non_dom.ACTUAL, d1_non_dom.PERCEIVED, 'exp1'))
+    row_data.append(between_regression_and_reality_absolute(d2_dom_1.ACTUAL, d2_dom_1.PERCEIVED, 'exp1'))
+    row_data.append(between_regression_and_reality_absolute(d2_dom_2.ACTUAL, d2_dom_2.PERCEIVED, 'exp1'))
+
+    #   append intercept and slope values to row data
+    d1_dom_intercept, d1_dom_slope = calculate_regression_general(d1_dom.ACTUAL, d1_dom.PERCEIVED)
+    d1_non_dom_intercept, d1_non_dom_slope = calculate_regression_general(d1_non_dom.ACTUAL, d1_non_dom.PERCEIVED)
+    d2_dom_1_intercept, d2_dom_1_slope = calculate_regression_general(d2_dom_1.ACTUAL, d2_dom_1.PERCEIVED)
+    d2_dom_2_intercept, d2_dom_2_slope = calculate_regression_general(d2_dom_2.ACTUAL, d2_dom_2.PERCEIVED)
+
+    row_data.extend([d1_dom_intercept, d1_non_dom_intercept, d2_dom_1_intercept, d2_dom_2_intercept])
+    row_data.extend([d1_dom_slope, d1_non_dom_slope, d2_dom_1_slope, d2_dom_2_slope])
+
+    return row_data
