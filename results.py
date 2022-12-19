@@ -9,6 +9,10 @@ import summarise
 import utils
 import data
 
+LOVISA = "exp2"
+
+KATHY = "exp1"
+
 
 def write_all(all_subject_data, subjects, experiment, data_directory):
     """
@@ -70,7 +74,7 @@ def write_participant_demographics(experiment, data_folder):
 
 
 def write_intercept_slope_summary(all_subject_data, experiment):
-    if experiment == "exp1":
+    if experiment == KATHY:
         intercept_lists = [[], [], [], []]
         slope_lists = [[], [], [], []]
         condition_names = [
@@ -126,7 +130,7 @@ def write_intercept_slope_summary(all_subject_data, experiment):
 
 def write_example_subject_data(all_subject_data, subjects, experiment):
     example = utils.ExampleParticipantIDs
-    if experiment == "exp1":
+    if experiment == KATHY:
         subject_1_ID = example.exp1_participant_1
         subject_2_ID = example.exp1_participant_2
         condition_names = [
@@ -135,14 +139,14 @@ def write_example_subject_data(all_subject_data, subjects, experiment):
             "day 2 dominant 1",
             "day 2 dominant 2",
         ]
-        data_list = utils.store_example_subject_data_exp1(
+        data_list = utils.store_example_subject_data_kathy(
             all_subject_data, subjects, subject_1_ID, subject_2_ID
         )
     else:
         subject_1_ID = example.exp2_participant_1
         subject_2_ID = example.exp2_participant_2
         condition_names = ["Vision-to-grasp", "Grasp-to-vision", "Grasp-to-grasp"]
-        data_list = utils.store_example_subject_data_exp2(
+        data_list = utils.store_example_subject_data_lovisa(
             all_subject_data, subjects, subject_1_ID, subject_2_ID
         )
 
@@ -187,7 +191,7 @@ def write_error_and_variability_summary(all_subject_data, experiment):
     utils.write_result_header(experiment, result_title)
     utils.write_mean_ci_header(experiment)
 
-    if experiment == "exp2":
+    if experiment == LOVISA:
         condition_names = ["Vision-to-grasp", "Grasp-to-vision", "Grasp-to-grasp"]
     else:
         condition_names = [
@@ -209,7 +213,7 @@ def write_error_and_variability_summary(all_subject_data, experiment):
 def write_error_vs_variability_regression(all_subject_data, experiment):
     error_lists = summarise.errors_per_condition(all_subject_data, experiment)
     variability_lists = summarise.r2_data_by_condition(all_subject_data, experiment)
-    if experiment == "exp1":
+    if experiment == KATHY:
         condition_names = [
             "Day 1 dominant",
             "Day 1 non-dominant",
@@ -295,7 +299,7 @@ def write_condition_vs_condition_regression(all_subject_data, experiment):
 
 def write_difference_between_conditions_exp1(all_subject_data):
     result_title = "Difference between conditions"
-    experiment = "exp1"
+    experiment = KATHY
     utils.write_result_header(experiment, result_title)
     measures = ["area", "R2", "intercept", "slope"]
     measure_labels = ["Error (cm^2)", "Variability (R^2)", "intercept", "slope"]
@@ -318,7 +322,7 @@ def write_difference_between_conditions_exp1(all_subject_data):
                     dom_vs_non_dom,
                     dom_d1_vs_d2,
                     dom_d2_vs_d2,
-                ) = utils.return_subject_between_condition_comparisons_exp1(
+                ) = utils.return_subject_between_condition_comparisons_kathy(
                     subject_data, measure
                 )
             elif measure == "slope":
@@ -326,7 +330,7 @@ def write_difference_between_conditions_exp1(all_subject_data):
                     dom_vs_non_dom,
                     dom_d1_vs_d2,
                     dom_d2_vs_d2,
-                ) = utils.return_subject_between_condition_comparisons_exp1(
+                ) = utils.return_subject_between_condition_comparisons_kathy(
                     subject_data, measure
                 )
             else:
@@ -334,7 +338,7 @@ def write_difference_between_conditions_exp1(all_subject_data):
                     dom_vs_non_dom,
                     dom_d1_vs_d2,
                     dom_d2_vs_d2,
-                ) = utils.return_subject_between_condition_comparisons_exp1(
+                ) = utils.return_subject_between_condition_comparisons_kathy(
                     subject_data, measure
                 )
 
@@ -345,7 +349,7 @@ def write_difference_between_conditions_exp1(all_subject_data):
         all_difference_data = [between_hands, across_days, within_day]
 
         utils.write_measure_header(experiment, measure_label)
-        utils.write_mean_ci_header("exp1")
+        utils.write_mean_ci_header(KATHY)
 
         for data_list, name, time_period in zip(
             all_difference_data, comparison_names, comparison_times
@@ -442,7 +446,7 @@ def _make_test_session_list(n_participants):
 
 
 def write_low_vs_high_area_correlation(all_subject_data):
-    experiment = "exp2"
+    experiment = LOVISA
     utils.write_result_header(
         experiment, "Low-level vs. High-level correlations: Error"
     )
@@ -494,7 +498,7 @@ def write_low_vs_high_r2_correlation(all_subject_data):
     width_to_width_r2 = []
     line_to_width_r2 = []
     width_to_line_r2 = []
-    experiment = "exp2"
+    experiment = LOVISA
 
     utils.write_result_header(
         experiment, "Low-level vs. High-level correlations: Variability"
@@ -539,7 +543,7 @@ def write_between_condition_r2_mean_difference(all_subject_data):
     width_to_width_r2 = []
     line_to_width_r2 = []
     width_to_line_r2 = []
-    experiment = "exp2"
+    experiment = LOVISA
 
     utils.write_result_header(
         experiment, "Between condition mean differences: Variability"
@@ -560,15 +564,20 @@ def write_between_condition_r2_mean_difference(all_subject_data):
         line_to_width_r2.append(line_to_width)
         width_to_line_r2.append(width_to_line)
 
+    print(f'Vision-to-grasp: {line_to_width_r2}')
+    print(f'Grasp-to-vision: {width_to_line_r2}')
+    print(f'Grasp-to-grasp: {width_to_width_r2}')
+
     line_to_width_vs_width_to_line = [
-        abs(x - y) for x, y in zip(line_to_width_r2, width_to_line_r2)
+        x - y for x, y in zip(line_to_width_r2, width_to_line_r2)
     ]
     line_to_width_vs_width_to_width = [
-        abs(x - y) for x, y in zip(line_to_width_r2, width_to_width_r2)
+        x - y for x, y in zip(line_to_width_r2, width_to_width_r2)
     ]
     width_to_line_vs_width_to_width = [
-        abs(x - y) for x, y in zip(width_to_line_r2, width_to_width_r2)
+        x - y for x, y in zip(width_to_line_r2, width_to_width_r2)
     ]
+
 
     lw_wl_mean, lw_wl_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_line)
     lw_ww_mean, lw_ww_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_width)
@@ -593,7 +602,7 @@ def write_between_condition_area_mean_difference(all_subject_data):
     width_to_width_areas = []
     line_to_width_areas = []
     width_to_line_areas = []
-    experiment = "exp2"
+    experiment = LOVISA
 
     utils.write_result_header(experiment, "Between condition mean differences: Error")
 
@@ -615,13 +624,13 @@ def write_between_condition_area_mean_difference(all_subject_data):
         width_to_line_areas.append(width_to_line)
 
     line_to_width_vs_width_to_line = [
-        abs(x - y) for x, y in zip(line_to_width_areas, width_to_line_areas)
+        x - y for x, y in zip(line_to_width_areas, width_to_line_areas)
     ]
     line_to_width_vs_width_to_width = [
-        abs(x - y) for x, y in zip(line_to_width_areas, width_to_width_areas)
+        x - y for x, y in zip(line_to_width_areas, width_to_width_areas)
     ]
     width_to_line_vs_width_to_width = [
-        abs(x - y) for x, y in zip(width_to_line_areas, width_to_width_areas)
+        x - y for x, y in zip(width_to_line_areas, width_to_width_areas)
     ]
 
     lw_wl_mean, lw_wl_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_line)
