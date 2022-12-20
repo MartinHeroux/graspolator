@@ -4,8 +4,10 @@ Code and data for the Graspolator manuscript.
 
 In the study manuscript, Experiment 1 was conducted by Lovisa, and Experiment 2 was conducted by Kathy.
 
-Kathy collected data before Lovisa. As such:
-- Functions in ```run_exp1.py``` and ```$ python run_exp2.py``` are named according to the experimental order reported in the manuscript (Exp1 = Lovisa, Exp2 = Kathy).
+However, Kathy collected data before Lovisa. 
+
+As such:
+- Functions in ```run_exp1.py``` and ```run_exp2.py``` are named according to the experimental order reported in the manuscript (Exp1 = Lovisa, Exp2 = Kathy).
 - Back-end functions are named according to the chronological order of the experiments, or according to the person who conducted the study (Exp1 = Kathy, Exp2 = Lovisa).
 - Results are saved according to the order reporting in the manuscript (e.g. exp1_results.txt == Lovisa study)
 
