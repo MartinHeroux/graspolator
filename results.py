@@ -1,5 +1,3 @@
-import pandas as pd
-import pingouin as pg
 import numpy as np
 from pathlib import Path
 import os
@@ -27,49 +25,53 @@ def write_all(all_subject_data, subjects, experiment, data_directory):
         all subject data tuples
     subjects: list
         all subject IDs, based off directory names
-    experiment: str
+    manuscript_experiment: str
         name of experiment
     data_directory: Path
         path to all subject data directory
     """
 
-    print(f"\n\n\nStarting {experiment} results.....\n")
     if experiment == 'exp1':
-        experiment_name = 'exp2'
+        manuscript_experiment = 'exp2'
     else:
-        experiment_name = 'exp1'
+        manuscript_experiment = 'exp1'
 
-    exp_result_filepath = Path(results_savepath, f"./results_{experiment_name}.txt")
+    chronological_experiment = experiment
+
+    exp_result_filepath = Path(results_savepath, f"results_{manuscript_experiment}.txt")
 
     #   Remove results file if already exists
     if exp_result_filepath.exists():
         os.remove(exp_result_filepath)
-        print(f"Previous results_{experiment}.txt removed\n")
+        print(f"Previous results_{manuscript_experiment}.txt removed\n")
 
-    write_participant_demographics(experiment, data_directory)
-    write_intercept_slope_summary(all_subject_data, experiment)
-    write_example_subject_data(all_subject_data, subjects, experiment)
-    write_error_and_variability_summary(all_subject_data, experiment)
-    write_error_vs_variability_regression(all_subject_data, experiment)
+    print(f'Starting to write to {exp_result_filepath}.\n')
 
-    if experiment == "exp2":
-        write_condition_vs_condition_regression(all_subject_data, experiment)
+    write_participant_demographics(manuscript_experiment, chronological_experiment, data_directory)
+    write_intercept_slope_summary(all_subject_data, chronological_experiment, manuscript_experiment)
+    write_example_subject_data(all_subject_data, subjects, chronological_experiment, manuscript_experiment)
+    write_error_and_variability_summary(all_subject_data, chronological_experiment, manuscript_experiment)
+    write_error_vs_variability_regression(all_subject_data, chronological_experiment, manuscript_experiment)
+
+    if manuscript_experiment == "exp1":
+        write_condition_vs_condition_regression(all_subject_data, chronological_experiment, manuscript_experiment)
         write_low_vs_high_area_correlation(all_subject_data)
         write_low_vs_high_r2_correlation(all_subject_data)
         write_between_condition_r2_mean_difference(all_subject_data)
         write_between_condition_area_mean_difference(all_subject_data)
 
-    if experiment == "exp1":
+    if manuscript_experiment == "exp2":
         write_difference_between_conditions_exp1(all_subject_data)
-        write_icc_results_exp1(all_subject_data)
+
+    print(f'Finished writing to {exp_result_filepath}.\n')
 
 
-def write_participant_demographics(experiment, data_folder):
+def write_participant_demographics(manuscript_experiment, chronological_experiment, data_folder):
     age_mean, age_sd, number_females, right_handed = data._return_participant_demographics(
-        experiment, data_folder
+        chronological_experiment, data_folder
     )
 
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{manuscript_experiment}.txt", "a")
     age = "Age mean:"
     fem = "N females:"
     right = "R handed:"
@@ -79,8 +81,8 @@ def write_participant_demographics(experiment, data_folder):
     results.close()
 
 
-def write_intercept_slope_summary(all_subject_data, experiment):
-    if experiment == KATHY:
+def write_intercept_slope_summary(all_subject_data, chronological_experiment, manuscript_experiment):
+    if chronological_experiment == KATHY:
         intercept_lists = [[], [], [], []]
         slope_lists = [[], [], [], []]
         condition_names = [
@@ -95,7 +97,7 @@ def write_intercept_slope_summary(all_subject_data, experiment):
         condition_names = ["Vision-to-grasp", "Grasp-to-vision", "Grasp-to-grasp"]
 
     for subject_data in all_subject_data:
-        data_list = utils.create_data_tuples(experiment, subject_data)
+        data_list = utils.create_data_tuples(chronological_experiment, subject_data)
         for condition_data, intercept_list, slope_list in zip(
             data_list, intercept_lists, slope_lists
         ):
@@ -118,25 +120,25 @@ def write_intercept_slope_summary(all_subject_data, experiment):
         slope_means.append(np.mean(slope_list))
         slope_cis.append(utils.calculate_ci(slope_list))
 
-    utils.write_result_header(experiment, "Group summary: Intercept and slope")
-    utils.write_mean_ci_header(experiment)
+    utils.write_result_header(manuscript_experiment, "Group summary: Intercept and slope")
+    utils.write_mean_ci_header(manuscript_experiment)
 
     for condition_name, intercept_mean, intercept_ci, slope_mean, slope_ci in zip(
         condition_names, intercept_means, intercept_cis, slope_means, slope_cis
     ):
         utils.write_mean_ci_result(
-            experiment, intercept_mean, intercept_ci, "intercept", condition_name
+            manuscript_experiment, intercept_mean, intercept_ci, "intercept", condition_name
         )
         utils.write_mean_ci_result(
-            experiment, slope_mean, slope_ci, "slope", condition_name
+            manuscript_experiment, slope_mean, slope_ci, "slope", condition_name
         )
 
-    print(f"INTERCEPT and SLOPE summary results written to results_{experiment}.txt")
+    print(f"INTERCEPT + SLOPE SUMMARY written")
 
 
-def write_example_subject_data(all_subject_data, subjects, experiment):
+def write_example_subject_data(all_subject_data, subjects, chronological_experiment, manuscript_experiment):
     example = utils.ExampleParticipantIDs
-    if experiment == KATHY:
+    if chronological_experiment == KATHY:
         subject_1_ID = example.exp1_participant_1
         subject_2_ID = example.exp1_participant_2
         condition_names = [
@@ -158,13 +160,13 @@ def write_example_subject_data(all_subject_data, subjects, experiment):
 
     example_subject_names = [subject_1_ID, subject_2_ID]
     result_title = "Example participant summary"
-    utils.write_result_header(experiment, result_title)
+    utils.write_result_header(manuscript_experiment, result_title)
 
     for example_subject_data, example_subject_name in zip(
         data_list, example_subject_names
     ):
-        utils.write_example_subject_name(experiment, example_subject_name)
-        utils.write_example_subject_header(experiment)
+        utils.write_example_subject_name(manuscript_experiment, example_subject_name)
+        utils.write_example_subject_header(manuscript_experiment)
         for condition_data, condition_name in zip(
             example_subject_data, condition_names
         ):
@@ -172,21 +174,21 @@ def write_example_subject_data(all_subject_data, subjects, experiment):
                 condition_data.ACTUAL, condition_data.PERCEIVED
             )
             area = calculate_area.between_regression_and_reality_absolute(
-                condition_data.ACTUAL, condition_data.PERCEIVED, experiment
+                condition_data.ACTUAL, condition_data.PERCEIVED, chronological_experiment
             )
             r2 = utils.calculate_r2(condition_data.ACTUAL, condition_data.PERCEIVED)
             utils.write_example_subject_results(
-                experiment, condition_name, intercept, slope, area, r2
+                manuscript_experiment, condition_name, intercept, slope, area, r2
             )
-        print(f"{example_subject_name} summary written to results_{experiment}.txt")
+        print(f"{example_subject_name} summary written.")
 
 
-def write_error_and_variability_summary(all_subject_data, experiment):
+def write_error_and_variability_summary(all_subject_data, chronological_experiment, manuscript_experiment):
     r2_means, r2_cis = summarise.r2_mean_and_ci_by_condition(
-        all_subject_data, experiment
+        all_subject_data, chronological_experiment
     )
     area_means, area_cis = summarise.area_mean_and_ci_by_condition(
-        all_subject_data, experiment
+        all_subject_data, chronological_experiment
     )
     means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
 
@@ -194,10 +196,10 @@ def write_error_and_variability_summary(all_subject_data, experiment):
     params = utils.r2_area_constants()
 
     result_title = "Group summary: Error and Variability"
-    utils.write_result_header(experiment, result_title)
-    utils.write_mean_ci_header(experiment)
+    utils.write_result_header(manuscript_experiment, result_title)
+    utils.write_mean_ci_header(manuscript_experiment)
 
-    if experiment == LOVISA:
+    if chronological_experiment == LOVISA:
         condition_names = ["Vision-to-grasp", "Grasp-to-vision", "Grasp-to-grasp"]
     else:
         condition_names = [
@@ -211,15 +213,15 @@ def write_error_and_variability_summary(all_subject_data, experiment):
         means_lists, ci_lists, params.subplot_indices, results_headers
     ):
         for mean, ci, condition_name in zip(mean_list, ci_list, condition_names):
-            utils.write_mean_ci_result(experiment, mean, ci, y_label, condition_name)
+            utils.write_mean_ci_result(manuscript_experiment, mean, ci, y_label, condition_name)
 
-    print(f"ERROR and VARIABILITY summary written to results_{experiment}.txt")
+    print(f"ERROR and VARIABILITY summary written.")
 
 
-def write_error_vs_variability_regression(all_subject_data, experiment):
-    error_lists = summarise.errors_per_condition(all_subject_data, experiment)
-    variability_lists = summarise.r2_data_by_condition(all_subject_data, experiment)
-    if experiment == KATHY:
+def write_error_vs_variability_regression(all_subject_data, chronological_experiment, manuscript_experiment):
+    error_lists = summarise.errors_per_condition(all_subject_data, chronological_experiment)
+    variability_lists = summarise.r2_data_by_condition(all_subject_data, chronological_experiment)
+    if chronological_experiment == KATHY:
         condition_names = [
             "Day 1 dominant",
             "Day 1 non-dominant",
@@ -229,7 +231,7 @@ def write_error_vs_variability_regression(all_subject_data, experiment):
     else:
         condition_names = ["Vision-to-grasp", "Grasp-to-vision", "Grasp-to-grasp"]
 
-    utils.write_result_header(experiment, "Regression: Error vs. variability")
+    utils.write_result_header(manuscript_experiment, "Regression: Error vs. variability")
 
     for condition_r2_data, condition_error_data, condition_name in zip(
         variability_lists, error_lists, condition_names
@@ -238,20 +240,20 @@ def write_error_vs_variability_regression(all_subject_data, experiment):
             condition_error_data, condition_r2_data
         )
         utils.write_regression_results(
-            experiment,
+            manuscript_experiment,
             condition_error_data,
             condition_r2_data,
             intercept,
             slope,
             condition_name,
         )
-    print(f"ERROR vs. VARIABILITY regression written to results_{experiment}.txt")
+    print(f"ERROR vs. VARIABILITY regression written.")
 
 
-def write_condition_vs_condition_regression(all_subject_data, experiment):
+def write_condition_vs_condition_regression(all_subject_data, chronological_experiment, manuscript_experiment):
     result_title = "OLS slope regression"
     condition_name = "Vision-to-grasp vs grasp-to-vision"
-    utils.write_result_header(experiment, result_title)
+    utils.write_result_header(manuscript_experiment, result_title)
 
     slopes_line_width = []
     slopes_width_line = []
@@ -282,7 +284,7 @@ def write_condition_vs_condition_regression(all_subject_data, experiment):
             )
 
     utils.write_regression_results(
-        experiment,
+        manuscript_experiment,
         slopes_line_width,
         slopes_width_line,
         intercept,
@@ -290,7 +292,7 @@ def write_condition_vs_condition_regression(all_subject_data, experiment):
         condition_name,
     )
     utils.write_regression_results(
-        experiment,
+        manuscript_experiment,
         slope_line_width_2,
         slope_width_line_2,
         intercept_2,
@@ -299,14 +301,14 @@ def write_condition_vs_condition_regression(all_subject_data, experiment):
     )
 
     print(
-        f"RECIPROCAL CONDITION OLS slope regression written to results_{experiment}.txt"
+        f"RECIPROCAL CONDITION SLOPE REGRESSION written."
     )
 
 
 def write_difference_between_conditions_exp1(all_subject_data):
     result_title = "Difference between conditions"
     experiment = KATHY
-    utils.write_result_header(experiment, result_title)
+    utils.write_result_header('exp2', result_title)
     measures = ["area", "R2", "intercept", "slope"]
     measure_labels = ["Error (cm^2)", "Variability (R^2)", "intercept", "slope"]
     comparison_names = ["Between hands", "Within hand", "Within hand"]
@@ -354,79 +356,17 @@ def write_difference_between_conditions_exp1(all_subject_data):
 
         all_difference_data = [between_hands, across_days, within_day]
 
-        utils.write_measure_header(experiment, measure_label)
-        utils.write_mean_ci_header(KATHY)
+        utils.write_measure_header('exp2', measure_label)
+        utils.write_mean_ci_header('exp2')
 
         for data_list, name, time_period in zip(
             all_difference_data, comparison_names, comparison_times
         ):
             mean, ci = utils.calculate_mean_ci(data_list)
-            utils.write_mean_ci_result(experiment, mean, ci, name, time_period)
+            utils.write_mean_ci_result('exp2', mean, ci, name, time_period)
 
-    print(f"Difference BETWEEN CONDITIONS written in results_exp1.txt\n")
+    print(f"DIFFERENCE BETWEEN CONDITIONS written.")
 
-
-def write_icc_results_exp1(all_subject_data):
-    r2_d1_dom = []
-    r2_d2_dom = []
-    area_d1_dom = []
-    area_d2_dom = []
-
-    for subject in all_subject_data:
-        d1_dom_r2 = utils.calculate_r2(
-            subject.day1_dominant.ACTUAL, subject.day1_dominant.PERCEIVED
-        )
-        d2_dom_r2 = utils.calculate_r2(
-            subject.day2_dominant_1.ACTUAL, subject.day2_dominant_1.PERCEIVED
-        )
-        d1_dom_area = calculate_area.between_regression_and_reality_absolute(
-            subject.day1_dominant.ACTUAL, subject.day1_dominant.PERCEIVED, "exp1"
-        )
-        d2_dom_area = calculate_area.between_regression_and_reality_absolute(
-            subject.day2_dominant_1.ACTUAL, subject.day2_dominant_1.PERCEIVED, "exp1"
-        )
-
-        r2_d1_dom.append(d1_dom_r2)
-        r2_d2_dom.append(d2_dom_r2)
-        area_d1_dom.append(d1_dom_area)
-        area_d2_dom.append(d2_dom_area)
-
-    n_participants = len(all_subject_data)
-
-    targets = _make_target_list(n_participants)
-    test_session = _make_test_session_list(n_participants)
-
-    high_r2 = r2_d1_dom + r2_d2_dom
-    high_area = area_d1_dom + area_d2_dom
-
-    high_r2_df = pd.DataFrame(
-        {"targets": targets, "rater": test_session, "score": high_r2}
-    )
-    high_area_df = pd.DataFrame(
-        {"targets": targets, "rater": test_session, "score": high_area}
-    )
-
-    high_r2_icc = pg.intraclass_corr(
-        data=high_r2_df, targets="targets", raters="rater", ratings="score"
-    )
-    high_area_icc = pg.intraclass_corr(
-        data=high_area_df, targets="targets", raters="rater", ratings="score"
-    )
-
-    high_area_icc["Outcome"] = ["Error", "Error", "Error", "Error", "Error", "Error"]
-    high_r2_icc["Outcome"] = [
-        "Variability",
-        "Variability",
-        "Variability",
-        "Variability",
-        "Variability",
-        "Variability",
-    ]
-
-    all_ICC_values = pd.concat((high_r2_icc, high_area_icc))
-    all_ICC_values.to_csv("./ICC_results_exp2.csv")
-
-    print("ICC results exported to ./ICC_results_exp2.csv")
 
 
 def _make_target_list(n_participants):
@@ -454,7 +394,7 @@ def _make_test_session_list(n_participants):
 def write_low_vs_high_area_correlation(all_subject_data):
     experiment = LOVISA
     utils.write_result_header(
-        experiment, "Low-level vs. High-level correlations: Error"
+        'exp1', "Low-level vs. High-level correlations: Error"
     )
     width_to_width_areas = []
     line_to_width_areas = []
@@ -484,19 +424,19 @@ def write_low_vs_high_area_correlation(all_subject_data):
         print("Uneven lists")
 
     utils.write_correlation(
-        experiment,
+        'exp1',
         width_to_width_areas,
         line_to_width_areas,
         "Grasp-to-grasp vs Vision-to-grasp",
     )
     utils.write_correlation(
-        experiment,
+        'exp1',
         width_to_width_areas,
         width_to_line_areas,
         "Grasp-to-grasp vs Grasp-to-vision",
     )
     print(
-        f"Low-level vs. High-level ERROR correlations written to results_{experiment}.txt"
+        f"CORRELATION LOW-LEVEL vs HIGH-LEVEL ERROR written."
     )
 
 
@@ -507,7 +447,7 @@ def write_low_vs_high_r2_correlation(all_subject_data):
     experiment = LOVISA
 
     utils.write_result_header(
-        experiment, "Low-level vs. High-level correlations: Variability"
+        'exp1', "Low-level vs. High-level correlations: Variability"
     )
 
     for participant in all_subject_data:
@@ -529,19 +469,19 @@ def write_low_vs_high_r2_correlation(all_subject_data):
         print("Uneven lists")
 
     utils.write_correlation(
-        experiment,
+        'exp1',
         width_to_width_r2,
         line_to_width_r2,
-        "Grasp-to-grasp - Vision-to-grasp",
+        "Grasp-to-grasp vs. Vision-to-grasp",
     )
     utils.write_correlation(
-        experiment,
+        'exp1',
         width_to_width_r2,
         width_to_line_r2,
-        "Grasp-to-grasp - Grasp-to-vision",
+        "Grasp-to-grasp vs. Grasp-to-vision",
     )
     print(
-        f"Low-level vs. High-level VARIABILITY correlations written to results_{experiment}.txt"
+        f"CORRELATION LOW-LEVEL VS HIGH_LEVEL VARIABILITY written."
     )
 
 
@@ -552,7 +492,7 @@ def write_between_condition_r2_mean_difference(all_subject_data):
     experiment = LOVISA
 
     utils.write_result_header(
-        experiment, "Between condition mean differences: Variability"
+        'exp1', "Between condition mean differences: Variability"
     )
 
     for participant in all_subject_data:
@@ -570,10 +510,6 @@ def write_between_condition_r2_mean_difference(all_subject_data):
         line_to_width_r2.append(line_to_width)
         width_to_line_r2.append(width_to_line)
 
-    print(f'Vision-to-grasp: {line_to_width_r2}')
-    print(f'Grasp-to-vision: {width_to_line_r2}')
-    print(f'Grasp-to-grasp: {width_to_width_r2}')
-
     line_to_width_vs_width_to_line = [
         x - y for x, y in zip(line_to_width_r2, width_to_line_r2)
     ]
@@ -589,18 +525,18 @@ def write_between_condition_r2_mean_difference(all_subject_data):
     lw_ww_mean, lw_ww_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_width)
     wl_ww_mean, wl_ww_ci = utils.calculate_mean_ci(width_to_line_vs_width_to_width)
 
-    utils.write_difference_mean_ci_header(experiment)
+    utils.write_difference_mean_ci_header('exp1')
     utils.write_mean_ci_result(
-        experiment, lw_wl_mean, lw_wl_ci, "Grasp-to-vision", "Vision-to-grasp  -"
+        'exp1', lw_wl_mean, lw_wl_ci, "Grasp-to-vision", "Vision-to-grasp  -"
     )
     utils.write_mean_ci_result(
-        experiment, lw_ww_mean, lw_ww_ci, "Grasp-to-grasp", "Vision-to-grasp  -"
+        'exp1', lw_ww_mean, lw_ww_ci, "Grasp-to-grasp", "Vision-to-grasp  -"
     )
     utils.write_mean_ci_result(
-        experiment, wl_ww_mean, wl_ww_ci, "Grasp-to-grasp", "Grasp-to-vision  -"
+        'exp1', wl_ww_mean, wl_ww_ci, "Grasp-to-grasp", "Grasp-to-vision  -"
     )
     print(
-        f"Between condition VARIABILITY differences written to results_{experiment}.txt"
+        f"BETWEEN CONDITION DIFFERENCE - VARIABILITY written."
     )
 
 
@@ -610,7 +546,7 @@ def write_between_condition_area_mean_difference(all_subject_data):
     width_to_line_areas = []
     experiment = LOVISA
 
-    utils.write_result_header(experiment, "Between condition mean differences: Error")
+    utils.write_result_header('exp1', "Between condition mean differences: Error")
 
     for participant in all_subject_data:
         width_to_width = calculate_area.between_regression_and_reality_absolute(
@@ -643,14 +579,14 @@ def write_between_condition_area_mean_difference(all_subject_data):
     lw_ww_mean, lw_ww_ci = utils.calculate_mean_ci(line_to_width_vs_width_to_width)
     wl_ww_mean, wl_ww_ci = utils.calculate_mean_ci(width_to_line_vs_width_to_width)
 
-    utils.write_difference_mean_ci_header(experiment)
+    utils.write_difference_mean_ci_header('exp1')
     utils.write_mean_ci_result(
-        experiment, lw_wl_mean, lw_wl_ci, "Grasp-to-vision", "Vision-to-grasp  -"
+        'exp1', lw_wl_mean, lw_wl_ci, "Grasp-to-vision", "Vision-to-grasp  -"
     )
     utils.write_mean_ci_result(
-        experiment, lw_ww_mean, lw_ww_ci, "Grasp-to-grasp", "Vision-to-grasp  -"
+        'exp1', lw_ww_mean, lw_ww_ci, "Grasp-to-grasp", "Vision-to-grasp  -"
     )
     utils.write_mean_ci_result(
-        experiment, wl_ww_mean, wl_ww_ci, "Grasp-to-grasp", "Grasp-to-vision  -"
+        'exp1', wl_ww_mean, wl_ww_ci, "Grasp-to-grasp", "Grasp-to-vision  -"
     )
-    print(f"Between condition ERROR differences written to results_{experiment}.txt")
+    print(f"BETWEEN CONDITION DIFFERENCE - ERROR written.")

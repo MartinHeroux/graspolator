@@ -1,5 +1,3 @@
-from pathlib import Path
-import os
 from random import random
 import numpy as np
 from matplotlib import pyplot as plt, patches as mpatches
@@ -8,28 +6,21 @@ from matplotlib.lines import Line2D
 
 import calculate_area
 import utils
+from utils import create_individual_plot_save_path
 
 KATHY = 'exp1'
 
 
-def create_individual_plot_save_path(plot, subject_ID):
-    path = Path(f'./plots/individual_plots/{plot}')
-    if not os.path.exists(path):
-        os.makedirs(path)
-    savepath = Path(f'./plots/individual_plots/{plot}/{plot}_{subject_ID}.png')
-    return savepath
-
-
 def individual_scatterplots(all_subject_data, subjects, experiment):
-    print('Note - this takes a while')
+    print('\n\nCreating individual scatter and regression plots. Note - this takes a while.\n')
     for subject_ID, subject_data in zip(subjects, all_subject_data):
         scatterplots_and_reg_lines(subject_ID, subject_data, experiment)
 
-    print(f'All individual regression plots saved in ./plots/individual_plots\n')
+    print(f'All individual scatter and regression plots saved in ./plots/individual_plots\n')
 
 
 def individual_error_plots(all_subject_data, subjects, experiment):
-    print('Note - this takes a while')
+    print('Creating individual error plots. Note - this takes a while.\n')
     for subject_ID, current_subject_data in zip(subjects, all_subject_data):
         areas_between_regression_and_reality(subject_ID, current_subject_data, experiment)
 
@@ -126,7 +117,6 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
         intercept, slope = utils.calculate_regression_general(condition_tuple.ACTUAL, condition_tuple.PERCEIVED)
         x1, x2, y1, y2 = utils.return_regression_line_endpoints(condition_tuple.ACTUAL, condition_tuple.PERCEIVED,
                                                            experiment)
-        print(x1)
         if y2 < 15:
             y_max = 14
         else:

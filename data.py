@@ -2,7 +2,6 @@ from typing import NamedTuple
 from collections import namedtuple
 from pathlib import Path
 import numpy as np
-from dataclasses import dataclass
 
 import utils
 from utils import get_directory_list, create_general_constants
@@ -115,7 +114,7 @@ def _remove_old_names(subjects):
         print("Error in popping 'old' directories")
         exit
     else:
-        print(f"List is now {len(subjects)}")
+        print(f"Subject names successfully edited {len(subjects)}")
 
 
 def _extract_age_gender_handedness(experiment, demographic_txt):
@@ -171,11 +170,11 @@ def _remove_ceiling_data_and_errors(current_subject_data, subject_folder, subjec
                 ):
                     index.append(i)
             index.reverse()
-            results = open("results_exp1.txt", "a")
-            results.write(
+            #results = open("./results/results_exp1.txt", "a")
+            print(
                 f"{str(len(index)):5s} saturated data point(s) removed for {subject}\n"
             )
-            results.close()
+            #results.close()
             for index in index:
                 current_subject_data.pop(index)
                 current_subject_data.pop(index - 1)
@@ -183,10 +182,10 @@ def _remove_ceiling_data_and_errors(current_subject_data, subject_folder, subjec
         else:
             current_subject_data.pop(deletion_target)
             current_subject_data.pop(deletion_target - 1)
-            results = open("results_exp1.txt", "a")
+            #results = open("./results/results_exp1.txt", "a")
             txt = "1"
-            results.write(f"{txt:5s} outlier   data point(s) removed for {subject}\n")
-            results.close()
+            print(f"{txt:5s} outlier   data point(s) removed for {subject}\n")
+            #results.close()
         return current_subject_data
 
 

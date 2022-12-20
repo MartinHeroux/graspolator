@@ -103,9 +103,12 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
     save_path = utils.create_figure_save_path(figure)
     y_ticks = list(range(0, 17, 2))
 
+    print(f'Starting {figure}.\n')
+
     plt.figure(figsize=(17.5 / 2.4, 22 / 2.4))
     plt.rcParams.update({"font.family": font})
     # plot example subjects in left and centre subplot cols
+    print(f'{figure} - plotting example participants')
     for column, (
         example_subject_data,
         color,
@@ -142,7 +145,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
             utils.plot_data_scatter(
                 ax, condition_data.ACTUAL, condition_data.PERCEIVED, color
             )
-            print(f"{condition_name}: {len(condition_data.ACTUAL)} data points")
+            print(f"{figure} {example_subject}: {condition_name} {len(condition_data.ACTUAL)} data points")
             utils.plot_regression_line(
                 ax, intercept, slope, color, x_data_lims[0], x_data_lims[1]
             )
@@ -322,11 +325,11 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
     plt.savefig(save_path, dpi=300)
     path_svg = Path(save_path.parts[0], save_path.parts[1], save_path.stem + ".svg")
     plt.savefig(path_svg)
-    print(
-        f"{experiment} example subjects and group regressions saved in in {path_svg}\n"
-    )
-    text = colored(save_path, "blue")
-    print(f"{experiment} example subjects and group regressions saved in in {text}\n")
+
+    png_text = colored(save_path, "blue")
+    print(f"{png_text} saved\n")
+    svg_text = colored(path_svg, 'blue')
+    print(f"{svg_text} saved\n")
     plt.close()
 
 
@@ -336,6 +339,8 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
         figure = "Figure_7"
     else:
         figure = "Figure_3"
+
+    print(f'Starting {figure}.\n')
 
     if not vertical_y_label:
         figure = figure + '_horizontal'
@@ -389,17 +394,19 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
     grasp_to_vision = 1
     grasp_to_grasp = -1
 
-    r2_means = [r2_means[grasp_to_grasp], r2_means[grasp_to_vision], r2_means[vision_to_grasp]]
-    r2_cis = [r2_cis[grasp_to_grasp], r2_cis[grasp_to_vision], r2_cis[vision_to_grasp]]
-    area_means = [area_means[grasp_to_grasp], area_means[grasp_to_vision], area_means[vision_to_grasp]]
-    area_cis = [area_cis[grasp_to_grasp], area_cis[grasp_to_vision], area_cis[vision_to_grasp]]
+    if experiment == 'exp2':    # change order of x-axis so that grasp-to-grasp is first
+        r2_means = [r2_means[grasp_to_grasp], r2_means[grasp_to_vision], r2_means[vision_to_grasp]]
+        r2_cis = [r2_cis[grasp_to_grasp], r2_cis[grasp_to_vision], r2_cis[vision_to_grasp]]
+        area_means = [area_means[grasp_to_grasp], area_means[grasp_to_vision], area_means[vision_to_grasp]]
+        area_cis = [area_cis[grasp_to_grasp], area_cis[grasp_to_vision], area_cis[vision_to_grasp]]
 
     means_lists, ci_lists = [r2_means, area_means], [r2_cis, area_cis]
 
     plt.figure(figsize=(3.3, (2.7 * 2)))
     for subject, subject_data in zip(subjects, all_subject_data):
         data_pairs = utils.create_data_tuples(experiment, subject_data)
-        data_pairs = [data_pairs[grasp_to_grasp], data_pairs[grasp_to_vision], data_pairs[vision_to_grasp]]
+        if experiment == 'exp2':    # change order of x-axis so that grasp-to-grasp is first
+            data_pairs = [data_pairs[grasp_to_grasp], data_pairs[grasp_to_vision], data_pairs[vision_to_grasp]]
         y_points_r2 = []
         y_points_area = []
 
@@ -528,6 +535,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
 def figure_4(all_subject_data, experiment, vertical_y_label=True):
     font = "arial"
     figure_name = "Figure_4"
+    print(f'Starting {figure_name}.\n')
     if not vertical_y_label:
         figure_name = figure_name + '_horizontal'
     save_path = utils.create_figure_save_path(figure_name)
@@ -646,7 +654,7 @@ def figure_4(all_subject_data, experiment, vertical_y_label=True):
 
 def figure_5(all_subject_data):
     figure = "Figure_5"
-
+    print(f'Starting {figure}.\n')
     save_path = utils.create_figure_save_path(figure)
 
     slopes_line_width = []
@@ -727,6 +735,7 @@ def figure_5(all_subject_data):
 def figure_8(all_subject_data, experiment, vertical_y_axis=True):
     font = "arial"
     figure = "Figure_8"
+    print(f'Starting {figure}.\n')
     if not vertical_y_axis:
         figure = figure + '_horizontal'
     save_path = utils.create_figure_save_path(figure)

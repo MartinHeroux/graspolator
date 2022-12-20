@@ -32,11 +32,11 @@ def remove_missing_data(actual_list, perceived_list, subject_ID, name):
             indices_to_remove.append(perceived_list.index(trial))
     indices_to_remove.reverse()
     if len(indices_to_remove) > 0:
-        results = open("results_exp2.txt", "a")
-        results.write(
+        #results = open("results_exp2.txt", "a")
+        print(
             f"{str(len(indices_to_remove)):5s} saturated data point(s) removed for {subject_ID}\n"
         )
-        results.close()
+        #results.close()
     for index in indices_to_remove:
         actual_list.pop(index)
         perceived_list.pop(index)
@@ -410,6 +410,14 @@ def create_data_save_path():
     return results_path
 
 
+def create_individual_plot_save_path(plot, subject_id):
+    path = Path(f'./plots/individual_plots/{plot}')
+    if not os.path.exists(path):
+        os.makedirs(path)
+    savepath = Path(f'./plots/individual_plots/{plot}/{plot}_{subject_id}.png')
+    return savepath
+
+
 def get_directory_list(directory):
     directories = []
     for root, dirs, files in os.walk(directory):
@@ -631,7 +639,7 @@ def return_subject_between_condition_comparisons_kathy(subject_data, measure):
 
 
 def write_result_header(experiment, result_name):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     results.write("\n")
     results.write("#####" * 20)
     results.write(f"\n\n{result_name}\n\n")
@@ -639,7 +647,7 @@ def write_result_header(experiment, result_name):
 
 
 def write_regression_results(experiment, x, y, intercept, slope, condition_name):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     t_vals, t_test, f_test = regression_summary(x, y)
     r, ci = pearson_r_ci(x, y)
     pearson, ols = "Pearson's", "OLS"
@@ -655,7 +663,7 @@ def write_regression_results(experiment, x, y, intercept, slope, condition_name)
 
 
 def write_correlation(experiment, x, y, condition_name):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     r, ci = pearson_r_ci(x, y)
     pearson = "Pearson's r [95%CI]:"
     condition_name = condition_name
@@ -664,13 +672,13 @@ def write_correlation(experiment, x, y, condition_name):
 
 
 def write_example_subject_name(experiment, example_subject):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     results.write(f"{example_subject}\n")
     results.close()
 
 
 def write_example_subject_header(experiment):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     results.write(
         f'{"CONDITION":20s}{"INTERCEPT":20s}{"SLOPE":20s}{"ERROR (cm^2 / cm)":20s}{"VARIABILITY (R^2)":20s}\n'
     )
@@ -680,7 +688,7 @@ def write_example_subject_header(experiment):
 def write_example_subject_results(
     experiment, condition_name, intercept, slope, area, R2
 ):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     intercept_text = f"{intercept:4.2f}"
     slope_text = f"{slope:4.2f}"
     area_text = f"{area:4.2f}"
@@ -693,19 +701,19 @@ def write_example_subject_results(
 
 
 def write_mean_ci_header(experiment):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     results.write(f'{"CONDITION":20s}{"MEASURE":27s}{"MEAN":10s}95%CI\n')
     results.close()
 
 
 def write_difference_mean_ci_header(experiment):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     results.write(f'{"DIFFERENCE":47s}{"MEAN":10s}95%CI\n')
     results.close()
 
 
 def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     mean_text = f"{mean:4.2f}"
     ci_lower = f"{mean - ci:4.2f}"
     ci_upper = f"{mean + ci:4.2f}"
@@ -716,7 +724,7 @@ def write_mean_ci_result(experiment, mean, ci, y_label, x_label):
 
 
 def write_measure_header(experiment, measure):
-    results = open(f"results_{experiment}.txt", "a")
+    results = open(f"./results/results_{experiment}.txt", "a")
     results.write(f"\n{measure.upper()}\n")
     results.close()
 
@@ -770,5 +778,4 @@ def return_regression_line_endpoints(actual, perceived, experiment):
     y1 = slope * x1 + intercept
     y2 = slope * x2 + intercept
     return x1, x2, y1, y2
-
 

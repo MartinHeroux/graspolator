@@ -9,7 +9,7 @@ from utils import ExpCodes
 import summarise
 
 exp_1 = ExpCodes.EXP_1
-exp_1_data_directory = Path(f"./data/{exp_1}'")
+exp_1_data_directory = Path(f"./data/{exp_1}")
 
 #   Store subject data and subject names
 all_subject_data_exp1 = data.return_all_subject_data(
