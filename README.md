@@ -48,9 +48,13 @@ For Exp 1 (Lovisa), the following files will be created:
 - ./plots/individual_plots/error_plots_exp1/participant_ID.png (1 x  for each participant)
 - ./plots/individual_plots/scatterplots_exp1/participant_ID.png (1 x  for each participant)
 - ./figures/Figure_2.png
+- ./figures/Figure_2.svg
 - ./figures/Figure_3.png
+- ./figures/Figure_3.svg
 - ./figures/Figure_4.png
+- ./figures/Figure_4.svg
 - ./figures/Figure_5.png
+- ./figures/Figure_5.svg
 - ./data/summary_data/participant_data_summary_exp1_lovisa.csv
 
 For Exp 2 (Kathy), the following files will be created:
@@ -58,6 +62,9 @@ For Exp 2 (Kathy), the following files will be created:
 - ./plots/individual_plots/error_plots_exp2/participant_ID.png (1 x  for each participant)
 - ./plots/individual_plots/scatterplots_exp2/participant_ID.png (1 x  for each participant)
 - ./figures/Figure_6.png
+- ./figures/Figure_6.svg
 - ./figures/Figure_7.png
+- ./figures/Figure_7.svg
 - ./figures/Figure_8.png
+- ./figures/Figure_8.svg
 - ./data/summary_data/participant_data_summary_exp2_kathy.csv
