@@ -64,6 +64,8 @@ def write_all(all_subject_data, subjects, experiment, data_directory):
         write_difference_between_conditions_exp1(all_subject_data)
 
     print(f'Finished writing to {exp_result_filepath}.\n')
+    dashes = '-' * 30
+    print(f'\n{dashes}\n')
 
 
 def write_participant_demographics(manuscript_experiment, chronological_experiment, data_folder):

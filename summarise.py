@@ -281,6 +281,9 @@ def write_raw_data_summary_exp1(all_subject_data):
     df = pd.DataFrame(row_data, columns=column_names)
     savepath = Path(raw_data_savepath, 'participant_data_summary_exp1.csv')
     df.to_csv(savepath)
+    print(f'Saved {savepath}.')
+    dashes = '-' * 60
+    print(f'\n{dashes}\n')
 
 
 def individual_participant_data_exp1(subject_data):
@@ -323,6 +326,9 @@ def write_raw_data_summary_exp2(all_subject_data, all_subject_ids):
     df = pd.DataFrame(row_data, columns=column_names)
     savepath = Path(raw_data_savepath, 'participant_data_summary_exp2.csv')
     df.to_csv(savepath)
+    print(f'Saved {savepath}.')
+    dashes = '-' * 60
+    print(f'\n{dashes}\n')
 
 
 def individual_participant_data_exp2(subject_data, sub_id):

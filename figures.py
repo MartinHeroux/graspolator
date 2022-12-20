@@ -27,6 +27,8 @@ def generate_all(all_subject_data, subjects, experiment, vertical_y_label=True):
 
     if experiment == "exp1":
         figure_8(all_subject_data, experiment, vertical_y_label)
+    dashes = '-' * 60
+    print(f'\n{dashes}\n')
 
 
 def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):

@@ -45,7 +45,8 @@ The following subdirectories will be created in the project directory:
 
 For Exp 1 (Lovisa), the following files will be created:
 - ./results/results_exp1.txt
-- ./plots/individual/exp1/participant_ID.png (1 x  for each participant)
+- ./plots/individual_plots/error_plots_exp1/participant_ID.png (1 x  for each participant)
+- ./plots/individual_plots/scatterplots_exp1/participant_ID.png (1 x  for each participant)
 - ./figures/Figure_2.png
 - ./figures/Figure_3.png
 - ./figures/Figure_4.png
@@ -54,7 +55,8 @@ For Exp 1 (Lovisa), the following files will be created:
 
 For Exp 2 (Kathy), the following files will be created:
 - ./results/results_exp2.txt
-- ./plots/individual/exp2/participant_ID.png (1 x for each participant)
+- ./plots/individual_plots/error_plots_exp2/participant_ID.png (1 x  for each participant)
+- ./plots/individual_plots/scatterplots_exp2/participant_ID.png (1 x  for each participant)
 - ./figures/Figure_6.png
 - ./figures/Figure_7.png
 - ./figures/Figure_8.png

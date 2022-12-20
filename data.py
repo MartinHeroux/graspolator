@@ -34,6 +34,15 @@ def return_all_subject_data(experiment, data_folder):
     else:
         SystemExit('Incorrect experiment string provided')
 
+    if experiment == 'exp1':
+        manuscript_experiment = 'exp2'
+    else:
+        manuscript_experiment = 'exp1'
+
+    print(f'All subject data loaded for {manuscript_experiment}.')
+    dashes = '-' * 60
+    print(f'\n{dashes}\n')
+
     return all_subject_data
 
 
@@ -61,6 +70,15 @@ def return_all_subject_IDs(experiment, data_folder):
 
     else:
         SystemExit('Incorrect experiment string provided')
+
+    if experiment == 'exp1':
+        manuscript_experiment = 'exp2'
+    else:
+        manuscript_experiment = 'exp1'
+
+    print(f'All subject names loaded for {manuscript_experiment}.')
+    dashes = '-' * 60
+    print(f'\n{dashes}\n')
 
     return subjects
 

@@ -17,6 +17,8 @@ def individual_scatterplots(all_subject_data, subjects, experiment):
         scatterplots_and_reg_lines(subject_ID, subject_data, experiment)
 
     print(f'All individual scatter and regression plots saved in ./plots/individual_plots\n')
+    dashes = '-' * 60
+    print(f'\n{dashes}\n')
 
 
 def individual_error_plots(all_subject_data, subjects, experiment):
@@ -25,10 +27,17 @@ def individual_error_plots(all_subject_data, subjects, experiment):
         areas_between_regression_and_reality(subject_ID, current_subject_data, experiment)
 
     print(f'All individual areas between regression line and reality saved in ./plots/individual_plots\n')
+    dashes = '-' * 60
+    print(f'\n{dashes}\n')
 
 
 def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
-    plot = f'scatterplots_{experiment}'
+    if experiment == 'exp1':
+        manuscript_experiment = 'exp2'
+    else:
+        manuscript_experiment = 'exp1'
+
+    plot = f'scatterplots_{manuscript_experiment}'
     path = create_individual_plot_save_path(plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
 
@@ -91,7 +100,12 @@ def scatterplots_and_reg_lines(subject_ID, subject_data, experiment):
 
 
 def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
-    plot = f'error_plots_{experiment}'
+    if experiment == 'exp2':
+        manuscript_experiment = 'exp1'
+    else:
+        manuscript_experiment = 'exp2'
+
+    plot = f'error_plots_{manuscript_experiment}'
     path = create_individual_plot_save_path(plot, subject_ID)
     data_list = utils.create_data_tuples(experiment, subject_data)
 
