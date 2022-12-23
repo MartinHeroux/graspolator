@@ -24,6 +24,10 @@ $ git clone https://github.com/MartinHeroux/graspolator.git
 $ pip install -r requirements.txt
 ```
 
+### Data location
+***
+X:\Projects\3 PROPRIOPCEPTION\PROPRIO_GRASPOLATOR\data\raw_data
+
 ### Usage
 ***
 While in the project directory:
