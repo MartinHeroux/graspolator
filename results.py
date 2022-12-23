@@ -69,7 +69,7 @@ def write_all(all_subject_data, subjects, experiment, data_directory):
 
 
 def write_participant_demographics(manuscript_experiment, chronological_experiment, data_folder):
-    age_mean, age_sd, number_females, right_handed = data._return_participant_demographics(
+    age_mean, age_sd, number_females, right_handed = data.return_summary_demographics(
         chronological_experiment, data_folder
     )
 

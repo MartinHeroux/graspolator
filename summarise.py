@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 
 import utils
+import data
 from calculate_area import between_regression_and_reality_absolute, between_regression_and_reality_signed
 from utils import store_condition_data_tuples_kathy, store_condition_data_tuples_lovisa, calculate_mean_ci, calculate_ci, \
     calculate_r2, calculate_regression_general
@@ -268,15 +269,20 @@ def _store_r2_tuples_exp2(all_subject_data):
 
 
 def write_raw_data_summary_exp1(all_subject_data):
-    column_names = ['sub_id']
+    column_names = ['sub_id', 'age', 'sex', 'handedness']
     condition_names = ['vision_grasp_', 'grasp_vision_', 'grasp_grasp_']
     outcome_names = ['R2', 'error', 'intercept', 'slope']
+
+    data_folder = Path(f"./data/exp2/")
+    ages, sexes, handedness = data.return_participant_demographics(
+        'exp2', data_folder
+    )
 
     for outcome in outcome_names:
         name_subset = [condition_name + outcome for condition_name in condition_names]
         column_names.extend(name_subset)
 
-    row_data = [individual_participant_data_exp1(subject_data) for subject_data in all_subject_data]
+    row_data = [individual_participant_data_lovisa(subject_data, age, sex, hand) for subject_data, age, sex, hand in zip(all_subject_data, ages, sexes, handedness)]
 
     df = pd.DataFrame(row_data, columns=column_names)
     savepath = Path(raw_data_savepath, 'participant_data_summary_exp1.csv')
@@ -286,8 +292,8 @@ def write_raw_data_summary_exp1(all_subject_data):
     print(f'\n{dashes}\n')
 
 
-def individual_participant_data_exp1(subject_data):
-    row_data = [subject_data.SUBJECT_ID]
+def individual_participant_data_lovisa(subject_data, age, sex, hand):
+    row_data = [subject_data.SUBJECT_ID, age, sex, hand]
 
     vision_to_grasp, grasp_to_vision, grasp_to_grasp = store_condition_data_tuples_lovisa(subject_data)
 
@@ -312,16 +318,21 @@ def individual_participant_data_exp1(subject_data):
     return row_data
 
 
-def write_raw_data_summary_exp2(all_subject_data, all_subject_ids):
-    column_names = ['sub_id']
+def write_raw_data_summary_kathy(all_subject_data, all_subject_ids):
+    column_names = ['sub_id', 'age', 'sex', 'handedness']
     condition_names = ['d1_dom_', 'd1_non_dom_', 'd2_dom_1_', 'd2_dom_2_']
     outcome_names = ['R2', 'error', 'intercept', 'slope']
+
+    data_folder = Path(f"./data/exp1/")
+    ages, sexes, handedness = data.return_participant_demographics(
+        'exp1', data_folder
+    )
 
     for outcome in outcome_names:
         name_subset = [condition_name + outcome for condition_name in condition_names]
         column_names.extend(name_subset)
 
-    row_data = [individual_participant_data_exp2(subject_data, subject_id) for subject_data, subject_id in zip(all_subject_data, all_subject_ids)]
+    row_data = [individual_participant_data_exp2(subject_data, subject_id, age, sex, hand) for subject_data, subject_id, age, sex, hand in zip(all_subject_data, all_subject_ids, ages, sexes, handedness)]
 
     df = pd.DataFrame(row_data, columns=column_names)
     savepath = Path(raw_data_savepath, 'participant_data_summary_exp2.csv')
@@ -331,8 +342,8 @@ def write_raw_data_summary_exp2(all_subject_data, all_subject_ids):
     print(f'\n{dashes}\n')
 
 
-def individual_participant_data_exp2(subject_data, sub_id):
-    row_data = [sub_id]
+def individual_participant_data_exp2(subject_data, sub_id, age, sex, hand):
+    row_data = [sub_id, age, sex, hand]
 
     d1_dom, d1_non_dom, d2_dom_1, d2_dom_2 = store_condition_data_tuples_kathy(subject_data)
 

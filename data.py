@@ -87,7 +87,7 @@ def return_all_subject_IDs(experiment, data_folder):
 ###########################################
 
 
-def _return_participant_demographics(experiment, data_folder):
+def return_summary_demographics(experiment, data_folder):
     subjects = utils.get_directory_list(Path(f"./data/{experiment}"))
 
     if experiment == "exp1":
@@ -114,6 +114,27 @@ def _return_participant_demographics(experiment, data_folder):
         right_handed = handednessi.count("r")
 
     return age_mean, age_sd, str(number_females), str(right_handed)
+
+
+def return_participant_demographics(experiment, data_folder):
+    subjects = utils.get_directory_list(Path(f"./data/{experiment}"))
+
+    if experiment == "exp1":
+        _remove_old_names(subjects)
+
+    ages, sexes, handedness = [], [], []
+
+    for subject in subjects:
+        subject_folder = data_folder / subject
+        demographic_txt = _read_dem_data(subject_folder)
+        age, gender, hand = _extract_age_gender_handedness(
+            experiment, demographic_txt
+        )
+        ages.append(int(age))
+        sexes.append(gender)
+        handedness.append(hand)
+
+    return ages, sexes, handedness
 
 
 def _read_dem_data(subject_folder):

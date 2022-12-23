@@ -21,7 +21,7 @@ all_subject_names_exp2 = data.return_all_subject_IDs(exp_2, exp2_data_directory)
 results.write_all(all_subject_data_exp2, all_subject_names_exp2, exp_2, exp2_data_directory)
 
 #   Write individual subject data to .csv
-summarise.write_raw_data_summary_exp2(all_subject_data_exp2, all_subject_names_exp2)
+summarise.write_raw_data_summary_kathy(all_subject_data_exp2, all_subject_names_exp2)
 
 #   Generate individual subject plots
 plot.individual_scatterplots(all_subject_data_exp2, all_subject_names_exp2, exp_2)
