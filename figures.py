@@ -7,7 +7,7 @@ from matplotlib.ticker import MultipleLocator
 
 import summarise
 import utils
-import calculate_area
+import area
 
 LOVISA = 'exp2'
 
@@ -136,7 +136,7 @@ def figure_2_and_6(all_subject_data, subjects, experiment, vertical_y_label):
             intercept, slope = utils.calculate_regression_general(
                 condition_data.ACTUAL, condition_data.PERCEIVED
             )
-            area = calculate_area.between_regression_and_reality_absolute(
+            area = area.between_regression_and_reality_absolute(
                 condition_data.ACTUAL, condition_data.PERCEIVED, experiment
             )
             r2 = utils.calculate_r2(condition_data.ACTUAL, condition_data.PERCEIVED)
@@ -422,7 +422,7 @@ def figure_3_and_7(all_subject_data, subjects, experiment, vertical_y_label=True
         for pair in data_pairs:
             y_points_r2.append(utils.calculate_r2(pair.ACTUAL, pair.PERCEIVED))
             y_points_area.append(
-                calculate_area.between_regression_and_reality_absolute(pair.ACTUAL, pair.PERCEIVED, experiment)
+                area.between_regression_and_reality_absolute(pair.ACTUAL, pair.PERCEIVED, experiment)
             )
 
         y_point_lists = [y_points_r2, y_points_area]
