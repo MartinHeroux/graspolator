@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt, patches as mpatches
 from matplotlib.lines import Line2D
 
 
-import calculate_area
+import area
 import utils
 from utils import create_individual_plot_save_path
 
@@ -136,7 +136,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
         else:
             y_max = y2
 
-        area = calculate_area.between_regression_and_reality_absolute(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, experiment)
+        area_result = area.between_regression_and_reality_absolute(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, experiment)
         #area = calculate_area.normalised(condition_tuple.ACTUAL, condition_tuple.PERCEIVED, 'comparison')
         color = 'firebrick'
 
@@ -150,7 +150,7 @@ def areas_between_regression_and_reality(subject_ID, subject_data, experiment):
         legend_handles = [Line2D([0], [0], color='royalblue', lw=2,
                                  label=f'Regression Line\n(y = {slope:4.2f}*x + {intercept:4.2f})'),
                           Line2D([0], [0], color='black', linestyle='--', label='Reality Line (y = x)', lw=2),
-                          mpatches.Patch(color=color, alpha=0.3, label=f'Area = {area:4.2f}')]
+                          mpatches.Patch(color=color, alpha=0.3, label=f'Area = {area_result:4.2f}')]
 
         plt.xticks(list(range(x_lims[0], (x_lims[1] + 1))))
         plt.xlim([x1 - 1, x2 + 1])
