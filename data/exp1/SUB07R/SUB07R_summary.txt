@@ -1,0 +1,589 @@
+--------------------------------
+PERCEIVED GRASP APERTURE SPACING
+--------------------------------
+ 
+----
+LEFT
+----
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+--------------------------------
+PERCEIVED GRASP APERTURE SPACING
+--------------------------------
+ 
+-----
+RIGHT
+-----
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+--------------------------------
+PERCEIVED GRASP APERTURE SPACING
+--------------------------------
+ 
+-----
+RIGHT
+-----
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+--------------------------------
+PERCEIVED GRASP APERTURE SPACING
+--------------------------------
+ 
+-----
+RIGHT
+-----
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+6
+	Serial Arduino 6 cm
+	Perceived spacing - horizontal: 6
+5
+	Serial Arduino 5 cm
+	Perceived spacing - horizontal: 5
+8
+	Serial Arduino 8 cm
+	Perceived spacing - horizontal: 8
+3
+	Serial Arduino 3 cm
+	Perceived spacing - horizontal: 3
+4
+	Serial Arduino 4 cm
+	Perceived spacing - horizontal: 4
+2
+	Serial Arduino 2 cm
+	Perceived spacing - horizontal: 2
+9
+	Serial Arduino 9 cm
+	Perceived spacing - horizontal: 9
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+7
+	Serial Arduino 7 cm
+	Perceived spacing - horizontal: 7
+10
+	Serial Arduino 10 cm
+	Perceived spacing - horizontal: 10
+--------------------------------
+PERCEIVED GRASP APERTURE SPACING
+--------------------------------
+ 
+----------
+WIDTH_TEST
+----------
+MAX_WIDTH
+	Perceived spacing - horizontal: MAX_WIDTH

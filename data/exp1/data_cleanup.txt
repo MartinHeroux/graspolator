@@ -1,0 +1,27 @@
+SUB2R
+-----
+day2_D2 - saturation: remove 10cm
+
+
+SUB4R
+-----
+day1_D  - saturation: remove 10cm
+day1_ND - saturation: remove 10cm
+day2_D1 - saturation: remove 10cm
+day2_D2 - saturation: remove 10cm
+
+
+SUB18R
+------
+day2_D1 - error point 2cm reported as 12cm
+
+
+SUB25R
+------
+day1_ND - error points: 2 at 7cm and 1 at 9cm
+
+
+SUB28R
+------
+day1_ND - error point 8cm reported as 2cm
+

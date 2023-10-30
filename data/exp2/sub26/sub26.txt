@@ -1,0 +1,4 @@
+id:sub26
+age:40
+gender:m
+handedness:l

@@ -1,0 +1,6 @@
+age: 28
+gender: F
+handedness: R
+widest_object_visual: 13
+widest_object_grasp: 13
+

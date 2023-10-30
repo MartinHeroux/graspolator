@@ -1,0 +1,4 @@
+id:sub10
+age:24
+gender:m
+handedness:r

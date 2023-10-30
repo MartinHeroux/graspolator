@@ -1,0 +1,301 @@
+-----------------
+LOVISA EXPERIMENT
+-----------------
+ 
+-------------
+motor bug fix
+-------------
+motor bug fix
+	Arduino serial command "2"
+ 
+----------------------
+Kathy experiment block
+----------------------
+5
+	Arduino serial command "5"
+	perceived spacing horizontal
+4
+	Arduino serial command "4"
+	perceived spacing horizontal
+7
+	Arduino serial command "7"
+	perceived spacing horizontal
+9
+	Arduino serial command "9"
+	perceived spacing horizontal
+3
+	Arduino serial command "3"
+	perceived spacing horizontal
+8
+	Arduino serial command "8"
+	perceived spacing horizontal
+6
+	Arduino serial command "6"
+	perceived spacing horizontal
+8
+	Arduino serial command "8"
+	perceived spacing horizontal
+3
+	Arduino serial command "3"
+	perceived spacing horizontal
+4
+	Arduino serial command "4"
+	perceived spacing horizontal
+6
+	Arduino serial command "6"
+	perceived spacing horizontal
+5
+	Arduino serial command "5"
+	perceived spacing horizontal
+7
+	Arduino serial command "7"
+	perceived spacing horizontal
+9
+	Arduino serial command "9"
+	perceived spacing horizontal
+6
+	Arduino serial command "6"
+	perceived spacing horizontal
+3
+	Arduino serial command "3"
+	perceived spacing horizontal
+7
+	Arduino serial command "7"
+	perceived spacing horizontal
+8
+	Arduino serial command "8"
+	perceived spacing horizontal
+4
+	Arduino serial command "4"
+	perceived spacing horizontal
+9
+	Arduino serial command "9"
+	perceived spacing horizontal
+5
+	Arduino serial command "5"
+	perceived spacing horizontal
+4
+	Arduino serial command "4"
+	perceived spacing horizontal
+6
+	Arduino serial command "6"
+	perceived spacing horizontal
+8
+	Arduino serial command "8"
+	perceived spacing horizontal
+9
+	Arduino serial command "9"
+	perceived spacing horizontal
+3
+	Arduino serial command "3"
+	perceived spacing horizontal
+5
+	Arduino serial command "5"
+	perceived spacing horizontal
+7
+	Arduino serial command "7"
+	perceived spacing horizontal
+5
+	Arduino serial command "5"
+	perceived spacing horizontal
+3
+	Arduino serial command "3"
+	perceived spacing horizontal
+7
+	Arduino serial command "7"
+	perceived spacing horizontal
+9
+	Arduino serial command "9"
+	perceived spacing horizontal
+4
+	Arduino serial command "4"
+	perceived spacing horizontal
+6
+	Arduino serial command "6"
+	perceived spacing horizontal
+8
+	Arduino serial command "8"
+	perceived spacing horizontal
+ 
+------------------------------
+present width pick width block
+------------------------------
+8
+	Arduino serial command "8"
+	present 8cm width, pick width
+3
+	Arduino serial command "3"
+	present 3cm width, pick width
+9
+	Arduino serial command "9"
+	present 9cm width, pick width
+5
+	Arduino serial command "5"
+	present 5cm width, pick width
+7
+	Arduino serial command "7"
+	present 7cm width, pick width
+6
+	Arduino serial command "6"
+	present 6cm width, pick width
+4
+	Arduino serial command "4"
+	present 4cm width, pick width
+8
+	Arduino serial command "8"
+	present 8cm width, pick width
+3
+	Arduino serial command "3"
+	present 3cm width, pick width
+6
+	Arduino serial command "6"
+	present 6cm width, pick width
+5
+	Arduino serial command "5"
+	present 5cm width, pick width
+4
+	Arduino serial command "4"
+	present 4cm width, pick width
+9
+	Arduino serial command "9"
+	present 9cm width, pick width
+7
+	Arduino serial command "7"
+	present 7cm width, pick width
+8
+	Arduino serial command "8"
+	present 8cm width, pick width
+4
+	Arduino serial command "4"
+	present 4cm width, pick width
+3
+	Arduino serial command "3"
+	present 3cm width, pick width
+9
+	Arduino serial command "9"
+	present 9cm width, pick width
+7
+	Arduino serial command "7"
+	present 7cm width, pick width
+6
+	Arduino serial command "6"
+	present 6cm width, pick width
+5
+	Arduino serial command "5"
+	present 5cm width, pick width
+4
+	Arduino serial command "4"
+	present 4cm width, pick width
+3
+	Arduino serial command "3"
+	present 3cm width, pick width
+6
+	Arduino serial command "6"
+	present 6cm width, pick width
+9
+	Arduino serial command "9"
+	present 9cm width, pick width
+8
+	Arduino serial command "8"
+	present 8cm width, pick width
+5
+	Arduino serial command "5"
+	present 5cm width, pick width
+7
+	Arduino serial command "7"
+	present 7cm width, pick width
+6
+	Arduino serial command "6"
+	present 6cm width, pick width
+9
+	Arduino serial command "9"
+	present 9cm width, pick width
+3
+	Arduino serial command "3"
+	present 3cm width, pick width
+8
+	Arduino serial command "8"
+	present 8cm width, pick width
+4
+	Arduino serial command "4"
+	present 4cm width, pick width
+7
+	Arduino serial command "7"
+	present 7cm width, pick width
+5
+	Arduino serial command "5"
+	present 5cm width, pick width
+ 
+--------------------------
+show line pick width block
+--------------------------
+6
+	show 6cm line, pick width
+5
+	show 5cm line, pick width
+7
+	show 7cm line, pick width
+4
+	show 4cm line, pick width
+3
+	show 3cm line, pick width
+8
+	show 8cm line, pick width
+9
+	show 9cm line, pick width
+9
+	show 9cm line, pick width
+8
+	show 8cm line, pick width
+4
+	show 4cm line, pick width
+7
+	show 7cm line, pick width
+6
+	show 6cm line, pick width
+5
+	show 5cm line, pick width
+3
+	show 3cm line, pick width
+7
+	show 7cm line, pick width
+6
+	show 6cm line, pick width
+9
+	show 9cm line, pick width
+4
+	show 4cm line, pick width
+5
+	show 5cm line, pick width
+3
+	show 3cm line, pick width
+8
+	show 8cm line, pick width
+5
+	show 5cm line, pick width
+8
+	show 8cm line, pick width
+7
+	show 7cm line, pick width
+3
+	show 3cm line, pick width
+9
+	show 9cm line, pick width
+6
+	show 6cm line, pick width
+4
+	show 4cm line, pick width
+4
+	show 4cm line, pick width
+5
+	show 5cm line, pick width
+8
+	show 8cm line, pick width
+3
+	show 3cm line, pick width
+9
+	show 9cm line, pick width
+7
+	show 7cm line, pick width
+6
+	show 6cm line, pick width

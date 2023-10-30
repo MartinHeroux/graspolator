@@ -1,0 +1,1183 @@
+-----------------
+LOVISA EXPERIMENT
+-----------------
+
+2018-10-05 09:50:07
+
+Starting study setup.
+	Creating:
+		/home/proprio/Desktop/lovisa_study/data/0510MH/0510MH_log.txt
+		/home/proprio/Desktop/lovisa_study/data/0510MH/0510MH_summary.txt
+		/home/proprio/Desktop/lovisa_study/data/0510MH/0510MH_data.txt
+	Writing experiment summary.
+Finished study setup.
+
+-------------
+motor bug fix
+-------------
+***** motor bug fix Trial #1-1 *****
+Arduino serial command "2"
+--------------------------
+show line pick width block
+--------------------------
+***** 4 Trial #2-1 *****
+show 4cm line, pick width
+Subject answer = 4
+
+***** 9 Trial #2-2 *****
+show 9cm line, pick width
+Subject answer = 8
+
+***** 8 Trial #2-3 *****
+show 8cm line, pick width
+Subject answer = 7
+
+***** 7 Trial #2-4 *****
+show 7cm line, pick width
+Subject answer = 6
+
+***** 3 Trial #2-5 *****
+show 3cm line, pick width
+Subject answer = 3
+
+***** 5 Trial #2-6 *****
+show 5cm line, pick width
+Subject answer = 5
+
+***** 6 Trial #2-7 *****
+show 6cm line, pick width
+Subject answer = 6
+
+***** 5 Trial #2-8 *****
+show 5cm line, pick width
+Subject answer = 5
+
+***** 6 Trial #2-9 *****
+show 6cm line, pick width
+Subject answer = 6
+
+***** 4 Trial #2-10 *****
+show 4cm line, pick width
+Subject answer = 4
+
+***** 7 Trial #2-11 *****
+show 7cm line, pick width
+Subject answer = 7
+
+***** 9 Trial #2-12 *****
+show 9cm line, pick width
+Subject answer = 9
+
+***** 8 Trial #2-13 *****
+show 8cm line, pick width
+Subject answer = 8
+
+***** 3 Trial #2-14 *****
+show 3cm line, pick width
+Subject answer = 4
+
+***** 9 Trial #2-15 *****
+show 9cm line, pick width
+Subject answer = 9
+
+***** 7 Trial #2-16 *****
+show 7cm line, pick width
+Subject answer = 8
+
+***** 3 Trial #2-17 *****
+show 3cm line, pick width
+Subject answer = 5
+
+***** 8 Trial #2-18 *****
+show 8cm line, pick width
+Subject answer = 8
+
+***** 5 Trial #2-19 *****
+show 5cm line, pick width
+Subject answer = 6
+
+***** 4 Trial #2-20 *****
+show 4cm line, pick width
+Subject answer = 6
+
+***** 6 Trial #2-21 *****
+show 6cm line, pick width
+Subject answer = 7
+
+***** 5 Trial #2-22 *****
+show 5cm line, pick width
+Subject answer = 6
+
+***** 8 Trial #2-23 *****
+show 8cm line, pick width
+Subject answer = 9
+
+***** 4 Trial #2-24 *****
+show 4cm line, pick width
+Subject answer = 5
+
+***** 6 Trial #2-25 *****
+show 6cm line, pick width
+Subject answer = 7
+
+***** 7 Trial #2-26 *****
+show 7cm line, pick width
+Subject answer = 8
+
+***** 9 Trial #2-27 *****
+show 9cm line, pick width
+Subject answer = 10
+
+***** 3 Trial #2-28 *****
+show 3cm line, pick width
+Subject answer = 5
+
+***** 6 Trial #2-29 *****
+show 6cm line, pick width
+Subject answer = 8
+
+***** 4 Trial #2-30 *****
+show 4cm line, pick width
+Subject answer = 7
+
+***** 8 Trial #2-31 *****
+show 8cm line, pick width
+Subject answer = 10
+
+***** 9 Trial #2-32 *****
+show 9cm line, pick width
+Subject answer = 11
+
+***** 3 Trial #2-33 *****
+show 3cm line, pick width
+Subject answer = 6
+
+***** 7 Trial #2-34 *****
+show 7cm line, pick width
+Subject answer = 9
+
+***** 5 Trial #2-35 *****
+show 5cm line, pick width
+Subject answer = 8
+
+----------------------
+Kathy experiment block
+----------------------
+***** 7 Trial #3-1 *****
+Arduino serial command "7"
+perceived spacing horizontal
+Subject selected: E
+Subject answer = 6
+Subject answer = 6
+Chart:
+	a = 9
+	b = 14
+	c = 4
+	d = 5
+	e = 6
+	f = 3
+	g = 1
+	h = 13
+	i = 10
+	j = 12
+	k = 7
+	l = 1.5
+	m = 2
+	n = 11
+	o = 8
+	p = 0.5
+
+***** 8 Trial #3-2 *****
+Arduino serial command "8"
+perceived spacing horizontal
+Subject selected: K
+Subject answer = 6
+Subject answer = 6
+Chart:
+	a = 11
+	b = 8
+	c = 12
+	d = 1.5
+	e = 9
+	f = 5
+	g = 10
+	h = 7
+	i = 4
+	j = 14
+	k = 6
+	l = 1
+	m = 3
+	n = 13
+	o = 2
+	p = 0.5
+
+***** 6 Trial #3-3 *****
+Arduino serial command "6"
+perceived spacing horizontal
+Subject selected: N
+Subject answer = 4
+Subject answer = 4
+Chart:
+	a = 1.5
+	b = 1
+	c = 12
+	d = 7
+	e = 5
+	f = 6
+	g = 3
+	h = 8
+	i = 0.5
+	j = 9
+	k = 13
+	l = 2
+	m = 10
+	n = 4
+	o = 11
+	p = 14
+
+***** 3 Trial #3-4 *****
+Arduino serial command "3"
+perceived spacing horizontal
+Subject selected: E
+Subject answer = 2
+Subject answer = 2
+Chart:
+	a = 1.5
+	b = 3
+	c = 8
+	d = 13
+	e = 2
+	f = 7
+	g = 14
+	h = 6
+	i = 11
+	j = 0.5
+	k = 1
+	l = 4
+	m = 9
+	n = 5
+	o = 12
+	p = 10
+
+***** 5 Trial #3-5 *****
+Arduino serial command "5"
+perceived spacing horizontal
+Subject selected: A
+Subject answer = 3
+Subject answer = 3
+Chart:
+	a = 3
+	b = 5
+	c = 7
+	d = 14
+	e = 6
+	f = 11
+	g = 2
+	h = 0.5
+	i = 9
+	j = 4
+	k = 10
+	l = 1.5
+	m = 13
+	n = 1
+	o = 12
+	p = 8
+
+***** 9 Trial #3-6 *****
+Arduino serial command "9"
+perceived spacing horizontal
+Subject selected: A
+Subject answer = 8
+Subject answer = 8
+Chart:
+	a = 8
+	b = 7
+	c = 14
+	d = 10
+	e = 12
+	f = 5
+	g = 13
+	h = 2
+	i = 6
+	j = 1.5
+	k = 11
+	l = 9
+	m = 3
+	n = 0.5
+	o = 4
+	p = 1
+
+***** 4 Trial #3-7 *****
+Arduino serial command "4"
+perceived spacing horizontal
+Subject selected: I
+Subject answer = 2
+Subject answer = 2
+Chart:
+	a = 10
+	b = 5
+	c = 1.5
+	d = 8
+	e = 1
+	f = 0.5
+	g = 7
+	h = 4
+	i = 2
+	j = 6
+	k = 9
+	l = 12
+	m = 13
+	n = 11
+	o = 14
+	p = 3
+
+***** 8 Trial #3-8 *****
+Arduino serial command "8"
+perceived spacing horizontal
+Subject selected: B
+Subject answer = 7
+Subject answer = 7
+Chart:
+	a = 5
+	b = 7
+	c = 12
+	d = 9
+	e = 2
+	f = 13
+	g = 4
+	h = 6
+	i = 1
+	j = 8
+	k = 14
+	l = 1.5
+	m = 0.5
+	n = 10
+	o = 11
+	p = 3
+
+***** 6 Trial #3-9 *****
+Arduino serial command "6"
+perceived spacing horizontal
+Subject selected: P
+Subject answer = 4
+Subject answer = 4
+Chart:
+	a = 12
+	b = 0.5
+	c = 1.5
+	d = 11
+	e = 1
+	f = 13
+	g = 14
+	h = 8
+	i = 6
+	j = 9
+	k = 2
+	l = 10
+	m = 7
+	n = 5
+	o = 3
+	p = 4
+
+***** 5 Trial #3-10 *****
+Arduino serial command "5"
+perceived spacing horizontal
+Subject selected: H
+Subject answer = 3
+Subject answer = 3
+Chart:
+	a = 4
+	b = 11
+	c = 14
+	d = 5
+	e = 10
+	f = 1
+	g = 1.5
+	h = 3
+	i = 13
+	j = 0.5
+	k = 12
+	l = 6
+	m = 9
+	n = 7
+	o = 2
+	p = 8
+
+***** 7 Trial #3-11 *****
+Arduino serial command "7"
+perceived spacing horizontal
+Subject selected: M
+Subject answer = 6
+Subject answer = 6
+Chart:
+	a = 5
+	b = 14
+	c = 12
+	d = 10
+	e = 4
+	f = 3
+	g = 9
+	h = 7
+	i = 13
+	j = 2
+	k = 0.5
+	l = 11
+	m = 6
+	n = 1.5
+	o = 1
+	p = 8
+
+***** 4 Trial #3-12 *****
+Arduino serial command "4"
+perceived spacing horizontal
+Subject selected: H
+Subject answer = 3
+Subject answer = 3
+Chart:
+	a = 8
+	b = 10
+	c = 6
+	d = 1.5
+	e = 11
+	f = 1
+	g = 13
+	h = 3
+	i = 12
+	j = 7
+	k = 5
+	l = 4
+	m = 0.5
+	n = 9
+	o = 2
+	p = 14
+
+***** 3 Trial #3-13 *****
+Arduino serial command "3"
+perceived spacing horizontal
+Subject selected: D
+Subject answer = 1.5
+Subject answer = 1.5
+Chart:
+	a = 4
+	b = 5
+	c = 12
+	d = 1.5
+	e = 2
+	f = 6
+	g = 7
+	h = 0.5
+	i = 3
+	j = 14
+	k = 11
+	l = 1
+	m = 8
+	n = 10
+	o = 13
+	p = 9
+
+***** 9 Trial #3-14 *****
+Arduino serial command "9"
+perceived spacing horizontal
+Subject selected: B
+Subject answer = 8
+Subject answer = 8
+Chart:
+	a = 10
+	b = 8
+	c = 9
+	d = 5
+	e = 12
+	f = 0.5
+	g = 7
+	h = 13
+	i = 2
+	j = 3
+	k = 1
+	l = 4
+	m = 14
+	n = 11
+	o = 6
+	p = 1.5
+
+***** 7 Trial #3-15 *****
+Arduino serial command "7"
+perceived spacing horizontal
+Subject selected: F
+Subject answer = 6
+Subject answer = 6
+Chart:
+	a = 1.5
+	b = 7
+	c = 14
+	d = 5
+	e = 2
+	f = 6
+	g = 0.5
+	h = 12
+	i = 10
+	j = 13
+	k = 1
+	l = 8
+	m = 3
+	n = 4
+	o = 9
+	p = 11
+
+***** 8 Trial #3-16 *****
+Arduino serial command "8"
+perceived spacing horizontal
+Subject selected: G
+Subject answer = 6
+Subject answer = 6
+Chart:
+	a = 0.5
+	b = 12
+	c = 10
+	d = 14
+	e = 1.5
+	f = 7
+	g = 6
+	h = 8
+	i = 13
+	j = 3
+	k = 2
+	l = 4
+	m = 11
+	n = 9
+	o = 1
+	p = 5
+
+***** 9 Trial #3-17 *****
+Arduino serial command "9"
+perceived spacing horizontal
+Subject selected: K
+Subject answer = 7
+Subject answer = 7
+Chart:
+	a = 1.5
+	b = 4
+	c = 5
+	d = 3
+	e = 12
+	f = 6
+	g = 2
+	h = 10
+	i = 11
+	j = 1
+	k = 7
+	l = 14
+	m = 0.5
+	n = 9
+	o = 13
+	p = 8
+
+***** 5 Trial #3-18 *****
+Arduino serial command "5"
+perceived spacing horizontal
+Subject selected: A
+Subject answer = 3
+Subject answer = 3
+Chart:
+	a = 3
+	b = 1
+	c = 14
+	d = 4
+	e = 8
+	f = 9
+	g = 0.5
+	h = 13
+	i = 10
+	j = 11
+	k = 6
+	l = 2
+	m = 5
+	n = 1.5
+	o = 12
+	p = 7
+
+***** 3 Trial #3-19 *****
+Arduino serial command "3"
+perceived spacing horizontal
+Subject selected: M
+Subject answer = 1.5
+Subject answer = 1.5
+Chart:
+	a = 9
+	b = 5
+	c = 12
+	d = 10
+	e = 7
+	f = 1
+	g = 14
+	h = 4
+	i = 8
+	j = 3
+	k = 2
+	l = 11
+	m = 1.5
+	n = 13
+	o = 6
+	p = 0.5
+
+***** 4 Trial #3-20 *****
+Arduino serial command "4"
+perceived spacing horizontal
+Subject selected: D
+Subject answer = 2
+Subject answer = 2
+Chart:
+	a = 0.5
+	b = 12
+	c = 1.5
+	d = 2
+	e = 7
+	f = 5
+	g = 10
+	h = 14
+	i = 11
+	j = 3
+	k = 4
+	l = 6
+	m = 9
+	n = 13
+	o = 1
+	p = 8
+
+***** 6 Trial #3-21 *****
+Arduino serial command "6"
+perceived spacing horizontal
+Subject selected: N
+Subject answer = 4
+Subject answer = 4
+Chart:
+	a = 5
+	b = 9
+	c = 10
+	d = 12
+	e = 8
+	f = 3
+	g = 0.5
+	h = 1.5
+	i = 6
+	j = 11
+	k = 13
+	l = 14
+	m = 2
+	n = 4
+	o = 1
+	p = 7
+
+***** 5 Trial #3-22 *****
+Arduino serial command "5"
+perceived spacing horizontal
+Subject selected: P
+Subject answer = 3
+Subject answer = 3
+Chart:
+	a = 4
+	b = 6
+	c = 0.5
+	d = 11
+	e = 1.5
+	f = 5
+	g = 10
+	h = 8
+	i = 13
+	j = 1
+	k = 12
+	l = 2
+	m = 7
+	n = 14
+	o = 9
+	p = 3
+
+***** 4 Trial #3-23 *****
+Arduino serial command "4"
+perceived spacing horizontal
+Subject selected: N
+Subject answer = 2
+Subject answer = 2
+Chart:
+	a = 11
+	b = 7
+	c = 6
+	d = 13
+	e = 9
+	f = 0.5
+	g = 4
+	h = 8
+	i = 5
+	j = 12
+	k = 3
+	l = 1
+	m = 1.5
+	n = 2
+	o = 10
+	p = 14
+
+***** 6 Trial #3-24 *****
+Arduino serial command "6"
+perceived spacing horizontal
+Subject selected: H
+Subject answer = 4
+Subject answer = 4
+Chart:
+	a = 13
+	b = 8
+	c = 11
+	d = 0.5
+	e = 10
+	f = 1
+	g = 5
+	h = 4
+	i = 3
+	j = 1.5
+	k = 2
+	l = 9
+	m = 7
+	n = 6
+	o = 12
+	p = 14
+
+***** 7 Trial #3-25 *****
+Arduino serial command "7"
+perceived spacing horizontal
+Subject selected: J
+Subject answer = 6
+Subject answer = 6
+Chart:
+	a = 13
+	b = 1.5
+	c = 8
+	d = 4
+	e = 12
+	f = 2
+	g = 0.5
+	h = 1
+	i = 14
+	j = 6
+	k = 5
+	l = 11
+	m = 3
+	n = 9
+	o = 10
+	p = 7
+
+***** 3 Trial #3-26 *****
+Arduino serial command "3"
+perceived spacing horizontal
+Subject selected: G
+Subject answer = 1.5
+Subject answer = 1.5
+Chart:
+	a = 9
+	b = 2
+	c = 13
+	d = 10
+	e = 6
+	f = 4
+	g = 1.5
+	h = 7
+	i = 5
+	j = 14
+	k = 12
+	l = 0.5
+	m = 8
+	n = 1
+	o = 3
+	p = 11
+
+***** 8 Trial #3-27 *****
+Arduino serial command "8"
+perceived spacing horizontal
+Subject selected: E
+Subject answer = 7
+Subject answer = 7
+Chart:
+	a = 11
+	b = 4
+	c = 8
+	d = 1
+	e = 7
+	f = 5
+	g = 12
+	h = 14
+	i = 2
+	j = 3
+	k = 9
+	l = 0.5
+	m = 13
+	n = 1.5
+	o = 6
+	p = 10
+
+***** 9 Trial #3-28 *****
+Arduino serial command "9"
+perceived spacing horizontal
+Subject selected: J
+Subject answer = 7
+Subject answer = 7
+Chart:
+	a = 13
+	b = 5
+	c = 8
+	d = 0.5
+	e = 1
+	f = 1.5
+	g = 6
+	h = 11
+	i = 14
+	j = 7
+	k = 10
+	l = 12
+	m = 3
+	n = 9
+	o = 2
+	p = 4
+
+***** 9 Trial #3-29 *****
+Arduino serial command "9"
+perceived spacing horizontal
+Subject selected: M
+Subject answer = 7
+Subject answer = 7
+Chart:
+	a = 13
+	b = 0.5
+	c = 2
+	d = 12
+	e = 11
+	f = 1
+	g = 6
+	h = 1.5
+	i = 9
+	j = 10
+	k = 14
+	l = 3
+	m = 7
+	n = 5
+	o = 8
+	p = 4
+
+***** 4 Trial #3-30 *****
+Arduino serial command "4"
+perceived spacing horizontal
+Subject selected: H
+Subject answer = 2
+Subject answer = 2
+Chart:
+	a = 8
+	b = 0.5
+	c = 7
+	d = 14
+	e = 3
+	f = 5
+	g = 9
+	h = 2
+	i = 1.5
+	j = 4
+	k = 1
+	l = 12
+	m = 10
+	n = 13
+	o = 11
+	p = 6
+
+***** 7 Trial #3-31 *****
+Arduino serial command "7"
+perceived spacing horizontal
+Subject selected: I
+Subject answer = 6
+Subject answer = 6
+Chart:
+	a = 5
+	b = 14
+	c = 3
+	d = 10
+	e = 7
+	f = 9
+	g = 13
+	h = 12
+	i = 6
+	j = 1
+	k = 4
+	l = 0.5
+	m = 1.5
+	n = 2
+	o = 8
+	p = 11
+
+***** 8 Trial #3-32 *****
+Arduino serial command "8"
+perceived spacing horizontal
+Subject selected: P
+Subject answer = 6
+Subject answer = 6
+Chart:
+	a = 2
+	b = 1.5
+	c = 12
+	d = 14
+	e = 13
+	f = 4
+	g = 7
+	h = 9
+	i = 0.5
+	j = 1
+	k = 5
+	l = 11
+	m = 3
+	n = 8
+	o = 10
+	p = 6
+
+***** 3 Trial #3-33 *****
+Arduino serial command "3"
+perceived spacing horizontal
+Subject selected: K
+Subject answer = 1.5
+Subject answer = 1.5
+Chart:
+	a = 2
+	b = 4
+	c = 14
+	d = 3
+	e = 5
+	f = 7
+	g = 1
+	h = 0.5
+	i = 6
+	j = 8
+	k = 1.5
+	l = 12
+	m = 9
+	n = 11
+	o = 13
+	p = 10
+
+***** 6 Trial #3-34 *****
+Arduino serial command "6"
+perceived spacing horizontal
+Subject selected: D
+Subject answer = 4
+Subject answer = 4
+Chart:
+	a = 0.5
+	b = 12
+	c = 6
+	d = 4
+	e = 1
+	f = 9
+	g = 5
+	h = 10
+	i = 11
+	j = 2
+	k = 3
+	l = 1.5
+	m = 7
+	n = 8
+	o = 13
+	p = 14
+
+***** 5 Trial #3-35 *****
+Arduino serial command "5"
+perceived spacing horizontal
+Subject selected: L
+Subject answer = 4
+Subject answer = 4
+Chart:
+	a = 13
+	b = 3
+	c = 7
+	d = 5
+	e = 6
+	f = 0.5
+	g = 10
+	h = 1.5
+	i = 2
+	j = 14
+	k = 9
+	l = 4
+	m = 1
+	n = 8
+	o = 12
+	p = 11
+
+------------------------------
+present width pick width block
+------------------------------
+***** 5 Trial #4-1 *****
+Arduino serial command "5"
+present 5cm width, pick width
+Subject answer = 5
+
+***** 4 Trial #4-2 *****
+Arduino serial command "4"
+present 4cm width, pick width
+Subject answer = 5
+
+***** 9 Trial #4-3 *****
+Arduino serial command "9"
+present 9cm width, pick width
+Subject answer = 9
+
+***** 3 Trial #4-4 *****
+Arduino serial command "3"
+present 3cm width, pick width
+Subject answer = 4
+
+***** 8 Trial #4-5 *****
+Arduino serial command "8"
+present 8cm width, pick width
+Subject answer = 8
+
+***** 7 Trial #4-6 *****
+Arduino serial command "7"
+present 7cm width, pick width
+Subject answer = 7
+
+***** 6 Trial #4-7 *****
+Arduino serial command "6"
+present 6cm width, pick width
+Subject answer = 6
+
+***** 6 Trial #4-8 *****
+Arduino serial command "6"
+present 6cm width, pick width
+Subject answer = 6
+
+***** 4 Trial #4-9 *****
+Arduino serial command "4"
+present 4cm width, pick width
+Subject answer = 5
+
+***** 9 Trial #4-10 *****
+Arduino serial command "9"
+present 9cm width, pick width
+Subject answer = 9
+
+***** 5 Trial #4-11 *****
+Arduino serial command "5"
+present 5cm width, pick width
+Subject answer = 5
+
+***** 8 Trial #4-12 *****
+Arduino serial command "8"
+present 8cm width, pick width
+Subject answer = 8
+
+***** 3 Trial #4-13 *****
+Arduino serial command "3"
+present 3cm width, pick width
+Subject answer = 4
+
+***** 7 Trial #4-14 *****
+Arduino serial command "7"
+present 7cm width, pick width
+Subject answer = 7
+
+***** 6 Trial #4-15 *****
+Arduino serial command "6"
+present 6cm width, pick width
+Subject answer = 7
+
+***** 8 Trial #4-16 *****
+Arduino serial command "8"
+present 8cm width, pick width
+Subject answer = 8
+
+***** 5 Trial #4-17 *****
+Arduino serial command "5"
+present 5cm width, pick width
+Subject answer = 5
+
+***** 7 Trial #4-18 *****
+Arduino serial command "7"
+present 7cm width, pick width
+Subject answer = 7
+
+***** 3 Trial #4-19 *****
+Arduino serial command "3"
+present 3cm width, pick width
+Subject answer = 4
+
+***** 4 Trial #4-20 *****
+Arduino serial command "4"
+present 4cm width, pick width
+Subject answer = 4
+
+***** 9 Trial #4-21 *****
+Arduino serial command "9"
+present 9cm width, pick width
+Subject answer = 9
+
+***** 5 Trial #4-22 *****
+Arduino serial command "5"
+present 5cm width, pick width
+Subject answer = 5
+
+***** 7 Trial #4-23 *****
+Arduino serial command "7"
+present 7cm width, pick width
+Subject answer = 7
+
+***** 6 Trial #4-24 *****
+Arduino serial command "6"
+present 6cm width, pick width
+Subject answer = 5
+
+***** 9 Trial #4-25 *****
+Arduino serial command "9"
+present 9cm width, pick width
+Subject answer = 9
+
+***** 4 Trial #4-26 *****
+Arduino serial command "4"
+present 4cm width, pick width
+Subject answer = 4
+
+***** 3 Trial #4-27 *****
+Arduino serial command "3"
+present 3cm width, pick width
+Subject answer = 3
+
+***** 8 Trial #4-28 *****
+Arduino serial command "8"
+present 8cm width, pick width
+Subject answer = 8
+
+***** 5 Trial #4-29 *****
+Arduino serial command "5"
+present 5cm width, pick width
+Subject answer = 5
+
+***** 3 Trial #4-30 *****
+Arduino serial command "3"
+present 3cm width, pick width
+Subject answer = 3
+
+***** 4 Trial #4-31 *****
+Arduino serial command "4"
+present 4cm width, pick width
+Subject answer = 4
+
+***** 7 Trial #4-32 *****
+Arduino serial command "7"
+present 7cm width, pick width
+Subject answer = 7
+
+***** 9 Trial #4-33 *****
+Arduino serial command "9"
+present 9cm width, pick width
+Subject answer = 9
+
+***** 8 Trial #4-34 *****
+Arduino serial command "8"
+present 8cm width, pick width
+Subject answer = 8
+
+***** 6 Trial #4-35 *****
+Arduino serial command "6"
+present 6cm width, pick width
+Subject answer = 6
+

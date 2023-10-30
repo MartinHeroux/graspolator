@@ -1,0 +1,4 @@
+id:sub14
+age:24
+gender:f
+handedness:r
